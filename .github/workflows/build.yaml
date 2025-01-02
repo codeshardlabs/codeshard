@@ -1,0 +1,48 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+  workflow_dispatch: # Allows you to run this workflow manually
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Docker Buildx (allows multi-platform builds and advanced features)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Step 3: Log in to Docker Hub using GitHub Secrets
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Step 4: Build and push the Docker image
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          # Path to your Dockerfile context (the directory containing Dockerfile)
+          context: .
+          # Explicitly specify the Dockerfile if it's not in the root
+          file: ./Dockerfile
+          # The image(s) to push. Replace "YOUR_DOCKERHUB_USERNAME" and "YOUR_IMAGE_NAME".
+          # You can add multiple tags, for example, "latest" and one that references the commit SHA.
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/YOUR_IMAGE_NAME:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/YOUR_IMAGE_NAME:${{ github.sha }}
+          push: true
+          # (Optional) If you want multi-platform images, e.g., for amd64 & arm64, add:
+          # platforms: linux/amd64,linux/arm64
+
+      # Optional: If you want to confirm the image was successfully built/pushed,
+      # you can add steps such as "docker pull" or other testing steps here.
