@@ -20,7 +20,11 @@ import {
 import Button from "./ui/Button";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
-import { Dialog, DialogContent, DialogTrigger } from "@/src/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/src/components/ui/dialog";
 import CommentTextBox from "./CommentTextbox";
 import { CommentsArea } from "./CommentsArea";
 import { useActiveComment } from "@/src/context/CommentContext";

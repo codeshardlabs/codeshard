@@ -61,7 +61,7 @@ render(<App />, root);
           references: [{ path: "./tsconfig.node.json" }],
         },
         null,
-        2
+        2,
       ),
     },
     "/tsconfig.node.json": {
@@ -76,7 +76,7 @@ render(<App />, root);
           include: ["vite.config.ts"],
         },
         null,
-        2
+        2,
       ),
     },
     "/package.json": {
@@ -98,7 +98,7 @@ render(<App />, root);
           },
         },
         null,
-        2
+        2,
       ),
     },
     "/vite-env.d.ts": {

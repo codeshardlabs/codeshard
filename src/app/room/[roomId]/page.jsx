@@ -3,7 +3,7 @@ import { Shard } from "@/src/models/Shard";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import CollaborativeSandpackEditor from "@/src/components/CollaborativeSandpackEditor";
-import { templates } from "@/src/utils";
+import { formatFilesLikeInDb, templates } from "@/src/utils";
 import { SANDBOX_TEMPLATES } from "@/src/templates";
 
 export default async function CollaborativeRoomPage({ params, searchParams }) {
@@ -30,7 +30,7 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
       type: "private",
       mode: "collaboration",
       templateType: template,
-      files: SANDBOX_TEMPLATES[template].files,
+      files: formatFilesLikeInDb(SANDBOX_TEMPLATES[template].files),
     });
 
     if (!shardDetails) {

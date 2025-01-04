@@ -93,3 +93,17 @@ export const findParentComment = (comments, parentId) => {
 
   return null;
 };
+
+
+export function formatFilesLikeInDb(files) {
+  const keys = Object.keys(files);
+  const finalFiles = [];
+  for (let key of keys) {
+    let code = files[key].code;
+    finalFiles.push({
+      code: code, 
+      name: key,
+    })
+  }
+  return finalFiles;
+}

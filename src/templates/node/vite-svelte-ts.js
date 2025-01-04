@@ -86,7 +86,7 @@ export default defineConfig({
           references: [{ path: "./tsconfig.node.json" }],
         },
         null,
-        2
+        2,
       ),
     },
     "tsconfig.node.json": {
@@ -100,7 +100,7 @@ export default defineConfig({
           include: ["vite.config.ts"],
         },
         null,
-        2
+        2,
       ),
     },
     "/package.json": {
@@ -121,7 +121,7 @@ export default defineConfig({
           },
         },
         null,
-        2
+        2,
       ),
     },
   },
