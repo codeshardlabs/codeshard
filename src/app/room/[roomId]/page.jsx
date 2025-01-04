@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import CollaborativeSandpackEditor from "@/src/components/CollaborativeSandpackEditor";
 import { templates } from "@/src/utils";
-import { User } from "@/src/models/User";
+import { SANDBOX_TEMPLATES } from "@/src/templates";
 
 export default async function CollaborativeRoomPage({ params, searchParams }) {
   const session = await auth();
@@ -30,6 +30,7 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
       type: "private",
       mode: "collaboration",
       templateType: template,
+      files: SANDBOX_TEMPLATES[template].files,
     });
 
     if (!shardDetails) {

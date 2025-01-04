@@ -128,11 +128,11 @@ See how to write the commit message below section [Commit messages](#commit-mess
 
 #### WorkFlow Image 1
 
-![Git Workflow 1](./ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%201.png)
+![Git Workflow 1](public/ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%201.png)
 
 #### WorkFlow Image 2
 
-![Git Workflow 2](./ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%202.png)
+![Git Workflow 2](public/ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%202.png)
 
 #### WorkFlow Image 3
 
@@ -141,7 +141,7 @@ git checkout branch-20
 git rebase disciple
 ```
 
-![Git Workflow 3](./ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%203.png)
+![Git Workflow 3](public/ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%203.png)
 
 ```bash
 git checkout disciple
@@ -149,7 +149,7 @@ git checkout disciple
 
 #### WorkFlow Image 4
 
-![Git Workflow 4](./ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%204.png)
+![Git Workflow 4](public/ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%204.png)
 
 ```bash
 git rebase branch-20
@@ -157,7 +157,7 @@ git rebase branch-20
 
 #### WorkFlow Image 5
 
-![Git Workflow 5](./ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%205.png)
+![Git Workflow 5](public/ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%205.png)
 
 ```bash
 git rebase branch-21
@@ -166,7 +166,7 @@ git rebase branch-21
 
 #### WorkFlow Image 6
 
-![Git Workflow 6](./ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%206.png)
+![Git Workflow 6](public/ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%206.png)
 
 ```bash
 git checkout master
@@ -175,7 +175,7 @@ git merge disciple
 
 #### WorkFlow Image 7
 
-![Git Workflow 7](./ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%207.png)
+![Git Workflow 7](public/ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%207.png)
 
 ```bash
 git checkout disciple
@@ -190,7 +190,7 @@ git checkout branch-22
 
 #### WorkFlow Image 8
 
-![Git Workflow 8](./ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%208.png)
+![Git Workflow 8](public/ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%208.png)
 
 ```bash
 git rebase disciple
@@ -202,7 +202,7 @@ git commit -m "some message4"
 
 #### WorkFlow Image 9
 
-![Git Workflow 9](./ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%209.png)
+![Git Workflow 9](public/ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%209.png)
 
 ```bash
 git checkout master
@@ -210,7 +210,7 @@ git checkout master
 
 #### WorkFlow Image 10
 
-![Git Workflow 10](./ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%2010.png)
+![Git Workflow 10](public/ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%2010.png)
 
 ```bash
 git merge disciple
@@ -218,12 +218,12 @@ git merge disciple
 
 #### WorkFlow Image 11
 
-![Git Workflow 11](./ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%2011.png)
+![Git Workflow 11](public/ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%2011.png)
 
 <h3>The final Git workflow will look like this:</h3>
 
 #### WorkFlow Image 12
 
-![Git Workflow 12](./ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%2012%20Final.png)
+![Git Workflow 12](public/ProjectInfo/Git%20Workflow%20Images/GitRebase%20Workflow%2012%20Final.png)
 
 For more understanding of git rebase, git merge and the overall git workflow you can visit the following link: [Git Workflow](https://onlywei.github.io/explain-git-with-d3/#zen)
