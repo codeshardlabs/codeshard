@@ -12,15 +12,19 @@ import FullScreen from "./ui/icons/FullScreen";
 import HorizontalThreeDots from "./ui/icons/HorizontalThreeDots";
 import CustomSandpackPreview from "./CustomSandpackPreview";
 import Pencil from "./ui/icons/Pencil";
-import { getCommentsOfShard, saveShardName, updateLikes } from "@/lib/actions";
+import {
+  getCommentsOfShard,
+  saveShardName,
+  updateLikes,
+} from "@/src/lib/actions";
 import Button from "./ui/Button";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import CommentTextBox from "./CommentTextbox";
 import { CommentsArea } from "./CommentsArea";
-import { useActiveComment } from "@/context/CommentContext";
-import { marshalUsername } from "@/utils";
+import { useActiveComment } from "@/src/context/CommentContext";
+import { marshalUsername } from "@/src/utils";
 
 const ProfileCard = ({
   content: initialContent,

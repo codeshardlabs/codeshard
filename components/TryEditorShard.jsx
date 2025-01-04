@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { setPrev, setShard } from "@/store/slices/shard";
+import { setPrev, setShard } from "@/src/store/slices/shard";
 import NormalEditor from "./NormalEditor";
 
 export default function TryEditorShard({}) {

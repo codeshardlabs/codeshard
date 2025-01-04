@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { setPrev, setShard } from "@/store/slices/shard";
+import { setPrev, setShard } from "@/src/store/slices/shard";
 import NormalEditor from "./NormalEditor";
-import { setModal } from "@/store/slices/modal";
+import { setModal } from "@/src/store/slices/modal";
 
 export default function ShardComponent({
   newShard,

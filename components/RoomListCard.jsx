@@ -1,5 +1,5 @@
 "use client";
-import { writeToClipboard } from "@/utils";
+import { writeToClipboard } from "@/src/utils";
 import React, { useState } from "react";
 import CopyLink from "./ui/icons/Link";
 import Delete from "./ui/icons/Delete";

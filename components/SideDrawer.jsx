@@ -5,7 +5,7 @@ import Avatar from "react-avatar";
 import Profile from "./ui/icons/Profile";
 import Code from "./ui/icons/Code";
 import JoinRoom from "./ui/icons/JoinRoom";
-import { signOutHandler } from "@/lib/actions";
+import { signOutHandler } from "@/src/lib/actions";
 
 const SideDrawer = () => {
   const { data: session } = useSession();

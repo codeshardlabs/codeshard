@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import ProfileIcon from "./ui/icons/Profile";
 import { useSession } from "next-auth/react";
-import { handleFollowersOfUser } from "@/lib/actions";
+import { handleFollowersOfUser } from "@/src/lib/actions";
 import { useOptimistic } from "react";
 import ProfileContainer from "./ProfileContainer";
 

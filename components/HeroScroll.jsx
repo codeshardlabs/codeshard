@@ -1,7 +1,7 @@
 "use client";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import Image from "next/image";
-import ShardImg from "@/images/shard.png";
+import ShardImg from "@/public/images/shard.png";
 
 export function HeroScrollDemo() {
   return (

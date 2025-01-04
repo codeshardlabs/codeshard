@@ -12,14 +12,18 @@ import FullScreen from "./ui/icons/FullScreen";
 import HorizontalThreeDots from "./ui/icons/HorizontalThreeDots";
 import CustomSandpackPreview from "./CustomSandpackPreview";
 import Pencil from "./ui/icons/Pencil";
-import { getCommentsOfShard, saveShardName, updateLikes } from "@/lib/actions";
+import {
+  getCommentsOfShard,
+  saveShardName,
+  updateLikes,
+} from "@/src/lib/actions";
 import Button from "./ui/Button";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import CommentTextBox from "./CommentTextbox";
 import { CommentsArea } from "./CommentsArea";
-import { useActiveComment } from "@/context/CommentContext";
+import { useActiveComment } from "@/src/context/CommentContext";
 
 const WorkCard = ({
   content: initialContent,
@@ -211,13 +215,13 @@ const WorkCard = ({
         >
           <FullScreen className="size-4 sm:size-5" />
         </span>
-          <CustomSandpackPreview
-            template={content.templateType}
-            files={content.files}
-            dependencies={content.dependencies}
-            devDependencies={content.devDependencies}
-            className="pointer-events-none bg-white h-[8rem] sm:h-[12rem] rounded-lg"
-          />
+        <CustomSandpackPreview
+          template={content.templateType}
+          files={content.files}
+          dependencies={content.dependencies}
+          devDependencies={content.devDependencies}
+          className="pointer-events-none bg-white h-[8rem] sm:h-[12rem] rounded-lg"
+        />
       </div>
 
       <div className="flex items-center justify-between relative">

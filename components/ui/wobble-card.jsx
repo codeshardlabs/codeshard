@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn } from "@/src/lib/utils";
 
 export const WobbleCard = ({ children, containerClassName, className }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });

@@ -1,5 +1,5 @@
-import { makeFilesAndDependenciesUIStateLike } from "@/utils";
-import { CommentContextProvider } from "@/context/CommentContext";
+import { makeFilesAndDependenciesUIStateLike } from "@/src/utils";
+import { CommentContextProvider } from "@/src/context/CommentContext";
 import ProfileCard from "./ProfileCard";
 import { Fragment } from "react";
 

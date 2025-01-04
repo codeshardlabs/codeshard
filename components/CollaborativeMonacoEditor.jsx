@@ -1,6 +1,6 @@
 "use client";
 
-import { useSocket } from "@/context/SocketContext";
+import { useSocket } from "@/src/context/SocketContext";
 import { Editor, useMonaco } from "@monaco-editor/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";

@@ -12,8 +12,8 @@ import { Toaster } from "sonner";
 
 import { useEffect, useRef, useState } from "react";
 import React from "react";
-import { useModal } from "@/customHooks/useModal";
-import { makeFilesAndDependenciesUIStateLike } from "@/utils";
+import { useModal } from "@/src/customHooks/useModal";
+import { makeFilesAndDependenciesUIStateLike } from "@/src/utils";
 import { ScaleLoader } from "react-spinners";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";

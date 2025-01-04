@@ -43,18 +43,18 @@ It is browser based collaborative code editor with built-in frontend templates s
 
 <table>
   <tr>
-    <td><img src="images/image-10.png" alt="Image 1" width="200"/></td>
-    <td><img src="images/shard.png" alt="Image 2" width="200"/></td>
-    <td><img src="images/image-3.png" alt="Image 3" width="200"/></td>
+    <td><img src="public/images/image-10.png" alt="Image 1" width="200"/></td>
+    <td><img src="public/images/shard.png" alt="Image 2" width="200"/></td>
+    <td><img src="public/images/image-3.png" alt="Image 3" width="200"/></td>
   </tr>
   <tr>
-    <td><img src="images/image-4.png" alt="Image 4" width="200"/></td>
-    <td><img src="images/image-5.png" alt="Image 5" width="200"/></td>
-    <td><img src="images/image-7.png" alt="Image 6" width="200"/></td>
+    <td><img src="public/images/image-4.png" alt="Image 4" width="200"/></td>
+    <td><img src="public/images/image-5.png" alt="Image 5" width="200"/></td>
+    <td><img src="public/images/image-7.png" alt="Image 6" width="200"/></td>
   </tr>
   <tr>
-    <td><img src="images/image-8.png" alt="Image 7" width="200"/></td>
-    <td><img src="images/image-9.png" alt="Image 8" width="200"/></td>
+    <td><img src="public/images/image-8.png" alt="Image 7" width="200"/></td>
+    <td><img src="public/images/image-9.png" alt="Image 8" width="200"/></td>
     <td></td>
   </tr>
 </table>

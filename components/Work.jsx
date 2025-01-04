@@ -1,12 +1,12 @@
 import { auth } from "@/auth";
-import connectToDB from "@/lib/database";
-import { User } from "@/models/User";
+import connectToDB from "@/src/lib/database";
+import { User } from "@/src/models/User";
 import WorkCard from "./WorkCard";
 import { redirect } from "next/navigation";
 import { Fragment } from "react";
-import { makeFilesAndDependenciesUIStateLike } from "@/utils";
-import { CommentContextProvider } from "@/context/CommentContext";
-import { getCommentsOfShard } from "@/lib/actions";
+import { makeFilesAndDependenciesUIStateLike } from "@/src/utils";
+import { CommentContextProvider } from "@/src/context/CommentContext";
+import { getCommentsOfShard } from "@/src/lib/actions";
 
 const fetchShards = async (email) => {
   const res = await fetch(`${process.env.HOST_URL}/api/shard?email=${email}`, {
@@ -50,7 +50,7 @@ async function Work() {
           const likeStatus = shard.likedBy?.includes(user._id.toString())
             ? "liked"
             : "unliked";
-      
+
           return (
             <CommentContextProvider key={shard._id.toString()}>
               <WorkCard

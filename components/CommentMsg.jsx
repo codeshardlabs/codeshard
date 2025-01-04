@@ -4,8 +4,8 @@ import React, { Fragment, useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import Comment from "./ui/icons/Comment";
 import Button from "./ui/Button";
-import { useActiveComment } from "@/context/CommentContext";
-import cn from "@/utils";
+import { useActiveComment } from "@/src/context/CommentContext";
+import cn from "@/src/utils";
 
 const CommentMsg = ({
   _id,

@@ -18,11 +18,11 @@ import File from "./ui/icons/File";
 import React from "react";
 import Package from "./ui/icons/Package";
 import Block from "./ui/icons/Block";
-import { useModal } from "@/customHooks/useModal";
+import { useModal } from "@/src/customHooks/useModal";
 import MonacoEditor from "./MonacoEditor.jsx";
 import Button from "./ui/Button";
-import { saveTemplateToDB } from "@/lib/actions";
-import { makeFilesAndDependenciesUIStateLike } from "@/utils";
+import { saveTemplateToDB } from "@/src/lib/actions";
+import { makeFilesAndDependenciesUIStateLike } from "@/src/utils";
 import { ScaleLoader } from "react-spinners";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -263,24 +263,24 @@ function SandpackSidebar({
     let loadingId = null;
     try {
       // const userName = session?.name;
-        loadingId = toast.loading("Saving...");
-        const { status } = await saveTemplateToDB(
-          id,
-          files,
-          dependencies,
-          devDependencies
-        );
-        setOnSaveClick(false);
-        if (status === 500) {
-          toast.dismiss(loadingId);
-          toast.error("Could not save shard. Try Again!");
-          return;
-        } else if (status === 200) {
-          // window.alert("Shard Updated Successfully")
-          toast.dismiss(loadingId);
-          toast.info("Shard saved successfully");
-          router.push(`/shard/${id}`);
-        }
+      loadingId = toast.loading("Saving...");
+      const { status } = await saveTemplateToDB(
+        id,
+        files,
+        dependencies,
+        devDependencies,
+      );
+      setOnSaveClick(false);
+      if (status === 500) {
+        toast.dismiss(loadingId);
+        toast.error("Could not save shard. Try Again!");
+        return;
+      } else if (status === 200) {
+        // window.alert("Shard Updated Successfully")
+        toast.dismiss(loadingId);
+        toast.info("Shard saved successfully");
+        router.push(`/shard/${id}`);
+      }
     } catch (error) {
       console.log("error occurred", error);
     } finally {
