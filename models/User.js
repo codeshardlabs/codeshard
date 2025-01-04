@@ -17,11 +17,6 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    shards: {
-      type: [Schema.Types.ObjectId],
-      ref: "Shard",
-      default: [],
-    },
     followers: {
       type: [String],
       default: [],

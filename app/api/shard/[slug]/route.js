@@ -24,7 +24,7 @@ export const PUT = auth(async (req, { params }) => {
 
   try {
     connectToDB();
-    const { html, css, js, title, mode } = await req.json();
+    const { title, mode } = await req.json();
     console.log("Title: ", title);
     console.log("Slug: ", slug);
 
@@ -32,10 +32,6 @@ export const PUT = auth(async (req, { params }) => {
     if (!existingShard) {
       return NextResponse.json({ message: "Shard not found" }, { status: 404 });
     }
-
-    if (html) existingShard.html = html;
-    if (css) existingShard.css = css;
-    if (js) existingShard.js = js;
     if (title) existingShard.title = title;
     if (mode) existingShard.mode = mode;
     await existingShard.save();
@@ -98,37 +94,16 @@ export const DELETE = auth(async (req, { params }) => {
     );
   }
 
-  const user = session?.user;
   console.log("Slug: ", slug);
-  console.log("User: ", user);
 
   try {
     connectToDB();
 
-    const existingShard = await Shard.findById(slug);
+    const existingShard = await Shard.findByIdAndDelete(slug);
     if (!existingShard) {
       return NextResponse.json({ message: "Shard not found" }, { status: 404 });
     }
-
-    console.log("existing shard: ", existingShard);
-
-    const existingUser = await User.findOne({ email: user.email });
-
-    if (!existingUser) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
-    }
-
-    await User.updateOne(
-      {
-        _id: existingUser._id,
-      },
-      {
-        $pull: {
-          shards: slug,
-        },
-      },
-    );
-
+    
     return NextResponse.json(
       { message: "Shard deleted successfully" },
       { status: 200 },

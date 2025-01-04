@@ -1,4 +1,5 @@
 import connectToDB from "@/lib/database";
+import { Shard } from "@/models/Shard";
 import { User } from "@/models/User";
 import { NextResponse } from "next/server";
 
@@ -15,13 +16,15 @@ export async function GET(req, { params }) {
   try {
     connectToDB();
     const name = username.split("-").join(" ");
-    const existingUser = await User.findOne({
+    let existingUser = await User.findOne({
       name: name,
-    }).populate("shards");
+    });
 
     if (!existingUser) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
+    const shards = await Shard.find({ creator: name });
+    existingUser.shards = shards;
 
     return NextResponse.json(existingUser, { status: 200 });
   } catch (error) {

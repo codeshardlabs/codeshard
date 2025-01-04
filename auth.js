@@ -50,7 +50,7 @@ export const authOptions = {
   pages: {
     signIn: "/login",
   },
-  trustHost: true, 
+  trustHost: true,
 };
 
 export const {

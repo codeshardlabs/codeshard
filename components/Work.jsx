@@ -33,7 +33,7 @@ async function Work() {
   if (!user) {
     redirect("/login");
   }
-
+  console.log("Shards: ", shards);
   const shardsCollection =
     shards.length > 0
       ? shards.map(async (shard, index) => {
@@ -50,7 +50,7 @@ async function Work() {
           const likeStatus = shard.likedBy?.includes(user._id.toString())
             ? "liked"
             : "unliked";
-
+      
           return (
             <CommentContextProvider key={shard._id.toString()}>
               <WorkCard

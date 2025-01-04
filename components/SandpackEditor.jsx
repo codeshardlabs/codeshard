@@ -220,10 +220,16 @@ function SandpackSidebar({
   const { sandpack } = useSandpack();
   const { data: session } = useSession();
   const router = useRouter();
-  console.log("Sandpacksidebar: ", session);
   const modalRef = useRef(null);
   const [isClicked, setIsClicked] = useState(false);
   useModal(isClicked, setIsClicked, modalRef);
+  const [onSaveClick, setOnSaveClick] = useState(false);
+
+  useEffect(() => {
+    if (onSaveClick) {
+      handleSave();
+    }
+  }, [onSaveClick]);
 
   const { files } = sandpack;
 
@@ -254,21 +260,17 @@ function SandpackSidebar({
   );
 
   const handleSave = async () => {
-    console.log(files, id);
     let loadingId = null;
-    if (session?.user) {
-      try {
-        // const userName = session?.name;
+    try {
+      // const userName = session?.name;
         loadingId = toast.loading("Saving...");
         const { status } = await saveTemplateToDB(
           id,
           files,
           dependencies,
-          devDependencies,
-          session?.user?.name,
+          devDependencies
         );
-
-        console.log(status);
+        setOnSaveClick(false);
         if (status === 500) {
           toast.dismiss(loadingId);
           toast.error("Could not save shard. Try Again!");
@@ -279,11 +281,10 @@ function SandpackSidebar({
           toast.info("Shard saved successfully");
           router.push(`/shard/${id}`);
         }
-      } catch (error) {
-        console.log("error occurred", error);
-      } finally {
-        toast.dismiss(loadingId);
-      }
+    } catch (error) {
+      console.log("error occurred", error);
+    } finally {
+      toast.dismiss(loadingId);
     }
   };
 
@@ -334,7 +335,9 @@ function SandpackSidebar({
             {id && (
               <Button
                 className="font-[500] text-sm border p-1 rounded-md"
-                onClick={handleSave}
+                onClick={() => {
+                  setOnSaveClick(true);
+                }}
               >
                 Save
               </Button>

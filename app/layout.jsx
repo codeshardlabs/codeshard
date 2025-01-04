@@ -20,7 +20,6 @@ export default function RootLayout({ children }) {
         <SandPackCSS />
       </head>
       <body className="bg-black text-white" suppressHydrationWarning={true}>
-        <SocketProvider>
           <AuthProvider>
             <ReduxProvider>
               {children}
@@ -28,7 +27,6 @@ export default function RootLayout({ children }) {
               <Analytics />
             </ReduxProvider>
           </AuthProvider>
-        </SocketProvider>
       </body>
     </html>
   );

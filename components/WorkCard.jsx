@@ -23,7 +23,6 @@ import { useActiveComment } from "@/context/CommentContext";
 
 const WorkCard = ({
   content: initialContent,
-  isTemplate,
   title,
   id,
   type: initialType,
@@ -212,8 +211,6 @@ const WorkCard = ({
         >
           <FullScreen className="size-4 sm:size-5" />
         </span>
-
-        {isTemplate && (
           <CustomSandpackPreview
             template={content.templateType}
             files={content.files}
@@ -221,7 +218,6 @@ const WorkCard = ({
             devDependencies={content.devDependencies}
             className="pointer-events-none bg-white h-[8rem] sm:h-[12rem] rounded-lg"
           />
-        )}
       </div>
 
       <div className="flex items-center justify-between relative">

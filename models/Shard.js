@@ -33,7 +33,7 @@ const shardSchema = new Schema(
         "vite",
         "vite-react",
         "vite-react-ts",
-      ]
+      ],
     },
     files: [fileSchema],
     dependencies: [dependencySchema],
@@ -60,7 +60,7 @@ const shardSchema = new Schema(
     commentThread: Schema.Types.ObjectId,
     lastSyncTimestamp: {
       type: Date,
-      default: Date.now()
+      default: Date.now(),
     },
   },
   {

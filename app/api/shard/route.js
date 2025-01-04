@@ -1,6 +1,7 @@
 import connectToDB from "@/lib/database";
 import { NextResponse } from "next/server";
 import { User } from "@/models/User";
+import { Shard } from "@/models/Shard";
 
 const getSearchParams = (req) => {
   const { searchParams } = new URL(req.url);
@@ -19,8 +20,8 @@ export const GET = async (req) => {
       return NextResponse.json({ message: "Email Not found" }, { status: 404 });
     }
 
-    const existingUser = await User.findOne({ email }).populate("shards");
-    const shards = existingUser.shards;
+    const existingUser = await User.findOne({ email });
+    const shards = await Shard.find({ creator: existingUser?.name });
     return NextResponse.json(shards, { status: 200 });
   } catch (error) {
     console.log(error);
