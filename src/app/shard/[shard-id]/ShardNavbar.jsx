@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@/components/ui/Button";
+import Button from "@/src/components/ui/Button";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -8,12 +8,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPrev, setShard } from "@/src/store/slices/shard";
 import { setModal } from "@/src/store/slices/modal";
 import ObjectID from "bson-objectid";
-import Pencil from "@/components/ui/icons/Pencil";
-import Cloud from "@/components/ui/icons/Cloud";
-import Start from "@/components/ui/icons/Start";
-import Close from "@/components/ui/icons/Close";
-import Share from "@/components/ui/icons/Share";
-import CopyLink from "@/components/ui/icons/Link";
+import Pencil from "@/src/components/ui/icons/Pencil";
+import Cloud from "@/src/components/ui/icons/Cloud";
+import Start from "@/src/components/ui/icons/Start";
+import Close from "@/src/components/ui/icons/Close";
+import Share from "@/src/components/ui/icons/Share";
+import CopyLink from "@/src/components/ui/icons/Link";
 import { writeToClipboard } from "@/src/utils";
 import Avatar from "react-avatar";
 import { Toaster, toast } from "sonner";

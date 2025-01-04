@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Textarea } from "@/components/ui/textarea";
-import Button from "@/components/ui/Button";
+import { Textarea } from "@/src/components/ui/textarea";
+import Button from "@/src/components/ui/Button";
 import { useActiveComment } from "@/src/context/CommentContext";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";

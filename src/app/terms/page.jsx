@@ -1,4 +1,4 @@
-import Terms from "@/components/Terms";
+import Terms from "@/src/components/Terms";
 
 const TermsPage = () => {
   return (

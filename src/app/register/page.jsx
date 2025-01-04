@@ -1,4 +1,4 @@
-import Register from "@/components/Register";
+import Register from "@/src/components/Register";
 import Navbar from "../Navbar";
 
 export default function RegisterPage() {

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import Profile from "@/components/Profile";
+import Profile from "@/src/components/Profile";
 import Navbar from "../Navbar";
 import { auth } from "@/auth";
 import { marshalUsername } from "@/src/utils";

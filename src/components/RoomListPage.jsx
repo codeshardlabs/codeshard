@@ -1,5 +1,5 @@
-import RoomsList from "@/components/RoomsList";
-import Navbar from "../src/app/Navbar";
+import RoomsList from "@/src/components/RoomsList";
+import Navbar from "../app/Navbar";
 import { auth } from "@/auth";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";

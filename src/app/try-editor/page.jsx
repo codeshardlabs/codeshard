@@ -1,4 +1,4 @@
-import TryEditorShard from "@/components/TryEditorShard";
+import TryEditorShard from "@/src/components/TryEditorShard";
 
 const page = () => {
   return (

@@ -1,4 +1,4 @@
-import RoomListPage from "@/components/RoomListPage";
+import RoomListPage from "@/src/components/RoomListPage";
 
 const Rooms = () => {
   return (

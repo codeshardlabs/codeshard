@@ -20,22 +20,18 @@ import {
 import Button from "./ui/Button";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/src/components/ui/dialog";
 import CommentTextBox from "./CommentTextbox";
 import { CommentsArea } from "./CommentsArea";
 import { useActiveComment } from "@/src/context/CommentContext";
-import { marshalUsername } from "@/src/utils";
 
-const ProfileCard = ({
+const WorkCard = ({
   content: initialContent,
-  isTemplate,
   title,
   id,
-  creator,
   type: initialType,
   likes: initialLikes,
   likeStatus: initialLikeStatus,
-  comments: initialComments,
 }) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [content, setContent] = useState(initialContent);
@@ -44,27 +40,12 @@ const ProfileCard = ({
   const [pencilClicked, setPencilClick] = useState(false);
   const [shardName, setShardName] = useState(title);
   const [likes, setLikes] = useState(initialLikes);
-  const [isOwner, setIsOwner] = useState(false);
   const [likeStatus, setLikeStatus] = useState(initialLikeStatus);
   const { comments, setComments, setShardId, parentComment, setParentComment } =
     useActiveComment();
   const { data: session } = useSession();
   const modal = useRef();
   const router = useRouter();
-
-  console.log("Initial comments: ", initialComments);
-
-  useEffect(() => {
-    if (session && creator) {
-      if (marshalUsername(session?.user?.name) === marshalUsername(creator)) {
-        setIsOwner(true);
-      } else {
-        setIsOwner(false);
-      }
-    } else {
-      setIsOwner(false);
-    }
-  }, [creator, session]);
 
   useEffect(() => {
     let toastId;
@@ -91,6 +72,8 @@ const ProfileCard = ({
       setShardId(id);
     }
   }, [id]);
+
+  console.log("Comments: ", comments);
 
   useEffect(() => {
     if (parentComment) {
@@ -232,21 +215,18 @@ const ProfileCard = ({
         >
           <FullScreen className="size-4 sm:size-5" />
         </span>
-
-        {isTemplate && (
-          <CustomSandpackPreview
-            template={content.templateType}
-            files={content.files}
-            dependencies={content.dependencies}
-            devDependencies={content.devDependencies}
-            className="pointer-events-none bg-white h-[8rem] sm:h-[12rem] rounded-lg"
-          />
-        )}
+        <CustomSandpackPreview
+          template={content.templateType}
+          files={content.files}
+          dependencies={content.dependencies}
+          devDependencies={content.devDependencies}
+          className="pointer-events-none bg-white h-[8rem] sm:h-[12rem] rounded-lg"
+        />
       </div>
 
       <div className="flex items-center justify-between relative">
         <div className="flex gap-1 items-center max-w-[70%]">
-          {isOwner && pencilClicked ? (
+          {pencilClicked ? (
             <input
               className="bg-transparent outline-none text-sm sm:text-base w-full"
               type="text"
@@ -267,7 +247,7 @@ const ProfileCard = ({
           )}
         </div>
         <div>
-          {isOwner && isPopoverOpen && (
+          {isPopoverOpen && (
             <ul
               ref={modal}
               className="text-xs p-2 w-[12rem] rounded-md absolute right-0 bottom-5 bg-[#131417]"
@@ -299,15 +279,13 @@ const ProfileCard = ({
             </ul>
           )}
 
-          {isOwner && (
-            <HorizontalThreeDots
-              onClick={() => setIsPopoverOpen(true)}
-              className={clsx(
-                "fill-[#5A5F73] size-5 cursor-pointer hover:fill-slate-200",
-                isPopoverOpen && "fill-slate-200",
-              )}
-            />
-          )}
+          <HorizontalThreeDots
+            onClick={() => setIsPopoverOpen(true)}
+            className={clsx(
+              "fill-[#5A5F73] size-5 cursor-pointer hover:fill-slate-200",
+              isPopoverOpen && "fill-slate-200",
+            )}
+          />
         </div>
       </div>
       <div className="flex gap-2 flex-wrap">
@@ -339,4 +317,4 @@ const ProfileCard = ({
   );
 };
 
-export default ProfileCard;
+export default WorkCard;

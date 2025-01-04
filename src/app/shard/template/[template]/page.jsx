@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { templates } from "@/src/utils";
-import SandpackEditor from "@/components/SandpackEditor";
+import SandpackEditor from "@/src/components/SandpackEditor";
 import { auth } from "@/auth";
 import { Shard } from "@/src/models/Shard";
 import connectToDB from "@/src/lib/database";

@@ -1,4 +1,4 @@
-import SandpackEditor from "@/components/SandpackEditor";
+import SandpackEditor from "@/src/components/SandpackEditor";
 
 const TestingPage = () => {
   return (
