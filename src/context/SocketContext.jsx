@@ -127,14 +127,13 @@ const SocketProvider = ({ children }) => {
   useEffect(() => {
     let _socket;
     if (username) {
-       _socket = io(process.env.NEXT_PUBLIC_BACKEND_URL, {
+      _socket = io(process.env.NEXT_PUBLIC_BACKEND_URL, {
         auth: {
-          token: username
-        }
+          token: username,
+        },
       });
       setSocket(_socket);
-    }
-    else {
+    } else {
       toast.error("username not found");
     }
 

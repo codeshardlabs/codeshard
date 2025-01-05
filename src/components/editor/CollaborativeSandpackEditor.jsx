@@ -18,15 +18,15 @@ import { ScaleLoader } from "react-spinners";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Avatar from "react-avatar";
-import Settings from "./ui/icons/Settings";
-import CollaborativeMonacoEditor from "./editor/CollaborativeMonacoEditor";
+import Settings from "@/src/components/ui/icons/Settings";
+import CollaborativeMonacoEditor from "./CollaborativeMonacoEditor";
 
 export default function CollaborativeSandpackEditor({
   id,
   shardDetails: initialShardDetails,
   template = "react",
   isNewShard,
-  creator
+  creator,
 }) {
   const [shardDetails, setShardDetails] = useState(
     JSON.parse(initialShardDetails),
@@ -143,7 +143,11 @@ export default function CollaborativeSandpackEditor({
             addNewDependency={addNewDependency}
             addNewDevDependency={addNewDevDependency}
           />
-          <CollaborativeMonacoEditor creator={creator} roomId={id} theme={theme} />
+          <CollaborativeMonacoEditor
+            creator={creator}
+            roomId={id}
+            theme={theme}
+          />
           <SandpackPreview
             showOpenInCodeSandbox={false}
             showOpenNewtab={true}
@@ -228,7 +232,6 @@ function SandpackSidebar({
   const modalRef = useRef(null);
   const [isClicked, setIsClicked] = useState(false);
   useModal(isClicked, setIsClicked, modalRef);
-
 
   let modal = (
     <>

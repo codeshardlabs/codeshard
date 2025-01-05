@@ -84,11 +84,11 @@ const CollaborativeMonacoEditor = ({ theme, roomId, creator }) => {
       if (
         !window.localStorage.getItem("visibleFiles") ||
         JSON.parse(window.localStorage.getItem("visibleFiles"))?.length !==
-        visibleFiles.length
+          visibleFiles.length
       )
         sendVisibleFiles({
           visibleFiles,
-          roomId: roomId, 
+          roomId: roomId,
         });
       window.localStorage.setItem("visibleFiles", JSON.stringify(visibleFiles));
     }
@@ -99,7 +99,7 @@ const CollaborativeMonacoEditor = ({ theme, roomId, creator }) => {
       return;
     }
 
-    let cleanup = () => { };
+    let cleanup = () => {};
 
     const setupYjs = async () => {
       try {

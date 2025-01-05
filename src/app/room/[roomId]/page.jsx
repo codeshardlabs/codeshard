@@ -2,7 +2,7 @@ import connectToDB from "@/src/lib/database";
 import { Shard } from "@/src/models/Shard";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import CollaborativeSandpackEditor from "@/src/components/CollaborativeSandpackEditor";
+import CollaborativeSandpackEditor from "@/src/components/editor/CollaborativeSandpackEditor";
 import { formatFilesLikeInDb, templates } from "@/src/utils";
 import { SANDBOX_TEMPLATES } from "@/src/templates";
 
@@ -42,11 +42,24 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
   }
 
   if (roomId !== "new-room") {
-    shardDetails = await Shard.findOne({ _id: roomId });
-    if (!shardDetails) {
-      console.log("shard details not present");
+    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/room/${roomId}`;
+    const response = fetch(url, {
+      headers: {
+        "Authorization" : `Bearer ${session?.user?.name}`
+      }
+    });
+    const responseBody = await response.json();
+
+    let { error, data, status } = responseBody;
+    if (error) {
+      console.log("(error) /room/[room-id] page", error.message);
       redirect("/your-work");
     }
+
+
+    console.log("data: ", data);
+
+
   }
 
   console.log("Shard details: ", shardDetails);

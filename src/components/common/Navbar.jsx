@@ -15,7 +15,7 @@ import Drawer from "@mui/material/Drawer";
 import SideDrawer from "@/src/components/common/SideDrawer";
 import { useModal } from "@/src/customHooks/useModal";
 import Close from "@/src/components/ui/icons/Close";
-import styles from "./PgModal.module.css";
+import styles from "@/src/app/PgModal.module.css";
 import clsx from "clsx";
 import { templates } from "@/src/utils";
 
