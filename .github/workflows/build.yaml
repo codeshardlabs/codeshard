@@ -1,10 +1,10 @@
 name: Build and Push Docker Image
 
 on:
-  push:
-    branches: ["master"]
-  pull_request:
-    branches: ["master"]
+  # push:
+  #   branches: ["master"]
+  # pull_request:
+  #   branches: ["master"]
   workflow_dispatch: # Allows you to run this workflow manually
 
 jobs:
