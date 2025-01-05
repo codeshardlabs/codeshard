@@ -43,9 +43,10 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
 
   if (roomId !== "new-room") {
     const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/room/${roomId}`;
-    const response = fetch(url, {
+    const response = await fetch(url, {
+      method: "GET",
       headers: {
-        "Authorization" : `Bearer ${session?.user?.name}`
+        Authorization: `Bearer ${session?.user?.name}`,
       }
     });
     const responseBody = await response.json();
@@ -56,15 +57,13 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
       redirect("/your-work");
     }
 
-
     console.log("data: ", data);
-
-
+    shardDetails = data.shard;
   }
 
   console.log("Shard details: ", shardDetails);
 
-  const { creator, isTemplate, _id } = shardDetails;
+  const { creator, isTemplate, id } = shardDetails;
 
   if (session) {
     if (roomId === "new-room" && session?.user?.name !== creator) {
@@ -78,7 +77,7 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
       <CollaborativeSandpackEditor
         shardDetails={JSON.stringify(shardDetails)}
         template={isTemplate ? shardDetails.templateType : "react"}
-        id={_id.toString() ?? ""}
+        id={id.toString() ?? ""}
         isNewShard={roomId === "new-room"}
         creator={creator}
       />
