@@ -1,4 +1,4 @@
-import Navbar from "../Navbar";
+import Navbar from "../../components/common/Navbar";
 import Work from "@/src/components/dashboard/Work";
 
 // server component

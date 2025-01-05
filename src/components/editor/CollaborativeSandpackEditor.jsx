@@ -26,6 +26,7 @@ export default function CollaborativeSandpackEditor({
   shardDetails: initialShardDetails,
   template = "react",
   isNewShard,
+  creator
 }) {
   const [shardDetails, setShardDetails] = useState(
     JSON.parse(initialShardDetails),
@@ -142,7 +143,7 @@ export default function CollaborativeSandpackEditor({
             addNewDependency={addNewDependency}
             addNewDevDependency={addNewDevDependency}
           />
-          <CollaborativeMonacoEditor roomId={id} theme={theme} />
+          <CollaborativeMonacoEditor creator={creator} roomId={id} theme={theme} />
           <SandpackPreview
             showOpenInCodeSandbox={false}
             showOpenNewtab={true}
@@ -227,6 +228,7 @@ function SandpackSidebar({
   const modalRef = useRef(null);
   const [isClicked, setIsClicked] = useState(false);
   useModal(isClicked, setIsClicked, modalRef);
+
 
   let modal = (
     <>

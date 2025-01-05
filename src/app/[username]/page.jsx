@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Profile from "@/src/components/profile/Profile";
-import Navbar from "../Navbar";
+import Navbar from "../../components/common/Navbar";
 import { auth } from "@/auth";
 import { marshalUsername } from "@/src/utils";
 
@@ -38,12 +38,6 @@ export default async function UserProfile({ params }) {
 
   console.log("user Details: ", userDetails);
   let { user, shards } = userDetails;
-
-  // let shards = isOwner
-  //   ? userDetails.shards
-  //   : userDetails.shards.filter(
-  //       (shard) => shard.mode === "normal" && shard.type === "public",
-  //     );
 
   return (
     <>

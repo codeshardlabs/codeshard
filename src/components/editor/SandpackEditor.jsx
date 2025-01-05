@@ -113,7 +113,6 @@ export default function SandpackEditor({
     }
   };
 
-  console.log(files);
   return (
     <>
       <SandpackProvider

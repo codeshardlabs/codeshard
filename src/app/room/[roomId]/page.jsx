@@ -67,6 +67,7 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
         template={isTemplate ? shardDetails.templateType : "react"}
         id={_id.toString() ?? ""}
         isNewShard={roomId === "new-room"}
+        creator={creator}
       />
     </>
   );

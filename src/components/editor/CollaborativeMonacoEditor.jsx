@@ -13,7 +13,7 @@ import { FileTabs } from "@codesandbox/sandpack-react";
 import { snakeCase } from "./MonacoEditor";
 import { toast } from "sonner";
 
-const CollaborativeMonacoEditor = ({ theme, roomId }) => {
+const CollaborativeMonacoEditor = ({ theme, roomId, creator }) => {
   const editorRef = useRef(null);
   const {
     sendMessage,
@@ -88,6 +88,7 @@ const CollaborativeMonacoEditor = ({ theme, roomId }) => {
       )
         sendVisibleFiles({
           visibleFiles,
+          roomId: roomId, 
         });
       window.localStorage.setItem("visibleFiles", JSON.stringify(visibleFiles));
     }

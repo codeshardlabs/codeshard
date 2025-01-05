@@ -1,6 +1,6 @@
 import "./globals.css";
-import AuthProvider from "./AuthProvider";
-import ReduxProvider from "./ReduxProvider";
+import AuthProvider from "../components/wrapper/AuthProvider";
+import ReduxProvider from "../components/wrapper/ReduxProvider";
 import { Analytics } from "@vercel/analytics/react";
 
 import { SandPackCSS } from "@/src/components/ui/sandpack-styles";

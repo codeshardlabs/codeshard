@@ -1,5 +1,5 @@
 import RoomsList from "@/src/components/room/RoomsList";
-import Navbar from "../../app/Navbar";
+import Navbar from "../common/Navbar";
 import { auth } from "@/auth";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
@@ -15,7 +15,6 @@ const fetchRooms = async (username) => {
 };
 const RoomListPage = async () => {
   const session = await auth();
-  // connectToDB();
 
   if (!session) {
     redirect("/login");

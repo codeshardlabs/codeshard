@@ -9,6 +9,8 @@ import {
   useEffect,
   useContext,
 } from "react";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
 const SocketContext = createContext(null);
 
@@ -26,6 +28,8 @@ const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState();
   const [latestData, setLatestData] = useState({});
   const [latestVisibleFiles, setLatestVisibleFiles] = useState([]);
+  const { data: session } = useSession();
+  const username = session ? session?.user?.name : "";
 
   const sendMessage = useCallback(
     ({ activeFile, data, roomId }) => {
@@ -121,13 +125,23 @@ const SocketProvider = ({ children }) => {
   }, [socket]);
 
   useEffect(() => {
-    const _socket = io(process.env.NEXT_PUBLIC_BACKEND_URL);
-    setSocket(_socket);
+    let _socket;
+    if (username) {
+       _socket = io(process.env.NEXT_PUBLIC_BACKEND_URL, {
+        auth: {
+          token: username
+        }
+      });
+      setSocket(_socket);
+    }
+    else {
+      toast.error("username not found");
+    }
 
     return () => {
-      _socket.disconnect();
+      _socket?.disconnect();
     };
-  }, []);
+  }, [username]);
 
   return (
     <>
