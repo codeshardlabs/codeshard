@@ -84,7 +84,7 @@ const CollaborativeMonacoEditor = ({ theme, roomId }) => {
       if (
         !window.localStorage.getItem("visibleFiles") ||
         JSON.parse(window.localStorage.getItem("visibleFiles"))?.length !==
-          visibleFiles.length
+        visibleFiles.length
       )
         sendVisibleFiles({
           visibleFiles,
@@ -98,7 +98,7 @@ const CollaborativeMonacoEditor = ({ theme, roomId }) => {
       return;
     }
 
-    let cleanup = () => {};
+    let cleanup = () => { };
 
     const setupYjs = async () => {
       try {

@@ -1,11 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Avatar from "react-avatar";
-import ProfileIcon from "./ui/icons/Profile";
+import ProfileIcon from "../ui/icons/Profile";
 import { useSession } from "next-auth/react";
 import { handleFollowersOfUser } from "@/src/lib/actions";
 import { useOptimistic } from "react";
-import ProfileContainer from "./ProfileContainer";
+import ProfileContainer from "../ProfileContainer";
 
 const Profile = ({
   shards,

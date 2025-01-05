@@ -1,8 +1,8 @@
 "use client";
 import { writeToClipboard } from "@/src/utils";
 import React, { useState } from "react";
-import CopyLink from "./ui/icons/Link";
-import Delete from "./ui/icons/Delete";
+import CopyLink from "../ui/icons/Link";
+import Delete from "../ui/icons/Delete";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 

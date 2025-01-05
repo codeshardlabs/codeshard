@@ -5,8 +5,8 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
-import Input from "./ui/Input";
-import Button from "./ui/Button";
+import Input from "../ui/Input";
+import Button from "../ui/Button";
 
 const Login = () => {
   const [email, setEmail] = useState("");

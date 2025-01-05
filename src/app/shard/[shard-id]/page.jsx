@@ -3,7 +3,7 @@ import ShardNavbar from "./ShardNavbar";
 import connectToDB from "@/src/lib/database";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import SandpackEditor from "@/src/components/SandpackEditor";
+import SandpackEditor from "@/src/components/editor/SandpackEditor";
 
 export default async function NewShardPage({ params }) {
   const session = await auth();

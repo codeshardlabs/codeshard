@@ -5,31 +5,37 @@ import {
   SandpackPreview,
   SandpackFileExplorer,
   SandpackLayout,
+  // SandpackCodeEditor,
   SandpackStack,
+  useSandpack,
 } from "@codesandbox/sandpack-react";
 
-import { Toaster } from "sonner";
+import { Toaster, toast } from "sonner";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import File from "../ui/icons/File";
+
 import React from "react";
+import Package from "../ui/icons/Package";
+import Block from "../ui/icons/Block";
 import { useModal } from "@/src/customHooks/useModal";
+import MonacoEditor from "./MonacoEditor.jsx";
+import Button from "../ui/Button";
+import { saveTemplateToDB } from "@/src/lib/actions";
 import { makeFilesAndDependenciesUIStateLike } from "@/src/utils";
 import { ScaleLoader } from "react-spinners";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Avatar from "react-avatar";
-import Settings from "./ui/icons/Settings";
-import CollaborativeMonacoEditor from "./CollaborativeMonacoEditor";
+import Settings from "../ui/icons/Settings";
 
-export default function CollaborativeSandpackEditor({
+export default function SandpackEditor({
   id,
   shardDetails: initialShardDetails,
   template = "react",
-  isNewShard,
+  room = false,
 }) {
-  const [shardDetails, setShardDetails] = useState(
-    JSON.parse(initialShardDetails),
-  );
+  const [shardDetails, setShardDetails] = useState(null);
   const [domLoaded, setDomLoaded] = useState(false);
   const [dependencies, setDependencies] = useState({});
   const [devDependencies, setDevDependencies] = useState({});
@@ -38,21 +44,10 @@ export default function CollaborativeSandpackEditor({
   const modalRef = useRef(null);
   const [theme, setTheme] = useState("vs-dark");
   useModal(isModalOpen, setIsModalOpen, modalRef);
-  const router = useRouter();
-
-  console.log("room id: ", id);
-
-  useEffect(() => {
-    // check if new shard when component is mounted...
-    if (isNewShard && id) {
-      router.replace(`/room/${id}`);
-    }
-  }, []);
 
   useEffect(() => {
     if (initialShardDetails) {
       const data = JSON.parse(initialShardDetails);
-      setShardDetails(data);
       console.log(data);
       const [f, dep, devDep] = makeFilesAndDependenciesUIStateLike(
         data.files,
@@ -142,7 +137,7 @@ export default function CollaborativeSandpackEditor({
             addNewDependency={addNewDependency}
             addNewDevDependency={addNewDevDependency}
           />
-          <CollaborativeMonacoEditor roomId={id} theme={theme} />
+          <MonacoEditor theme={theme} />
           <SandpackPreview
             showOpenInCodeSandbox={false}
             showOpenNewtab={true}
@@ -222,11 +217,21 @@ function SandpackSidebar({
   addNewDevDependency,
   id,
 }) {
+  const { sandpack } = useSandpack();
   const { data: session } = useSession();
   const router = useRouter();
   const modalRef = useRef(null);
   const [isClicked, setIsClicked] = useState(false);
   useModal(isClicked, setIsClicked, modalRef);
+  const [onSaveClick, setOnSaveClick] = useState(false);
+
+  useEffect(() => {
+    if (onSaveClick) {
+      handleSave();
+    }
+  }, [onSaveClick]);
+
+  const { files } = sandpack;
 
   let modal = (
     <>
@@ -254,6 +259,35 @@ function SandpackSidebar({
     </>
   );
 
+  const handleSave = async () => {
+    let loadingId = null;
+    try {
+      // const userName = session?.name;
+      loadingId = toast.loading("Saving...");
+      const { status } = await saveTemplateToDB(
+        id,
+        files,
+        dependencies,
+        devDependencies,
+      );
+      setOnSaveClick(false);
+      if (status === 500) {
+        toast.dismiss(loadingId);
+        toast.error("Could not save shard. Try Again!");
+        return;
+      } else if (status === 200) {
+        // window.alert("Shard Updated Successfully")
+        toast.dismiss(loadingId);
+        toast.info("Shard saved successfully");
+        router.push(`/shard/${id}`);
+      }
+    } catch (error) {
+      console.log("error occurred", error);
+    } finally {
+      toast.dismiss(loadingId);
+    }
+  };
+
   return (
     <>
       <Toaster position="top-center" richColors />
@@ -261,6 +295,34 @@ function SandpackSidebar({
       <div className="w-[15%] flex flex-col ">
         <SandpackStack>
           <div className="flex gap-2 mb-4 p-1 items-center justify-left">
+            {/* <p className="text-lg pr-4 pl-2 font-['Josh', sans-serif]">{template}</p> */}
+            <File
+              onClick={() => {
+                const fileName = prompt("Enter File Name: ");
+                if (fileName) addNewFile(fileName);
+              }}
+              className={
+                "size-4 fill-white hover:fill-slate-600 cursor-pointer"
+              }
+            />
+            <Package
+              onClick={() => {
+                const dependencyName = prompt("Add new dependency");
+                if (dependencyName) addNewDependency(dependencyName);
+              }}
+              className={
+                "size-4 fill-white hover:fill-slate-600 cursor-pointer"
+              }
+            />
+            <Block
+              onClick={() => {
+                const dependencyName = prompt("Add new dev. dependency");
+                if (dependencyName) addNewDevDependency(dependencyName);
+              }}
+              className={
+                "cursor-pointer hover:fill-slate-600 fill-white size-4"
+              }
+            />
             <Settings
               onClick={() => {
                 console.log("clicked on settings");
@@ -270,11 +332,21 @@ function SandpackSidebar({
                 "size-4 hover:fill-slate-600 fill-white cursor-pointer"
               }
             />
+            {id && (
+              <Button
+                className="font-[500] text-sm border p-1 rounded-md"
+                onClick={() => {
+                  setOnSaveClick(true);
+                }}
+              >
+                Save
+              </Button>
+            )}
             {session && (
               <button
                 className="text-xs cursor-pointer"
                 onClick={() => {
-                  router.replace("/rooms-list");
+                  router.replace("/your-work");
                 }}
               >
                 <Avatar

@@ -3,7 +3,7 @@ import AuthProvider from "./AuthProvider";
 import ReduxProvider from "./ReduxProvider";
 import { Analytics } from "@vercel/analytics/react";
 
-import { SandPackCSS } from "@/src/components/sandpack-styles";
+import { SandPackCSS } from "@/src/components/ui/sandpack-styles";
 import { Toaster } from "sonner";
 import SocketProvider from "@/src/context/SocketContext";
 

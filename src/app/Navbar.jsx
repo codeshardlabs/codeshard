@@ -12,7 +12,7 @@ import Code from "@/src/components/ui/icons/Code";
 import JoinRoom from "@/src/components/ui/icons/JoinRoom";
 import Cloud from "@/src/components/ui/icons/Cloud";
 import Drawer from "@mui/material/Drawer";
-import SideDrawer from "@/src/components/SideDrawer";
+import SideDrawer from "@/src/components/common/SideDrawer";
 import { useModal } from "@/src/customHooks/useModal";
 import Close from "@/src/components/ui/icons/Close";
 import styles from "./PgModal.module.css";

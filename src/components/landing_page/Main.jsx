@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import ObjectID from "bson-objectid";
-import Footer from "@/src/components/Footer";
+import Footer from "@/src/components/landing_page/Footer";
 import { FeaturesSectionDemo } from "./FeatureSection";
 import { HeroScrollDemo } from "./HeroScroll";
 

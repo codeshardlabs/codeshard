@@ -2,9 +2,9 @@ import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import Avatar from "react-avatar";
-import Profile from "./ui/icons/Profile";
-import Code from "./ui/icons/Code";
-import JoinRoom from "./ui/icons/JoinRoom";
+import Profile from "../ui/icons/Profile";
+import Code from "../ui/icons/Code";
+import JoinRoom from "../ui/icons/JoinRoom";
 import { signOutHandler } from "@/src/lib/actions";
 
 const SideDrawer = () => {

@@ -1,6 +1,6 @@
 import React from "react";
-import Settings from "./ui/icons/Settings";
-import ArrowDown from "./ui/icons/ArrowDown";
+import Settings from "../ui/icons/Settings";
+import ArrowDown from "../ui/icons/ArrowDown";
 
 const Card = ({ lang, content }) => {
   return (

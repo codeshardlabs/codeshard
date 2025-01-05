@@ -3,21 +3,21 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
-import Heart from "./ui/icons/Heart";
-import Comment from "./ui/icons/Comment";
-import Delete from "./ui/icons/Delete";
-import Lock from "./ui/icons/Lock";
-import Unlock from "./ui/icons/Unlock";
-import FullScreen from "./ui/icons/FullScreen";
-import HorizontalThreeDots from "./ui/icons/HorizontalThreeDots";
-import CustomSandpackPreview from "./CustomSandpackPreview";
-import Pencil from "./ui/icons/Pencil";
+import Heart from "../ui/icons/Heart";
+import Comment from "../ui/icons/Comment";
+import Delete from "../ui/icons/Delete";
+import Lock from "../ui/icons/Lock";
+import Unlock from "../ui/icons/Unlock";
+import FullScreen from "../ui/icons/FullScreen";
+import HorizontalThreeDots from "../ui/icons/HorizontalThreeDots";
+import CustomSandpackPreview from "../editor/CustomSandpackPreview";
+import Pencil from "../ui/icons/Pencil";
 import {
   getCommentsOfShard,
   saveShardName,
   updateLikes,
 } from "@/src/lib/actions";
-import Button from "./ui/Button";
+import Button from "../ui/Button";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import {
@@ -25,8 +25,8 @@ import {
   DialogContent,
   DialogTrigger,
 } from "@/src/components/ui/dialog";
-import CommentTextBox from "./CommentTextbox";
-import { CommentsArea } from "./CommentsArea";
+import CommentTextBox from "../comment/CommentTextbox";
+import { CommentsArea } from "../comment/CommentsArea";
 import { useActiveComment } from "@/src/context/CommentContext";
 
 const WorkCard = ({

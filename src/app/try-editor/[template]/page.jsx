@@ -1,4 +1,4 @@
-import SandpackEditor from "@/src/components/SandpackEditor";
+import SandpackEditor from "@/src/components/editor/SandpackEditor";
 import { templates } from "@/src/utils";
 import { redirect } from "next/navigation";
 export const generateMetadata = ({ params }) => {
