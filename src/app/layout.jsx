@@ -1,8 +1,8 @@
 import "./globals.css";
-import ReduxProvider from "../components/wrapper/ReduxProvider";
 import { Analytics } from "@vercel/analytics/react";
-import { SandPackCSS } from "@/src/components/ui/sandpack-styles";
+import { SandPackCSS } from "../components/ui/sandpack-styles";
 import { Toaster } from "sonner";
+import AuthProvider from "../components/wrapper/AuthProvider";
 
 export const metadata = {
   title: "CodeShard: Collaborative Code Editor",
@@ -18,11 +18,9 @@ export default function RootLayout({ children }) {
       </head>
       <body className="bg-black text-white" suppressHydrationWarning={true}>
         <AuthProvider>
-          <ReduxProvider>
-            {children}
-            <Toaster richColors position="top-center" />
-            <Analytics />
-          </ReduxProvider>
+          {children}
+          <Toaster richColors position="top-center" />
+          <Analytics />
         </AuthProvider>
       </body>
     </html>

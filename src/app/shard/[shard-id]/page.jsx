@@ -1,18 +1,17 @@
 import { Shard } from "@/src/models/Shard";
-import ShardNavbar from "./ShardNavbar";
 import connectToDB from "@/src/lib/database";
-import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import SandpackEditor from "@/src/components/editor/SandpackEditor";
+import { auth } from "@clerk/nextjs/server";
 
 export default async function NewShardPage({ params }) {
-  const session = await auth();
+  const { userId } = await auth();
   const shardId = params["shard-id"];
   console.log("Shard id: ", shardId);
   connectToDB();
 
-  if (!session) {
-    console.log("session not present");
+  if (!userId) {
+    console.log("user not present");
     redirect("/");
   }
 

@@ -1,26 +1,26 @@
 "use client";
-
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import Button from "@/src/components/ui/Button";
+import Button from "../ui/Button";
 import Avatar from "react-avatar";
-import Plus from "@/src/components/ui/icons/Plus";
-import ArrowDown from "@/src/components/ui/icons/ArrowDown";
-import Code from "@/src/components/ui/icons/Code";
-import JoinRoom from "@/src/components/ui/icons/JoinRoom";
-import Cloud from "@/src/components/ui/icons/Cloud";
+import Plus from "../ui/icons/Plus";
+import ArrowDown from "../ui/icons/ArrowDown";
+import Code from "../ui/icons/Code";
+import JoinRoom from "../ui/icons/JoinRoom";
+import Cloud from "../ui/icons/Cloud";
 import Drawer from "@mui/material/Drawer";
-import SideDrawer from "@/src/components/common/SideDrawer";
-import { useModal } from "@/src/customHooks/useModal";
-import Close from "@/src/components/ui/icons/Close";
-import styles from "@/src/app/PgModal.module.css";
+import SideDrawer from "../common/SideDrawer";
+import { useModal } from "../../customHooks/useModal";
+import Close from "../ui/icons/Close";
+import styles from "../../app/PgModal.module.css";
 import clsx from "clsx";
-import { templates } from "@/src/utils";
+import { templates } from "../../utils";
+import { useAuth, useUser } from "@clerk/nextjs";
 
 export default function Navbar() {
-  const { data: session } = useSession();
+  const { userId } = useAuth();
+  const { user } = useUser();
   const router = useRouter();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [isJoinRoomModalOpen, setIsJoinRoomOpen] = useState(false);
@@ -100,7 +100,7 @@ export default function Navbar() {
                   const roomRoute = `/room/new-room?template=${template}`;
                   const shardRoute = `/shard/template/${template}`;
                   const tryEditorRoute = `/try-editor/${template}`;
-                  const routeToPushTo = session
+                  const routeToPushTo = userId
                     ? roomOpen
                       ? roomRoute
                       : shardRoute
@@ -191,7 +191,7 @@ export default function Navbar() {
         >
           <SideDrawer />
         </Drawer>
-        {!session && (
+        {!userId && (
           <>
             {pgModalOpen && (
               <>
@@ -210,7 +210,7 @@ export default function Navbar() {
           </>
         )}
 
-        {session ? (
+        {userId ? (
           <>
             <Button onClick={() => setIsPopoverOpen(true)} type="outline">
               <Plus className="size-3 fill-white" />{" "}
@@ -226,7 +226,7 @@ export default function Navbar() {
 
             {/* <Link href="/your-work"> */}
             <button onClick={onAvatarClick}>
-              <Avatar name={session.user?.name} round={true} size="40" />
+              <Avatar name={user.username} round={true} size="40" />
             </button>
             {/* </Link> */}
           </>

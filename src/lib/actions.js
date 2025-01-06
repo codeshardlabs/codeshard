@@ -1,6 +1,4 @@
 "use server";
-
-import { signOut } from "@/auth";
 import { Shard } from "@/src/models/Shard";
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
@@ -10,11 +8,6 @@ import { Activity, ActivityType } from "@/src/models/Activity";
 import { Feed } from "@/src/models/Feed";
 import { Comment } from "@/src/models/Comment";
 import { getThreadedComments } from "@/src/utils";
-
-export const signOutHandler = async () => {
-  await signOut();
-  redirect("/login");
-};
 
 export const handleRouteShift = () => {
   revalidateTag("shards");

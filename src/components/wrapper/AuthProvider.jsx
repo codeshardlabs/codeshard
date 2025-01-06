@@ -18,6 +18,6 @@ export default function AuthProvider({ children }) {
         </SignedIn>
         {children}
       </ClerkProvider>
-    </> 
+    </>
   );
 }

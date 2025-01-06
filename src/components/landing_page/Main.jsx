@@ -1,14 +1,14 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import ObjectID from "bson-objectid";
-import Footer from "@/src/components/landing_page/Footer";
+import Footer from "../landing_page/Footer";
 import { FeaturesSectionDemo } from "./FeatureSection";
 import { HeroScrollDemo } from "./HeroScroll";
+import { useAuth } from "@clerk/nextjs";
 
 const Main = () => {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { userId } = useAuth();
 
   return (
     <>
@@ -29,16 +29,16 @@ const Main = () => {
 
           <button
             onClick={() => {
-              if (session) {
+              if (userId) {
                 const id = ObjectID();
                 router.push(`/shard/${id.toHexString()}`);
                 return;
               }
-              router.push("/register");
+              router.push("/sign-up");
             }}
             className="my-5 bg-white dark:bg-[#1F1F25] border border-transparent hover:bg-slate-100 dark:hover:bg-gray-700 text-md p-2 text-black dark:text-white rounded-sm  lg:w-[50%]"
           >
-            {session ? "Start Coding" : "Signup for free"}
+            {userId ? "Start Coding" : "Signup for free"}
           </button>
         </main>
       </div>

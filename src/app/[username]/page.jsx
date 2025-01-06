@@ -25,7 +25,7 @@ export const fetchUserDetails = async (username) => {
 export default async function UserProfile({ params }) {
   const { userId } = await auth();
   let loginnedUser = await currentUser();
-  
+
   if (!loginnedUser) {
     redirect("/");
   }
