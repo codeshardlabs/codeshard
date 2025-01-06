@@ -47,7 +47,7 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
       method: "GET",
       headers: {
         Authorization: `Bearer ${session?.user?.name}`,
-      }
+      },
     });
     const responseBody = await response.json();
 

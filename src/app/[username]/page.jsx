@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import Profile from "@/src/components/profile/Profile";
 import Navbar from "../../components/common/Navbar";
-import { auth } from "@/auth";
 import { marshalUsername } from "@/src/utils";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 export const fetchUserDetails = async (username) => {
   const response = await fetch(`${process.env.HOST_URL}/api/${username}`, {
@@ -23,11 +23,16 @@ export const fetchUserDetails = async (username) => {
 };
 
 export default async function UserProfile({ params }) {
-  const session = await auth();
+  const { userId } = await auth();
+  let loginnedUser = await currentUser();
+  
+  if (!loginnedUser) {
+    redirect("/");
+  }
   const username = params.username;
   const userDetails = await fetchUserDetails(username);
   const isOwner = session
-    ? marshalUsername(session?.user?.name) === marshalUsername(username)
+    ? marshalUsername(loginnedUser.username) === marshalUsername(username)
       ? true
       : false
     : false;

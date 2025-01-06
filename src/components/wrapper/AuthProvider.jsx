@@ -1,9 +1,23 @@
-import { SessionProvider } from "next-auth/react";
+import {
+  ClerkProvider,
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
 
 export default function AuthProvider({ children }) {
   return (
     <>
-      <SessionProvider>{children}</SessionProvider>
-    </>
+      <ClerkProvider>
+        <SignedOut>
+          <SignInButton />
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
+        {children}
+      </ClerkProvider>
+    </> 
   );
 }

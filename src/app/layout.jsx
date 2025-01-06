@@ -1,11 +1,8 @@
 import "./globals.css";
-import AuthProvider from "../components/wrapper/AuthProvider";
 import ReduxProvider from "../components/wrapper/ReduxProvider";
 import { Analytics } from "@vercel/analytics/react";
-
 import { SandPackCSS } from "@/src/components/ui/sandpack-styles";
 import { Toaster } from "sonner";
-import SocketProvider from "@/src/context/SocketContext";
 
 export const metadata = {
   title: "CodeShard: Collaborative Code Editor",
