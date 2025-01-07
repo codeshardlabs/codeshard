@@ -1,7 +1,8 @@
 "use client";
 
-import { addCommentToShard } from "@/src/lib/actions";
-import { findParentComment } from "@/src/utils";
+
+import { addCommentToShard } from "@/lib/actions";
+import { findParentComment } from "@/utils";
 import { createContext, useContext, useState } from "react";
 import { toast } from "sonner";
 

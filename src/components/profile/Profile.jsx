@@ -1,11 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import ProfileIcon from "../ui/icons/Profile";
-import { useSession } from "next-auth/react";
-import { handleFollowersOfUser } from "@/src/lib/actions";
+import { handleFollowersOfUser } from "../../lib/actions";
 import { useOptimistic } from "react";
-import ProfileContainer from "../ProfileContainer";
+import ProfileContainer from "./ProfileContainer";
+import { useAuth, useUser } from "@clerk/nextjs";
 
 const Profile = ({
   shards,
@@ -15,7 +15,7 @@ const Profile = ({
   following: initialFollowing,
   id,
 }) => {
-  const { data: session } = useSession();
+  const { user, isSignedIn } = useUser();
   const [name] = useState(initialName);
   const [followers, setFollowers] = useState(initialFollowerCount);
   const [optimisticFollowers, setOptimisticFollowers] =
@@ -25,12 +25,13 @@ const Profile = ({
   let [optimisticHasFollowed, setOptimisticHasFollowed] =
     useOptimistic(hasFollowed);
 
+  if (!isSignedIn) {
+    return null;
+  }
+
   useEffect(() => {
-    if (!session) {
-      return;
-    }
-    setHasFollowed(initialFollowers.includes(session?.user?.name));
-  }, [session, initialFollowers]);
+    setHasFollowed(initialFollowers.includes(user.username));
+  }, [user, initialFollowers]);
 
   useEffect(() => {
     setFollowers(initialFollowerCount);
@@ -47,11 +48,7 @@ const Profile = ({
       setOptimisticFollowers((prev) => prev + 1);
     }
 
-    await handleFollowersOfUser(
-      name,
-      session?.user?.name,
-      optimisticHasFollowed,
-    );
+    await handleFollowersOfUser(name, user.username, optimisticHasFollowed);
   };
 
   return (
@@ -60,7 +57,7 @@ const Profile = ({
         <Avatar name={name} round={true} size="100" />
         <div className="flex flex-col justify-center gap-1">
           <span>{name}</span>
-          {session && session?.user?.name !== name && (
+          {user.username !== name && (
             <form action={handleFollowersAction}>
               <button
                 type="submit"

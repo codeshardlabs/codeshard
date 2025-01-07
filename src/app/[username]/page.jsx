@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
-import Profile from "@/src/components/profile/Profile";
-import Navbar from "../../components/common/Navbar";
+import Profile from "../../components/profile/Profile";
 import { marshalUsername } from "@/src/utils";
 import { auth, currentUser } from "@clerk/nextjs/server";
 
@@ -46,7 +45,6 @@ export default async function UserProfile({ params }) {
 
   return (
     <>
-      <Navbar />
       <Profile
         shards={shards}
         followers={user?.followers}

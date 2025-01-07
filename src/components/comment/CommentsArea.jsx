@@ -1,5 +1,5 @@
-import { ScrollArea } from "@/src/components/ui/scroll-area";
-import { Separator } from "@/src/components/ui/separator";
+import { ScrollArea } from "../ui/scroll-area";
+import { Separator } from "../ui/separator";
 import CommentMsg from "./CommentMsg";
 import { Fragment } from "react";
 

@@ -1,10 +1,4 @@
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
+import { drizzle } from "drizzle-orm/postgres-js";
 
-export default function connectToDB() {
-  try {
-    mongoose.connect(process.env.MONGODB_URI);
-    console.log("Database Connected Successfully");
-  } catch (error) {
-    console.log("Database Connection Error");
-  }
-}
+ export const db = drizzle(process.env.DATABASE_URL);

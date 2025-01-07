@@ -16,19 +16,19 @@ import {
   getCommentsOfShard,
   saveShardName,
   updateLikes,
-} from "@/src/lib/actions";
+} from "../../lib/actions";
 import Button from "../ui/Button";
 import { toast } from "sonner";
-import { useSession } from "next-auth/react";
 import {
   Dialog,
   DialogContent,
   DialogTrigger,
-} from "@/src/components/ui/dialog";
+} from "../ui/dialog";
 import CommentTextBox from "../comment/CommentTextbox";
 import { CommentsArea } from "../comment/CommentsArea";
-import { useActiveComment } from "@/src/context/CommentContext";
-import { marshalUsername } from "@/src/utils";
+import { useActiveComment } from "../../context/CommentContext";
+import { marshalUsername } from "../../utils";
+import { useUser } from "@clerk/nextjs";
 
 const ProfileCard = ({
   content: initialContent,
@@ -52,15 +52,20 @@ const ProfileCard = ({
   const [likeStatus, setLikeStatus] = useState(initialLikeStatus);
   const { comments, setComments, setShardId, parentComment, setParentComment } =
     useActiveComment();
-  const { data: session } = useSession();
+  const { user, isSignedIn } = useUser();
   const modal = useRef();
   const router = useRouter();
 
   console.log("Initial comments: ", initialComments);
 
+  if (!isSignedIn) {
+    toast.error("Not Authenticated")
+    return null;
+  }
+
   useEffect(() => {
-    if (session && creator) {
-      if (marshalUsername(session?.user?.name) === marshalUsername(creator)) {
+    if (user && creator) {
+      if (marshalUsername(user.username)=== marshalUsername(creator)) {
         setIsOwner(true);
       } else {
         setIsOwner(false);
@@ -68,18 +73,7 @@ const ProfileCard = ({
     } else {
       setIsOwner(false);
     }
-  }, [creator, session]);
-
-  useEffect(() => {
-    let toastId;
-    if (!session) {
-      toastId = toast.error("Authentication Error");
-      router.push("/login");
-    }
-    return () => {
-      toast.dismiss(toastId);
-    };
-  });
+  }, [creator, user]);
 
   useEffect(() => {
     if (id) {
@@ -211,14 +205,14 @@ const ProfileCard = ({
         return prev - 1;
       });
       setLikeStatus("unliked");
-      await updateLikes(id, likes, "unliked", session?.user?.email);
+      await updateLikes(id, likes, "unliked", user.primaryEmailAddress);
     } else if (likeStatus === "unliked") {
       setLikes((prev) => {
         return prev + 1;
       });
 
       setLikeStatus("liked");
-      await updateLikes(id, likes, "liked", session?.user?.email);
+      await updateLikes(id, likes, "liked", user.primaryEmailAddress);
     }
   };
 

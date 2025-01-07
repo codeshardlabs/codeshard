@@ -1,28 +1,19 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Textarea } from "@/src/components/ui/textarea";
-import Button from "@/src/components/ui/Button";
-import { useActiveComment } from "@/src/context/CommentContext";
-import { useSession } from "next-auth/react";
+import { Textarea } from "../ui/textarea";
+import Button from "../ui/Button";
+import { useActiveComment } from "../../context/CommentContext";
 import { toast } from "sonner";
+import { useUser } from "@clerk/nextjs";
 
 const CommentTextBox = () => {
   const [input, setInput] = useState("");
   const textareaRef = useRef(null);
   const { shardId, commentCreator, createNewComment } = useActiveComment();
-  const { data: session } = useSession();
+  const { user, isSignedIn } = useUser();
 
-  useEffect(() => {
-    let toastId;
-
-    if (!session) {
-      toastId = toast.error("Authentication Error");
-      window.location.href = "/login";
-    }
-
-    return () => {
-      toast.dismiss(toastId);
-    };
-  }, [session]);
+  if (!isSignedIn) {
+    return null;
+  }
 
   useEffect(() => {
     adjustTextareaHeight();
@@ -43,7 +34,7 @@ const CommentTextBox = () => {
   const handleSubmit = () => {
     if (input.trim()) {
       setTimeout(() => {
-        createNewComment(input, session?.user?.name, shardId);
+        createNewComment(input, user.username, shardId);
       }, 100);
       setInput("");
     }

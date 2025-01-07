@@ -1,5 +1,4 @@
-import cn from "@/src/utils";
-import React from "react";
+import { cn } from "@/lib/utils";
 
 const Unlock = ({ className }) => {
   return (

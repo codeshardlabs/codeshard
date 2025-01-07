@@ -1,11 +1,11 @@
 import { Separator } from "@radix-ui/react-separator";
 import clsx from "clsx";
-import React, { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Avatar from "react-avatar";
-import Comment from "../ui/icons/Comment";
 import Button from "../ui/Button";
-import { useActiveComment } from "@/src/context/CommentContext";
-import cn from "@/src/utils";
+import { cn } from "@/lib/utils";
+import { useActiveComment } from "@/context/CommentContext";
+import Comment from "../ui/icons/Comment";
 
 const CommentMsg = ({
   _id,

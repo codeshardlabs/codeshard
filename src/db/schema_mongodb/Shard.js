@@ -1,7 +1,6 @@
 import { Schema, model, models } from "mongoose";
 import { fileSchema } from "./File.js";
 import { dependencySchema } from "./Dependency.js";
-import { User } from "./User.js";
 import { Comment } from "./Comment.js";
 
 const shardSchema = new Schema(
@@ -10,8 +9,9 @@ const shardSchema = new Schema(
       type: String,
       default: "Untitled",
     },
-    creator: {
+    userId: {
       type: String,
+      index: true,
     },
     templateType: {
       type: String,
@@ -53,9 +53,8 @@ const shardSchema = new Schema(
       default: 0,
     },
     likedBy: {
-      type: [Schema.Types.ObjectId],
-      default: [],
-      ref: "User",
+      type: [String],
+      default: []
     },
     commentThread: Schema.Types.ObjectId,
     lastSyncTimestamp: {

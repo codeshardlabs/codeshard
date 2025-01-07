@@ -3,20 +3,21 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Button from "../ui/Button";
-import Avatar from "react-avatar";
 import Plus from "../ui/icons/Plus";
 import ArrowDown from "../ui/icons/ArrowDown";
 import Code from "../ui/icons/Code";
 import JoinRoom from "../ui/icons/JoinRoom";
 import Cloud from "../ui/icons/Cloud";
 import Drawer from "@mui/material/Drawer";
-import SideDrawer from "../common/SideDrawer";
+import SideDrawer from "./ItemsList";
 import { useModal } from "../../customHooks/useModal";
 import Close from "../ui/icons/Close";
 import styles from "../../app/PgModal.module.css";
 import clsx from "clsx";
 import { templates } from "../../utils";
 import { useAuth, useUser } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
+import ItemsList from "./ItemsList";
 
 export default function Navbar() {
   const { userId } = useAuth();
@@ -122,7 +123,7 @@ export default function Navbar() {
     <>
       <ul
         ref={modal}
-        className="text-xs p-2 z-50 rounded-md absolute flex flex-col right-[3.7rem] text-black top-14 cursor-pointer bg-white"
+        className="text-xs p-2 z-50 rounded-md absolute flex flex-col right-[3rem] text-black top-14 cursor-pointer bg-white"
       >
         <li
           onClick={() => {
@@ -191,9 +192,11 @@ export default function Navbar() {
         >
           <SideDrawer />
         </Drawer>
-        {!userId && (
+        <SignedOut>
+          <SignInButton />
           <>
-            {pgModalOpen && (
+            {
+              pgModalOpen && (
               <>
                 <PgModal />
               </>
@@ -208,10 +211,10 @@ export default function Navbar() {
               Try Editor
             </Button>
           </>
-        )}
-
-        {userId ? (
+        </SignedOut>
+        <SignedIn>
           <>
+            <ItemsList/>
             <Button onClick={() => setIsPopoverOpen(true)} type="outline">
               <Plus className="size-3 fill-white" />{" "}
               <ArrowDown className="fill-white size-4" />
@@ -223,25 +226,9 @@ export default function Navbar() {
                 <PgModal sessionModal />
               </>
             )}
-
-            {/* <Link href="/your-work"> */}
-            <button onClick={onAvatarClick}>
-              <Avatar name={user.username} round={true} size="40" />
-            </button>
-            {/* </Link> */}
+            <UserButton />
           </>
-        ) : (
-          <>
-            {/* <Link className="cursor-pointer bg-[#47cf73] hover:bg-[#248C46] text-black px-2 py-2 rounded-md text-sm" href="/register">Signup</Link> */}
-            <Button onClick={() => router.push("/register")} type="primary">
-              Signup
-            </Button>
-            {/* <Link className="hover:text-slate-300 text-sm cursor-pointer" href="/login">Signin</Link> */}
-            <Button type="outline" onClick={() => router.push("/login")}>
-              Login
-            </Button>
-          </>
-        )}
+        </SignedIn>
       </div>
     </div>
   );

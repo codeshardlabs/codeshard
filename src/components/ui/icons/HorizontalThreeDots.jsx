@@ -1,4 +1,4 @@
-import cn from "@/src/utils";
+
 import React from "react";
 
 const HorizontalThreeDots = ({ className, onClick }) => {

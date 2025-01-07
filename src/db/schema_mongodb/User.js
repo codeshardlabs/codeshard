@@ -1,21 +1,10 @@
-import { Schema, model, models } from "mongoose";
-import { Shard } from "./Shard";
 
 const userSchema = new Schema(
   {
-    name: {
-      type: String,
+    userId: {
+      type: String, 
       unique: true,
-      required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    password: {
-      type: String,
-      required: true,
+      index: true,
     },
     followers: {
       type: [String],
@@ -30,4 +19,7 @@ const userSchema = new Schema(
     timestamps: true,
   },
 );
+
 export const User = models?.User || model("User", userSchema);
+
+

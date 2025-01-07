@@ -1,5 +1,4 @@
 import RoomsList from "@/src/components/room/RoomsList";
-import Navbar from "../common/Navbar";
 import { auth } from "@/auth";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
@@ -24,7 +23,6 @@ const RoomListPage = async () => {
   console.log("Rooms: ", rooms);
   return (
     <div>
-      <Navbar />
       <Suspense fallback={<p>Loading...</p>}>
         <RoomsList rooms={rooms} />
       </Suspense>
