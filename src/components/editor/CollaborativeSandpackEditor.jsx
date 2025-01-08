@@ -15,11 +15,12 @@ import React from "react";
 import { useModal } from "@/src/customHooks/useModal";
 import { makeFilesAndDependenciesUIStateLike } from "@/src/utils";
 import { ScaleLoader } from "react-spinners";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Avatar from "react-avatar";
 import Settings from "@/src/components/ui/icons/Settings";
 import CollaborativeMonacoEditor from "./CollaborativeMonacoEditor";
+import { useAuth } from "@clerk/nextjs";
+import { toast } from "sonner";
 
 export default function CollaborativeSandpackEditor({
   id,
@@ -227,11 +228,16 @@ function SandpackSidebar({
   addNewDevDependency,
   id,
 }) {
-  const { data: session } = useSession();
+  const { user, isSignedIn } = useAuth();
   const router = useRouter();
   const modalRef = useRef(null);
   const [isClicked, setIsClicked] = useState(false);
   useModal(isClicked, setIsClicked, modalRef);
+
+  if (!isSignedIn) {
+    toast.error("not signed in");
+    return null;
+  }
 
   let modal = (
     <>

@@ -1,7 +1,10 @@
 import { serial } from "drizzle-orm/mysql-core";
-import { pgEnum, pgTable } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, text, varchar } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { comments } from "./comments";
+import { dependencies } from "./dependencies";
+import { files } from "./files";
+import { likes } from "./likes";
 
 const templateTypeEnum = pgEnum('template_type', [
     "static",
@@ -35,18 +38,17 @@ const typeEnum = pgEnum('type', [
 ]);
 
 export const shards = pgTable("shards", {
-    id: serial().primaryKey(),
-    title: varchar(256),
-    userId: varchar(256),
-    templateType: templateTypeEnum(),
+    id: serial("id").primaryKey(),
+    title: text("title"),
+    userId: text("user_id").references(() => users.id),
+    templateType: templateTypeEnum().default("react"),
     mode: modeEnum().default("normal"),
     type: typeEnum().default("public"),
 });
 
-export const postsRelations = relations(posts, ({ one, many }) => ({
-	user: one(users, {
-		fields: [posts.userId],
-		references: [users.id],
-	}),
-	comments: many(comments)
+export const postsRelations = relations(shards, ({  many }) => ({
+    comments: many(comments),
+    files: many(files),
+    dependencies: many(dependencies),
+    likes: many(likes)
 }));

@@ -2,7 +2,7 @@
 import { Shard } from "@/src/models/Shard";
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
-import connectToDB from "./database";
+import connectToDB, { db } from "./database";
 import { User } from "@/src/models/User";
 import { Activity, ActivityType } from "@/src/models/Activity";
 import { Feed } from "@/src/models/Feed";

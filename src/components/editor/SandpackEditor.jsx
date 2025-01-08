@@ -24,10 +24,10 @@ import Button from "../ui/Button";
 import { saveTemplateToDB } from "@/src/lib/actions";
 import { makeFilesAndDependenciesUIStateLike } from "@/src/utils";
 import { ScaleLoader } from "react-spinners";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Avatar from "react-avatar";
 import Settings from "../ui/icons/Settings";
+import { useUser } from "@clerk/nextjs";
 
 export default function SandpackEditor({
   id,
@@ -217,7 +217,7 @@ function SandpackSidebar({
   id,
 }) {
   const { sandpack } = useSandpack();
-  const { data: session } = useSession();
+  const { user, isSignedIn } = useUser();
   const router = useRouter();
   const modalRef = useRef(null);
   const [isClicked, setIsClicked] = useState(false);
@@ -231,6 +231,11 @@ function SandpackSidebar({
   }, [onSaveClick]);
 
   const { files } = sandpack;
+
+  if(!isSignedIn) {
+    toast.error("not signed in");
+    return null;
+  }
 
   let modal = (
     <>

@@ -19,7 +19,6 @@ import {
 } from "@/src/lib/actions";
 import Button from "../ui/Button";
 import { toast } from "sonner";
-import { useSession } from "next-auth/react";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +27,7 @@ import {
 import CommentTextBox from "../comment/CommentTextbox";
 import { CommentsArea } from "../comment/CommentsArea";
 import { useActiveComment } from "@/src/context/CommentContext";
+import { useAuth } from "@clerk/nextjs";
 
 const WorkCard = ({
   content: initialContent,
@@ -47,20 +47,13 @@ const WorkCard = ({
   const [likeStatus, setLikeStatus] = useState(initialLikeStatus);
   const { comments, setComments, setShardId, parentComment, setParentComment } =
     useActiveComment();
-  const { data: session } = useSession();
+  const { user, isSignedIn } = useAuth();
   const modal = useRef();
-  const router = useRouter();
 
-  useEffect(() => {
-    let toastId;
-    if (!session) {
-      toastId = toast.error("Authentication Error");
-      router.push("/login");
-    }
-    return () => {
-      toast.dismiss(toastId);
-    };
-  });
+  if(!isSignedIn) {
+    toast.error("not signed in");
+    return null;
+  }
 
   useEffect(() => {
     if (id) {

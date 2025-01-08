@@ -1,21 +1,23 @@
 import { relations } from "drizzle-orm";
-import { pgTable, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text } from "drizzle-orm/pg-core";
 
 
 export const users = pgTable({
-    id: varchar(256).primaryKey(),
-    followerId: varchar(256),
-    followingId: varchar(256),
+    id: text("id").primaryKey(),
+    // actual database foregin key constraints
+    followerId: text("follower_id").references(() => users.id),
+    followingId: text("following_id").references(() => users.id)
 })
 
-export const usersRelations = relations(users, ({ one }) => ({
-	follower: one(users, {
-		fields: [users.followerId],
-		references: [users.id],
+// application level abstraction
+export const usersRelations = relations(users, ({one, many}) => ({
+    follower: one(users, {
+        fields: [users.followerId],
+        references: [users.id]
     }),
     following: one(users, {
         fields: [users.followingId],
         references: [users.id]
-    })
-}));
-
+    }),
+    shards: many(shards)
+}))

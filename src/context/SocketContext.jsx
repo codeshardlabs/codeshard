@@ -9,8 +9,8 @@ import {
   useEffect,
   useContext,
 } from "react";
-import { useSession } from "next-auth/react";
 import { toast } from "sonner";
+import { useUser } from "@clerk/nextjs";
 
 const SocketContext = createContext(null);
 
@@ -28,8 +28,12 @@ const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState();
   const [latestData, setLatestData] = useState({});
   const [latestVisibleFiles, setLatestVisibleFiles] = useState([]);
-  const { data: session } = useSession();
-  const username = session ? session?.user?.name : "";
+  const { user, isSignedIn } = useUser();
+  if(!isSignedIn) {
+    toast.error("not signed in");
+    return null;
+  }
+  const username = isSignedIn ? user.username : "";
 
   const sendMessage = useCallback(
     ({ activeFile, data, roomId }) => {
