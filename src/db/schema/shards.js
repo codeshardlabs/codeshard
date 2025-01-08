@@ -1,12 +1,14 @@
-import { serial } from "drizzle-orm/mysql-core";
-import { pgEnum, pgTable, text, varchar } from "drizzle-orm/pg-core";
+
+import { pgEnum, pgTable, serial, text } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { comments } from "./comments";
 import { dependencies } from "./dependencies";
 import { files } from "./files";
 import { likes } from "./likes";
+import { timestamps } from "../utils/timestamp";
+import { relations } from "drizzle-orm";
 
-const templateTypeEnum = pgEnum('template_type', [
+export const templateTypeEnum = pgEnum('template_type', [
     "static",
     "angular",
     "react",
@@ -26,12 +28,12 @@ const templateTypeEnum = pgEnum('template_type', [
     "vite-react-ts",
 ])
 
-const modeEnum = pgEnum('mode', [
+export const modeEnum = pgEnum('mode', [
     'normal',
     'collaboration'
 ]);
 
-const typeEnum = pgEnum('type', [
+export const typeEnum = pgEnum('type', [
     'public',
     'private',
     'forked'
@@ -44,6 +46,7 @@ export const shards = pgTable("shards", {
     templateType: templateTypeEnum().default("react"),
     mode: modeEnum().default("normal"),
     type: typeEnum().default("public"),
+    ...timestamps
 });
 
 export const postsRelations = relations(shards, ({  many }) => ({

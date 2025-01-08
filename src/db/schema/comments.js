@@ -1,8 +1,9 @@
 
 import { relations } from "drizzle-orm";
 import { index, pgTable, serial, text } from "drizzle-orm/pg-core";
-import { shards } from "./shards";
 import { users } from "./users";
+import { timestamps } from "../utils/timestamp";
+import { shards } from "./shards";
 
 export const comments = pgTable('comments', {
 	id: serial('id').primaryKey(),
@@ -10,14 +11,15 @@ export const comments = pgTable('comments', {
 	userId: text('user_id').references(() => users.id),
 	parentId: serial('parent_id').references(() => comments.id),
 	shardId: serial('shard_id').references(() => shards.id),
+	...timestamps
 }, (table) => [
-	index('shard_id_index').onOnly(table.shardId)
+	index('comm_shard_id_index').on(table.shardId)
 ]);
 
 export const commentsRelations = relations(comments, ({ one }) => ({
 	user: one(users, {
 		fields: [comments.userId],
-		references: [shards.id],
+		references: [users.id],
 	}),
 	parent: one(comments, {
 		fields: [comments.parentId],

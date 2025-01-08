@@ -1,5 +1,4 @@
-import { serial } from "drizzle-orm/mysql-core";
-import { pgTable } from "drizzle-orm/pg-core";
+
 import { Schema, model, models } from "mongoose";
 
 const userSchema = new Schema(
