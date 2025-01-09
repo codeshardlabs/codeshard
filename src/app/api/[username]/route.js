@@ -1,6 +1,9 @@
-import connectToDB from "@/src/lib/database";
+
+import { users } from "@/db/schema/users";
+import { db } from "@/lib/database";
 import { Shard } from "@/src/models/Shard";
 import { User } from "@/src/models/User";
+import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
@@ -14,11 +17,13 @@ export async function GET(req, { params }) {
   }
 
   try {
-    connectToDB();
     const name = username.split("-").join(" ");
-    let existingUser = await User.findOne({
-      name: name,
-    });
+    await db.query.users.findFirst({
+      where: eq(users.id, id);
+    })
+    // let existingUser = await User.findOne({
+    //   name: name,
+    // });
 
     if (!existingUser) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
