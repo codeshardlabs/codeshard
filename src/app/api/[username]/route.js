@@ -18,7 +18,7 @@ export async function GET(req, { params }) {
 
   try {
     const name = username.split("-").join(" ");
-    await db.query.users.findFirst({
+    const existingUser = await db.query.users.findFirst({
       where: eq(users.name, name)
     })
     // let existingUser = await User.findOne({
@@ -28,7 +28,10 @@ export async function GET(req, { params }) {
     if (!existingUser) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
-    const shards = await Shard.find({ creator: name });
+    // const shards = await Shard.find({ creator: name });
+    const shards = await db.query.shards.findMany({
+      userId: existingUser.id
+    })
 
     return NextResponse.json(
       {

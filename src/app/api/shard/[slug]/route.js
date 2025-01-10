@@ -1,63 +1,36 @@
-// import connectToDB from "@/src/lib/database";
-// import { Shard } from "@/src/models/Shard";
 import { NextResponse } from "next/server";
-// import { auth } from "@/auth";
-// import { User } from "@/src/models/User";
-import { revalidateTag } from "next/cache";
-// import { Activity } from "@/src/models/Activity";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { db } from "@/lib/database";
+import { shards } from "@/db/schema/shards";
+import { eq } from "drizzle-orm";
+
 
 export const PUT = async (req, { params }) => {
   const slug = params.slug;
 
   console.log("Parameters: ", params);
-  // const session = req.auth;
+  const {userId} = await auth();
 
-  if (!session?.user) {
+  if (!userId) {
     return NextResponse.json(
       { message: "Unauthenticated request" },
       { status: 401 },
     );
   }
 
-  // const user = session?.user;
-  // console.log("User: ", user);
-
   try {
-    connectToDB();
     const { title } = await req.json();
     console.log("Title: ", title);
     console.log("Slug: ", slug);
 
-    // const existingShard = await Shard.findById(slug);
-    // if (!existingShard) {
-    //   return NextResponse.json({ message: "Shard not found" }, { status: 404 });
-    // }
-    // if (title) existingShard.title = title;
-    // if (mode) existingShard.mode = mode;
-    // await existingShard.save();
-
-    // console.log("existing shard: ", existingShard);
-
-    // const existingUser = await User.findOne({ email: user.email });
-
-    if (!existingUser) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    let fields = {
+      id: slug
+    };
+    if(title) {
+      fields["title"] = title;
     }
 
-    // const shards = existingUser.shards;
-    // if (shards.includes(existingShard._id)) {
-    //   return NextResponse.json(
-    //     { message: "Shard already present" },
-    //     { status: 200 },
-    //   );
-    // }
-    // existingUser.shards.push(existingShard._id);
-
-    console.log("Existing User: ", existingUser);
-    await existingUser.save();
-    revalidateTag(`${existingUser.name.toLowerCase().split(" ").join("-")}`);
-    revalidateTag(`rooms`);
-
+    await db.update(shards).set(fields);
     return NextResponse.json(
       { message: "Shard updated successfully" },
       { status: 200 },
@@ -71,11 +44,12 @@ export const PUT = async (req, { params }) => {
   }
 };
 
-export const DELETE = auth(async (req, { params }) => {
+export const DELETE = async (req, { params }) => {
   const slug = params.slug;
-  const session = req.auth;
+  // const session = req.auth;
+  const {userId} = await auth();
 
-  if (!session?.user) {
+  if (!userId) {
     return NextResponse.json(
       { message: "Unauthenticated request" },
       { status: 401 },
@@ -85,13 +59,7 @@ export const DELETE = auth(async (req, { params }) => {
   console.log("Slug: ", slug);
 
   try {
-    connectToDB();
-
-    const existingShard = await Shard.findByIdAndDelete(slug);
-    if (!existingShard) {
-      return NextResponse.json({ message: "Shard not found" }, { status: 404 });
-    }
-
+    await db.delete(shards).where(eq(shards.id, slug));
     return NextResponse.json(
       { message: "Shard deleted successfully" },
       { status: 200 },
@@ -103,7 +71,7 @@ export const DELETE = auth(async (req, { params }) => {
       { status: 500 },
     );
   }
-});
+};
 
 export const PATCH = auth(async (req, { params }) => {
   const slug = params.slug;
