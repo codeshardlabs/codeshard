@@ -1,6 +1,9 @@
-import connectToDB from "@/src/lib/database";
-import { Shard } from "@/src/models/Shard";
+
+// import { Shard } from "@/src/models/Shard";
 import { NextResponse } from "next/server";
+import {db} from "@/lib/database";
+import { and } from "drizzle-orm";
+
 
 export const revalidate = true;
 
@@ -9,11 +12,11 @@ const getSearchParams = (req) => {
   return searchParams;
 };
 
+
 export async function GET(req, res) {
   const searchParams = getSearchParams(req);
   try {
-    connectToDB();
-    const creator = searchParams.get("creator");
+    const creator = searchParams.get("userId");
 
     if (!creator) {
       return NextResponse.json(
@@ -22,10 +25,17 @@ export async function GET(req, res) {
       );
     }
 
-    const collaborativeShards = await Shard.find({
-      mode: "collaboration",
-      creator: creator,
+   const collaborativeShards =  await db.query.shards.findMany({
+      where: (shards) => and(
+        eq(shards.mode, "collaboration"),
+        eq(shards.userId, creator)
+      )
     });
+    
+    // const collaborativeShards = await Shard.find({
+    //   mode: "collaboration",
+    //   creator: creator,
+    // });
     return NextResponse.json(collaborativeShards, { status: 200 });
   } catch (error) {
     console.log("Could not fetch rooms list", error.message);

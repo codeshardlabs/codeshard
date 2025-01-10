@@ -1,7 +1,9 @@
-import connectToDB from "@/src/lib/database";
+// import connectToDB from "@/src/lib/database";
+import { db } from "@/lib/database";
+import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
-import { User } from "@/src/models/User";
-import { Shard } from "@/src/models/Shard";
+// import { User } from "@/src/models/User";
+// import { Shard } from "@/src/models/Shard";
 
 const getSearchParams = (req) => {
   const { searchParams } = new URL(req.url);
@@ -13,15 +15,24 @@ export const GET = async (req) => {
 
   try {
     connectToDB();
-    const email = searchParams.get("email");
-    console.log(email);
+    const userId = searchParams.get("userId");
+    console.log(userId);
 
-    if (!email) {
-      return NextResponse.json({ message: "Email Not found" }, { status: 404 });
+    if (!userId) {
+      return NextResponse.json({ message: "UserID Not found" }, { status: 404 });
     }
 
-    const existingUser = await User.findOne({ email });
-    const shards = await Shard.find({ creator: existingUser?.name });
+    // const existingUser = await User.findOne({ email });
+    const shards = await db.query.shards.findMany({
+      where: (shards) => (
+        and(
+          eq(shards.mode, "normal"),
+          eq(shards.userId, userId)
+        )
+      )
+    });
+    
+    // const shards = await Shard.find({ creator: existingUser?.name });
     return NextResponse.json(shards, { status: 200 });
   } catch (error) {
     console.log(error);

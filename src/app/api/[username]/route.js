@@ -19,7 +19,7 @@ export async function GET(req, { params }) {
   try {
     const name = username.split("-").join(" ");
     await db.query.users.findFirst({
-      where: eq(users.id, id);
+      where: eq(users.name, name)
     })
     // let existingUser = await User.findOne({
     //   name: name,
