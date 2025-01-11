@@ -9,15 +9,15 @@ const fetchRooms = async (userId) => {
   const res = await fetch(`${url}/api/room?userId=${userId}`, {
     cache: "no-store",
     headers: {
-      "Accept" : "application/json"
-    }
+      Accept: "application/json",
+    },
   });
 
   const data = await res.text();
   return data;
 };
 const RoomListPage = async () => {
-  const {userId} = await auth();
+  const { userId } = await auth();
 
   if (!userId) {
     redirect("/login");

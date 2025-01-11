@@ -8,25 +8,21 @@ import ArrowDown from "../ui/icons/ArrowDown";
 import Code from "../ui/icons/Code";
 import JoinRoom from "../ui/icons/JoinRoom";
 import Cloud from "../ui/icons/Cloud";
-import Drawer from "@mui/material/Drawer";
-import SideDrawer from "./ItemsList";
 import { useModal } from "../../customHooks/useModal";
 import Close from "../ui/icons/Close";
 import styles from "../../app/PgModal.module.css";
 import clsx from "clsx";
 import { templates } from "../../utils";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
 import ItemsList from "./ItemsList";
 
 export default function Navbar() {
   const { userId } = useAuth();
-  const { user } = useUser();
-  const router = useRouter();
+   const router = useRouter();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [isJoinRoomModalOpen, setIsJoinRoomOpen] = useState(false);
   const [pgModalOpen, setPgModalOpen] = useState(false);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [roomOpen, setRoomOpen] = useState(false);
   const [roomInput, setRoomInput] = useState("");
   const modal = useRef();
@@ -72,9 +68,6 @@ export default function Navbar() {
     router.push(`/room/${roomInput}`);
   };
 
-  const onAvatarClick = () => {
-    setIsDrawerOpen((prev) => !prev);
-  };
 
   let PgModal = () => (
     <>
@@ -185,13 +178,6 @@ export default function Navbar() {
       </h1>
 
       <div className="flex gap-3 items-center">
-        <Drawer
-          anchor={"right"}
-          open={isDrawerOpen}
-          onClose={() => setIsDrawerOpen(false)}
-        >
-          <SideDrawer />
-        </Drawer>
         <SignedOut>
           <SignInButton />
           <>
