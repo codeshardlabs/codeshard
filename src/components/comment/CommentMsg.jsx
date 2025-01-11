@@ -3,9 +3,9 @@ import clsx from "clsx";
 import { Fragment, useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import Button from "../ui/Button";
-import { cn } from "@/lib/utils";
-import { useActiveComment } from "@/context/CommentContext";
 import Comment from "../ui/icons/Comment";
+import { cn } from "@/src/lib/utils";
+import { useActiveComment } from "@/src/context/CommentContext";
 
 const CommentMsg = ({
   _id,

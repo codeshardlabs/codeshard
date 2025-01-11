@@ -54,7 +54,7 @@ const shardSchema = new Schema(
     },
     likedBy: {
       type: [String],
-      default: []
+      default: [],
     },
     commentThread: Schema.Types.ObjectId,
     lastSyncTimestamp: {

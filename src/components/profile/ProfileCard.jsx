@@ -19,11 +19,7 @@ import {
 } from "../../lib/actions";
 import Button from "../ui/Button";
 import { toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "../ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import CommentTextBox from "../comment/CommentTextbox";
 import { CommentsArea } from "../comment/CommentsArea";
 import { useActiveComment } from "../../context/CommentContext";
@@ -59,13 +55,13 @@ const ProfileCard = ({
   console.log("Initial comments: ", initialComments);
 
   if (!isSignedIn) {
-    toast.error("Not Authenticated")
+    toast.error("Not Authenticated");
     return null;
   }
 
   useEffect(() => {
     if (user && creator) {
-      if (marshalUsername(user.username)=== marshalUsername(creator)) {
+      if (marshalUsername(user.username) === marshalUsername(creator)) {
         setIsOwner(true);
       } else {
         setIsOwner(false);

@@ -1,82 +1,70 @@
-import { auth } from "@/auth";
-import connectToDB from "@/src/lib/database";
-import { User } from "@/src/models/User";
 import WorkCard from "./WorkCard";
 import { redirect } from "next/navigation";
 import { Fragment } from "react";
 import { makeFilesAndDependenciesUIStateLike } from "@/src/utils";
 import { CommentContextProvider } from "@/src/context/CommentContext";
-import { getCommentsOfShard } from "@/src/lib/actions";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
-const fetchShards = async (email) => {
-  const res = await fetch(`${process.env.HOST_URL}/api/shard?email=${email}`, {
-    cache: "no-store",
-    next: { tags: ["shards"] },
-  });
+const fetchShards = async (userId) => {
+  const res = await fetch(
+    `${process.env.HOST_URL}/api/shard?userId=${userId}`,
+    {
+      cache: "no-store",
+      next: { tags: ["shards"] },
+    },
+  );
 
-  const shards = await res.json();
+  const shards = await res.text();
+  console.log("shards: ", shards);
 
   return shards;
 };
 
 async function Work() {
-  const session = await auth();
+  const { userId } = await auth();
+  const user = await currentUser();
 
-  if (!session) {
-    redirect("/login");
+  if (!userId) {
+    redirect("/signin");
   }
 
-  const shards = await fetchShards(session?.user.email);
-  connectToDB();
-  const user = await User.findOne({ email: session?.user.email });
-
-  if (!user) {
-    redirect("/login");
-  }
+  const shards = await fetchShards(userId);
   console.log("Shards: ", shards);
-  const shardsCollection =
-    shards.length > 0
-      ? shards.map(async (shard, index) => {
-          if (shard.mode === "collaboration") {
-            return <Fragment key={index}></Fragment>;
-          }
+  // const shardsCollection =
+  //   shards.length > 0
+  //     ? shards.map(async (shard, index) => {
+  //         const [files, dependencies, devDependencies] =  makeFilesAndDependenciesUIStateLike(
+  //               shard.files,
+  //               shard.dependencies,
+  //             );
 
-          const [files, dependencies, devDependencies] = shard.isTemplate
-            ? makeFilesAndDependenciesUIStateLike(
-                shard.files,
-                shard.dependencies,
-              )
-            : [null, null, null];
-          const likeStatus = shard.likedBy?.includes(user._id.toString())
-            ? "liked"
-            : "unliked";
-
-          return (
-            <CommentContextProvider key={shard._id.toString()}>
-              <WorkCard
-                likeStatus={likeStatus}
-                likes={shard.likedBy?.length ?? 0}
-                isTemplate={shard.isTemplate}
-                content={{
-                  templateType: shard.templateType,
-                  files,
-                  dependencies,
-                  devDependencies,
-                }}
-                mode={shard.mode}
-                type={shard.type}
-                title={shard.title}
-                id={shard._id.toString()}
-              />
-            </CommentContextProvider>
-          );
-        })
-      : [];
+  //         return (
+  //           <CommentContextProvider key={shard._id.toString()}>
+  //             <WorkCard
+  //               likeStatus={likeStatus}
+  //               likes={shard.likedBy?.length ?? 0}
+  //               isTemplate={shard.isTemplate}
+  //               content={{
+  //                 templateType: shard.templateType,
+  //                 files,
+  //                 dependencies,
+  //                 devDependencies,
+  //               }}
+  //               mode={shard.mode}
+  //               type={shard.type}
+  //               title={shard.title}
+  //               id={shard._id.toString()}
+  //             />
+  //           </CommentContextProvider>
+  //         );
+  //       })
+  //     : [];
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
       {shards.length > 0 ? (
-        shardsCollection
+        // <>{JSON.stringify(shards)}</>
+        <></>
       ) : (
         <p className="text-white p-2 col-span-full">No Shards Yet...</p>
       )}

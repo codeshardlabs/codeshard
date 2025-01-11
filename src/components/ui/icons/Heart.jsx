@@ -1,5 +1,3 @@
-
-
 const Heart = ({ className }) => {
   return (
     <svg

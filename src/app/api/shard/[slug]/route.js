@@ -1,15 +1,14 @@
 import { NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { db } from "@/lib/database";
-import { shards } from "@/db/schema/shards";
+import { db } from "@/src/lib/database";
+import { shards } from "@/src/db/schema/shards";
 import { eq } from "drizzle-orm";
-
 
 export const PUT = async (req, { params }) => {
   const slug = params.slug;
 
   console.log("Parameters: ", params);
-  const {userId} = await auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json(
@@ -24,9 +23,9 @@ export const PUT = async (req, { params }) => {
     console.log("Slug: ", slug);
 
     let fields = {
-      id: slug
+      id: slug,
     };
-    if(title) {
+    if (title) {
       fields["title"] = title;
     }
 
@@ -47,7 +46,7 @@ export const PUT = async (req, { params }) => {
 export const DELETE = async (req, { params }) => {
   const slug = params.slug;
   // const session = req.auth;
-  const {userId} = await auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json(

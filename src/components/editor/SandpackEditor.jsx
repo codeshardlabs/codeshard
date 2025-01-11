@@ -232,7 +232,7 @@ function SandpackSidebar({
 
   const { files } = sandpack;
 
-  if(!isSignedIn) {
+  if (!isSignedIn) {
     toast.error("not signed in");
     return null;
   }

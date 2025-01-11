@@ -1,4 +1,3 @@
-
 export const writeToClipboard = (text) => {
   navigator.clipboard.writeText(`${text}`);
 };

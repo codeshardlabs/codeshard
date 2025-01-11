@@ -195,8 +195,7 @@ export default function Navbar() {
         <SignedOut>
           <SignInButton />
           <>
-            {
-              pgModalOpen && (
+            {pgModalOpen && (
               <>
                 <PgModal />
               </>
@@ -214,7 +213,7 @@ export default function Navbar() {
         </SignedOut>
         <SignedIn>
           <>
-            <ItemsList/>
+            <ItemsList />
             <Button onClick={() => setIsPopoverOpen(true)} type="outline">
               <Plus className="size-3 fill-white" />{" "}
               <ArrowDown className="fill-white size-4" />

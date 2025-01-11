@@ -50,7 +50,7 @@ const WorkCard = ({
   const { user, isSignedIn } = useAuth();
   const modal = useRef();
 
-  if(!isSignedIn) {
+  if (!isSignedIn) {
     toast.error("not signed in");
     return null;
   }

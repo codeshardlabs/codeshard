@@ -1,4 +1,3 @@
-
 import { users } from "@/db/schema/users";
 import { db } from "@/lib/database";
 import { Shard } from "@/src/models/Shard";
@@ -19,8 +18,8 @@ export async function GET(req, { params }) {
   try {
     const name = username.split("-").join(" ");
     const existingUser = await db.query.users.findFirst({
-      where: eq(users.name, name)
-    })
+      where: eq(users.name, name),
+    });
     // let existingUser = await User.findOne({
     //   name: name,
     // });
@@ -30,8 +29,8 @@ export async function GET(req, { params }) {
     }
     // const shards = await Shard.find({ creator: name });
     const shards = await db.query.shards.findMany({
-      userId: existingUser.id
-    })
+      userId: existingUser.id,
+    });
 
     return NextResponse.json(
       {

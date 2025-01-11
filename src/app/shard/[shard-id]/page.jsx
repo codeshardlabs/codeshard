@@ -1,5 +1,3 @@
-import { Shard } from "@/src/models/Shard";
-import connectToDB from "@/src/lib/database";
 import { redirect } from "next/navigation";
 import SandpackEditor from "@/src/components/editor/SandpackEditor";
 import { auth } from "@clerk/nextjs/server";

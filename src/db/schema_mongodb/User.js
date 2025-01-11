@@ -1,8 +1,7 @@
-
 const userSchema = new Schema(
   {
     userId: {
-      type: String, 
+      type: String,
       unique: true,
       index: true,
     },
@@ -21,5 +20,3 @@ const userSchema = new Schema(
 );
 
 export const User = models?.User || model("User", userSchema);
-
-

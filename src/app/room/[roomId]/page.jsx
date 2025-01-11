@@ -1,6 +1,3 @@
-import connectToDB from "@/src/lib/database";
-import { Shard } from "@/src/models/Shard";
-import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import CollaborativeSandpackEditor from "@/src/components/editor/CollaborativeSandpackEditor";
 import { formatFilesLikeInDb, templates } from "@/src/utils";

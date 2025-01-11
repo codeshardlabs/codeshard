@@ -1,9 +1,7 @@
-
 // import { Shard } from "@/src/models/Shard";
 import { NextResponse } from "next/server";
-import {db} from "@/lib/database";
+import { db } from "@/src/lib/database";
 import { and } from "drizzle-orm";
-
 
 export const revalidate = true;
 
@@ -11,7 +9,6 @@ const getSearchParams = (req) => {
   const { searchParams } = new URL(req.url);
   return searchParams;
 };
-
 
 export async function GET(req, res) {
   const searchParams = getSearchParams(req);
@@ -25,13 +22,11 @@ export async function GET(req, res) {
       );
     }
 
-   const collaborativeShards =  await db.query.shards.findMany({
-      where: (shards) => and(
-        eq(shards.mode, "collaboration"),
-        eq(shards.userId, creator)
-      )
+    const collaborativeShards = await db.query.shards.findMany({
+      where: (shards) =>
+        and(eq(shards.mode, "collaboration"), eq(shards.userId, creator)),
     });
-    
+
     // const collaborativeShards = await Shard.find({
     //   mode: "collaboration",
     //   creator: creator,

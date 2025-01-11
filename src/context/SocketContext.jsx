@@ -29,7 +29,7 @@ const SocketProvider = ({ children }) => {
   const [latestData, setLatestData] = useState({});
   const [latestVisibleFiles, setLatestVisibleFiles] = useState([]);
   const { user, isSignedIn } = useUser();
-  if(!isSignedIn) {
+  if (!isSignedIn) {
     toast.error("not signed in");
     return null;
   }

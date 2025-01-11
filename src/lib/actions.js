@@ -1,20 +1,15 @@
 "use server";
-import { Shard } from "@/src/models/Shard";
+
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
-import  { db } from "./database";
-// import { User } from "@/src/models/User";
-// import { Activity, ActivityType } from "@/src/models/Activity";
-// import { Feed } from "@/src/models/Feed";
-// import { Comment } from "@/src/models/Comment";
+import { db } from "./database";
 import { getThreadedComments } from "@/src/utils";
-import { likes } from "@/db/schema/likes";
-import { followers, users } from "@/db/schema/users";
+import { likes } from "@/src/db/schema/likes";
+import { followers } from "@/src/db/schema/users";
 import { and, eq, or } from "drizzle-orm";
-import { shards } from "@/db/schema/shards";
-import { comments, replies } from "@/db/schema/comments";
-import { dependencies } from "@/db/schema/dependencies";
-import { files } from "@/db/schema/files";
+import { shards } from "@/src/db/schema/shards";
+import { comments, replies } from "@/src/db/schema/comments";
+import { dependencies } from "@/src/db/schema/dependencies";
 
 export const handleRouteShift = () => {
   revalidateTag("shards");
@@ -30,12 +25,11 @@ export const incLikes = async (shardId, userId) => {
   try {
     await db.insert(likes).values({
       shardId: shardId,
-      likedBy: userId
+      likedBy: userId,
     });
     console.log("likes incremented successfully", shardId, userId);
-    
   } catch (error) {
-    console.log("could not increment likes", error)
+    console.log("could not increment likes", error);
   }
 };
 
@@ -45,30 +39,33 @@ export const handleFollowersOfUser = async (
   hasFollowed,
 ) => {
   try {
-
-    if(!hasFollowed) {
-      await db.insert(followers).values({
-        id: mainUserId, 
-        followerId: guestUserId
-      }, {
-        id: guestUserId,
-        followingId: mainUserId,
-      });
-    }
-
-    else {
+    if (!hasFollowed) {
+      await db.insert(followers).values(
+        {
+          id: mainUserId,
+          followerId: guestUserId,
+        },
+        {
+          id: guestUserId,
+          followingId: mainUserId,
+        },
+      );
+    } else {
       // unfollowing user
-      await db.delete(followers).where(
-        or(
-          and(
-            eq(followers.id, mainUserId), 
-            eq(followers.followerId, guestUserId)
+      await db
+        .delete(followers)
+        .where(
+          or(
+            and(
+              eq(followers.id, mainUserId),
+              eq(followers.followerId, guestUserId),
+            ),
+            and(
+              eq(followers.id, guestUserId),
+              eq(followers.followingId, mainUserId),
+            ),
           ),
-          and(
-            eq(followers.id, guestUserId),
-            eq(followers.followingId, mainUserId)
-          )
-        ))
+        );
     }
     // connectToDB();
     // const mainUserDetails = await User.findOne({ name: mainUser });
@@ -95,22 +92,23 @@ export const handleFollowersOfUser = async (
     // }
 
     // await Promise.all([mainUserDetails.save(), guestUserDetails.save()]);
-
-   
-
   } catch (error) {
     console.log("Could not handle followers of user");
     console.log(error.message);
   }
 };
 
-export const addDependency = async (dependencyName, version, isDevDependency) => {
+export const addDependency = async (
+  dependencyName,
+  version,
+  isDevDependency,
+) => {
   await db.insert(dependencies).values({
     name: dependencyName,
     version: version,
-    isDevDependency: isDevDependency
+    isDevDependency: isDevDependency,
   });
-}
+};
 
 export const saveTemplateToDB = async (
   id,
@@ -118,17 +116,13 @@ export const saveTemplateToDB = async (
   dependencies,
   devDependencies,
 ) => {
-
-
   const fileContent = Object.entries(files).map(([fileName, fileConfig]) => {
-
     return {
       name: fileName,
       ...fileConfig,
     };
   });
 
-  
   const nonDevDepContent = Object.entries(dependencies).map(
     ([depName, version]) => {
       return {
@@ -147,14 +141,14 @@ export const saveTemplateToDB = async (
       };
     },
   );
-  
+
   const dependencyContent = [...nonDevDepContent, ...devDepContent];
   try {
-   await db.transaction(async (tx) => {
+    await db.transaction(async (tx) => {
       await tx.insert(files).values(...fileContent);
       await tx.insert(dependencies).values(...dependencyContent);
     });
-   
+
     // updatedDoc.files = fileContent;
     // updatedDoc.dependencies = dependencyContent;
     // await updatedDoc.save();
@@ -167,11 +161,14 @@ export const saveTemplateToDB = async (
 
 export const saveShardName = async (id, shardName) => {
   try {
-    await db.update(shards).set({
-      title: shardName
-    }).where({
-      id: id
-    })
+    await db
+      .update(shards)
+      .set({
+        title: shardName,
+      })
+      .where({
+        id: id,
+      });
     // const existingShard = await Shard.findById({ _id: id });
     // existingShard.title = shardName;
     // await existingShard.save();
@@ -188,30 +185,29 @@ export const updateLikes = async (shardId, userId, likeStatus) => {
     if (likeStatus === "liked") {
       await db.insert(likes).values({
         shardId: shardId,
-        likedBy: userId
+        likedBy: userId,
       });
       // existingShard.likes++;
       // existingShard.likedBy?.push(user._id);
 
       // await existingShard.save();
-
     } else if (likeStatus === "unliked") {
       // existingShard.liked--;
       // existingShard.likedBy?.pop(user._id);
       // await existingShard.save();
-      await db.delete(likes).where(
-        eq(
-          likes.shardId,
-          shardId
-        )
-      )
+      await db.delete(likes).where(eq(likes.shardId, shardId));
     }
   } catch (error) {
     console.log("Could not update likes...", error);
   }
 };
 
-export const addCommentToShard = async (msg, shardId, userId, parent = null) => {
+export const addCommentToShard = async (
+  msg,
+  shardId,
+  userId,
+  parent = null,
+) => {
   try {
     // const commentDoc = await Comment.create({
     //   user: user,
@@ -220,32 +216,34 @@ export const addCommentToShard = async (msg, shardId, userId, parent = null) => 
     //   shardId: shardId,
     // });
 
- 
-    const comment = await db.insert(comments).values({
-      userId: userId,
-      message: msg,
-      shardId: shardId
-    }).returning();
-      
-    if(parent != null) {
+    const comment = await db
+      .insert(comments)
+      .values({
+        userId: userId,
+        message: msg,
+        shardId: shardId,
+      })
+      .returning();
+
+    if (parent != null) {
       await db.insert(replies).values({
         repliedTo: parent,
-        repliedBy: comment[0].id
-      })
+        repliedBy: comment[0].id,
+      });
     }
-    
-      // commentDoc.threadId = shardId;
-      // await Shard.findOneAndUpdate(
-      //   {
-      //     _id: shardId,
-      //   },
-      //   {
-      //     $set: {
-      //       commentThread: shardId,
-      //     },
-      //   },
-      // );
-    // } 
+
+    // commentDoc.threadId = shardId;
+    // await Shard.findOneAndUpdate(
+    //   {
+    //     _id: shardId,
+    //   },
+    //   {
+    //     $set: {
+    //       commentThread: shardId,
+    //     },
+    //   },
+    // );
+    // }
 
     // const commentObj = await Comment.findById(commentDoc._id).lean();
     return comment[0];
@@ -257,15 +255,15 @@ export const addCommentToShard = async (msg, shardId, userId, parent = null) => 
 
 export const getCommentsOfShard = async (shardId) => {
   try {
-   const comments =  await db.query.comments.findMany({
+    const comments = await db.query.comments.findMany({
       where: eq(comments.shardId, shardId),
       with: {
         replies: {
-          comment: true
-        }
-      }
-    })
-    
+          comment: true,
+        },
+      },
+    });
+
     return JSON.stringify(getThreadedComments(comments));
   } catch (error) {
     console.log("Could not get new comment...", error);
