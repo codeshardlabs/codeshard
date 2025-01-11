@@ -4,6 +4,7 @@ import { SandPackCSS } from "../components/ui/sandpack-styles";
 import { Toaster } from "sonner";
 import AuthProvider from "../components/wrapper/AuthProvider";
 import Navbar from "../components/common/Navbar";
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata = {
   title: "CodeShard: Collaborative Code Editor",
@@ -18,6 +19,7 @@ export default function RootLayout({ children }) {
         <SandPackCSS />
       </head>
       <body className="bg-black text-white" suppressHydrationWarning={true}>
+        <NextTopLoader />
         <AuthProvider>
           <Navbar />
           {children}

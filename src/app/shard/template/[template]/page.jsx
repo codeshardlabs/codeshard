@@ -45,12 +45,14 @@ const page = async ({ params }) => {
 
   return (
     <div>
-      <SandpackEditor
-        shardDetails={JSON.stringify(shardDetails)}
-        template={template}
-        shard={true}
-        id={shardDetails?.id ?? null}
-      />
+      {shardDetails && (
+        <SandpackEditor
+          shardDetails={JSON.stringify(shardDetails)}
+          template={template}
+          shard={true}
+          id={shardDetails?.id ?? null}
+        />
+      )}
     </div>
   );
 };

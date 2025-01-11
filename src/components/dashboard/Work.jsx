@@ -4,20 +4,22 @@ import { Fragment } from "react";
 import { makeFilesAndDependenciesUIStateLike } from "@/src/utils";
 import { CommentContextProvider } from "@/src/context/CommentContext";
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { db } from "@/src/lib/database";
+import { shards } from "@/src/db/schema/shards";
+import { eq } from "drizzle-orm";
 
 const fetchShards = async (userId) => {
-  const res = await fetch(
-    `${process.env.HOST_URL}/api/shard?userId=${userId}`,
-    {
-      cache: "no-store",
-      next: { tags: ["shards"] },
-    },
-  );
+  try {
+    const shards = await db.query.shards.findMany({
+      where: (shards) => eq(shards.userId, userId),
+    });
 
-  const shards = await res.json();
-  console.log("shards: ", shards);
-
-  return shards;
+    console.log("shards: ", shards);
+    return shards;
+  } catch (error) {
+    console.log("error in fetching shards: ", error);
+    return null;
+  }
 };
 
 async function Work() {
@@ -29,46 +31,41 @@ async function Work() {
   }
 
   const shards = await fetchShards(userId);
+  if (!shards) {
+    console.log("hello");
+    redirect("/");
+  }
   console.log("Shards: ", shards);
-  // const shardsCollection =
-  //   shards.length > 0
-  //     ? shards.map(async (shard, index) => {
-  //         const [files, dependencies, devDependencies] =  makeFilesAndDependenciesUIStateLike(
-  //               shard.files,
-  //               shard.dependencies,
-  //             );
+  if (shards.length == 0) {
+    return <>No Shards Yet...</>;
+  }
+  const shardsCollection = shards.map(async (shard, index) => {
+    const [files, dependencies, devDependencies] =
+      makeFilesAndDependenciesUIStateLike(shard.files, shard.dependencies);
 
-  //         return (
-  //           <CommentContextProvider key={shard._id.toString()}>
-  //             <WorkCard
-  //               likeStatus={likeStatus}
-  //               likes={shard.likedBy?.length ?? 0}
-  //               isTemplate={shard.isTemplate}
-  //               content={{
-  //                 templateType: shard.templateType,
-  //                 files,
-  //                 dependencies,
-  //                 devDependencies,
-  //               }}
-  //               mode={shard.mode}
-  //               type={shard.type}
-  //               title={shard.title}
-  //               id={shard._id.toString()}
-  //             />
-  //           </CommentContextProvider>
-  //         );
-  //       })
-  //     : [];
+    return (
+      <CommentContextProvider key={shard.id}>
+        <WorkCard
+          likeStatus={likeStatus}
+          likes={shard.likedBy?.length ?? 0}
+          isTemplate={shard.isTemplate}
+          content={{
+            templateType: shard.templateType,
+            files,
+            dependencies,
+            devDependencies,
+          }}
+          mode={shard.mode}
+          type={shard.type}
+          title={shard.title}
+          id={shard._id.toString()}
+        />
+      </CommentContextProvider>
+    );
+  });
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-      {shards.length > 0 ? (
-        // <>{JSON.stringify(shards)}</>
-        <></>
-      ) : (
-        <p className="text-white p-2 col-span-full">No Shards Yet...</p>
-      )}
-    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2"></div>
   );
 }
 

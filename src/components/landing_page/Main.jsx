@@ -1,6 +1,5 @@
 "use client";
 import { useRouter } from "next/navigation";
-import ObjectID from "bson-objectid";
 import Footer from "../landing_page/Footer";
 import { FeaturesSectionDemo } from "./FeatureSection";
 import { HeroScrollDemo } from "./HeroScroll";
