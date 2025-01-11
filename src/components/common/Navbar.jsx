@@ -19,7 +19,7 @@ import ItemsList from "./ItemsList";
 
 export default function Navbar() {
   const { userId } = useAuth();
-   const router = useRouter();
+  const router = useRouter();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [isJoinRoomModalOpen, setIsJoinRoomOpen] = useState(false);
   const [pgModalOpen, setPgModalOpen] = useState(false);
@@ -67,7 +67,6 @@ export default function Navbar() {
 
     router.push(`/room/${roomInput}`);
   };
-
 
   let PgModal = () => (
     <>
