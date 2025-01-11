@@ -14,7 +14,7 @@ const fetchShards = async (userId) => {
     },
   );
 
-  const shards = await res.text();
+  const shards = await res.json();
   console.log("shards: ", shards);
 
   return shards;

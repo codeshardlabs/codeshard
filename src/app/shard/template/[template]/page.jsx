@@ -7,7 +7,7 @@ import { shards } from "@/src/db/schema/shards";
 
 const page = async ({ params }) => {
   const template = params.template;
-  const {userId} = await auth();
+  const { userId } = await auth();
   const user = await currentUser();
   if (!templates.includes(template)) {
     // TODO: Give Error Info. to user using modal or alert.
@@ -25,15 +25,18 @@ const page = async ({ params }) => {
   let shardDetails = null;
 
   try {
-    let ans  = await db.insert(shards).values({
-      userId: userId,
-      templateType: template
-    }).returning()
-    if(ans.length == 0) {
-      console.log("length 0")
+    let ans = await db
+      .insert(shards)
+      .values({
+        userId: userId,
+        templateType: template,
+      })
+      .returning();
+    if (ans.length == 0) {
+      console.log("length 0");
       redirect("/");
     }
-   shardDetails =  ans[0];
+    shardDetails = ans[0];
   } catch (error) {
     console.log(error);
   }

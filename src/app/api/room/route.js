@@ -14,6 +14,7 @@ export async function GET(req, res) {
   const searchParams = getSearchParams(req);
   try {
     const creator = searchParams.get("userId");
+    console.log("creator: ", creator)
 
     if (!creator) {
       return NextResponse.json(
@@ -27,10 +28,7 @@ export async function GET(req, res) {
         and(eq(shards.mode, "collaboration"), eq(shards.userId, creator)),
     });
 
-    // const collaborativeShards = await Shard.find({
-    //   mode: "collaboration",
-    //   creator: creator,
-    // });
+   
     return NextResponse.json(collaborativeShards, { status: 200 });
   } catch (error) {
     console.log("Could not fetch rooms list", error.message);

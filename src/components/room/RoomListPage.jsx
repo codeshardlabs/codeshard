@@ -1,30 +1,35 @@
 import RoomsList from "@/src/components/room/RoomsList";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
 
-const fetchRooms = async (username) => {
+const fetchRooms = async (userId) => {
   const url = process.env.HOST_URL;
-  const res = await fetch(`${url}/api/room?creator=${username}`, {
+  console.log("url: ", url);
+  const res = await fetch(`${url}/api/room?userId=${userId}`, {
     cache: "no-store",
+    headers: {
+      "Accept" : "application/json"
+    }
   });
 
-  const data = await res.json();
+  const data = await res.text();
   return data;
 };
 const RoomListPage = async () => {
-  const session = await auth();
+  const {userId} = await auth();
 
-  if (!session) {
+  if (!userId) {
     redirect("/login");
   }
 
-  let rooms = await fetchRooms(session?.user.name);
-  console.log("Rooms: ", rooms);
+  let rooms = await fetchRooms(userId);
+  // console.log("Rooms: ", rooms);
   return (
     <div>
-      <Suspense fallback={<p>Loading...</p>}>
+      {/* <Suspense fallback={<p>Loading...</p>}>
         <RoomsList rooms={rooms} />
-      </Suspense>
+      </Suspense> */}
     </div>
   );
 };
