@@ -24,11 +24,10 @@ const RoomsList = ({ rooms: initialRooms }) => {
       setRooms={setRooms}
       title={room.title}
       index={index}
-      isTemplate={room.isTemplate}
       template={room.templateType}
-      key={room._id.toString()}
+      key={room.id}
       onLinkCopy={onLinkCopy}
-      id={room._id.toString()}
+      id={room.id}
     />
   ));
   return (

@@ -19,8 +19,8 @@ export default function RootLayout({ children }) {
         <SandPackCSS />
       </head>
       <body className="bg-black text-white" suppressHydrationWarning={true}>
-        <NextTopLoader />
         <AuthProvider>
+          <NextTopLoader/>
           <Navbar />
           {children}
           <Toaster richColors position="top-center" />

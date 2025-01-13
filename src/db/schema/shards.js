@@ -41,7 +41,7 @@ export const shards = pgTable("shards", {
   ...timestamps,
 });
 
-export const postsRelations = relations(shards, ({ many }) => ({
+export const shardsRelations = relations(shards, ({ many }) => ({
   comments: many(comments),
   files: many(files),
   dependencies: many(dependencies),

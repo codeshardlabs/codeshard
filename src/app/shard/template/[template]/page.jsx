@@ -30,8 +30,10 @@ const page = async ({ params }) => {
       .values({
         userId: userId,
         templateType: template,
+        createdAt: new Date()
       })
       .returning();
+      console.log("ans: ", ans);
     if (ans.length == 0) {
       console.log("length 0");
       redirect("/");
