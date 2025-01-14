@@ -12,7 +12,7 @@ import { Toaster } from "sonner";
 
 import { useEffect, useRef, useState } from "react";
 import React from "react";
-import { useModal } from "@/src/customHooks/useModal";
+import { useModal } from "@/src/hooks/useModal";
 import { makeFilesAndDependenciesUIStateLike } from "@/src/utils";
 import { ScaleLoader } from "react-spinners";
 import { useRouter } from "next/navigation";

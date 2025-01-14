@@ -7,17 +7,14 @@ import NextTopLoader from "nextjs-toploader";
 import { eq } from "drizzle-orm";
 
 export const fetchUserDetails = async (userId) => {
-  try{
+  try {
     const user = await db.query.users.findFirst({
-         where: (users) => eq(users.id, userId)
-       });
-       console.log("user: ", user)
+      where: (users) => eq(users.id, userId),
+    });
+    console.log("user: ", user);
 
-       
-       return user;
-  }
-
-  catch(error) {
+    return user;
+  } catch (error) {
     console.log("could not fetch user details", error);
     return null;
   }
@@ -30,25 +27,20 @@ export default async function UserProfile({ params }) {
   if (!loginnedUser) {
     redirect("/");
   }
-  const user= params["user-id"];
+  const user = params["user-id"];
   const userDetails = await fetchUserDetails(user);
   if (!userDetails) {
     redirect("/");
   }
-  const isOwner = session
-    ? userId === userDetails.id
-      ? true
-      : false
-    : false;
-
+  const isOwner = session ? (userId === userDetails.id ? true : false) : false;
 
   console.log("user Details: ", userDetails);
   // let { user, shards } = userDetails;
 
   return (
     <>
-    <Suspense fallback={<NextTopLoader />}>
-      {/* <Profile
+      <Suspense fallback={<NextTopLoader />}>
+        {/* <Profile
         shards={shards}
         followers={user?.followers}
         followersCount={user?.followers?.length}
@@ -56,7 +48,7 @@ export default async function UserProfile({ params }) {
         name={user?.name}
         id={user?._id.toString()}
       /> */}
-    </Suspense>
+      </Suspense>
     </>
   );
 }

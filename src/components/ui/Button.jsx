@@ -13,7 +13,7 @@ const Button = ({ children, className, onClick, type = "primary" }) => {
           type === "primary" &&
             "bg-white text-black hover:bg-slate-300 border border-transparent",
           type === "outline" &&
-            "border text-white hover:text-[#47cf73] hover:border-[#47cf73]",
+            "border text-white  hover:bg-gray-900",
           className,
         ),
       )}

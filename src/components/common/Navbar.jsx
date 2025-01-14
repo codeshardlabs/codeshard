@@ -8,7 +8,7 @@ import ArrowDown from "../ui/icons/ArrowDown";
 import Code from "../ui/icons/Code";
 import JoinRoom from "../ui/icons/JoinRoom";
 import Cloud from "../ui/icons/Cloud";
-import { useModal } from "../../customHooks/useModal";
+import { useModal } from "../../hooks/useModal";
 import Close from "../ui/icons/Close";
 import styles from "../../app/PgModal.module.css";
 import clsx from "clsx";
@@ -87,9 +87,9 @@ export default function Navbar() {
         <div className="grid grid-cols-5 gap-16">
           {templates.map((template) => {
             return (
-              <div
-                className="text-white border p-2 cursor-pointer hover:opacity-65"
-                onClick={() => {
+              <Link
+                className="text-white border text-xl p-2 cursor-pointer hover:opacity-65"
+                href={(function () {
                   const roomRoute = `/room/new-room?template=${template}`;
                   const shardRoute = `/shard/template/${template}`;
                   const tryEditorRoute = `/try-editor/${template}`;
@@ -98,12 +98,13 @@ export default function Navbar() {
                       ? roomRoute
                       : shardRoute
                     : tryEditorRoute;
-                  router.push(routeToPushTo);
-                }}
+                  // router.push(routeToPushTo);
+                  return routeToPushTo;
+                })()}
                 key={template}
               >
-                <p className="text-xl">{template}</p>
-              </div>
+                {template}
+              </Link>
             );
           })}
         </div>
@@ -178,7 +179,7 @@ export default function Navbar() {
 
       <div className="flex gap-3 items-center">
         <SignedOut>
-          <SignInButton />
+          <SignInButton className="bg-white text-black p-2 rounded-sm hover:bg-gray-200" />
           <>
             {pgModalOpen && (
               <>

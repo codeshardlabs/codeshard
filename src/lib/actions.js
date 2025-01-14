@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { db } from "./database";
 import { getThreadedComments } from "@/src/utils";
 import { likes } from "@/src/db/schema/likes";
-import { followers } from "@/src/db/schema/users";
+import { followers, users } from "@/src/db/schema/users";
 import { and, eq, or } from "drizzle-orm";
 import { shards } from "@/src/db/schema/shards";
 import { comments, replies } from "@/src/db/schema/comments";
@@ -14,6 +14,21 @@ import { dependencies } from "@/src/db/schema/dependencies";
 export const handleRouteShift = () => {
   revalidateTag("shards");
   redirect("/your-work");
+};
+
+export const saveUserMetadeta = async (userId) => {
+  const existingUser = await db.query.users.findFirst({
+    where: (users) => eq(users.id, userId),
+  });
+  if (existingUser) return null;
+  return await db
+    .insert(users)
+    .values({
+      id: userId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .returning();
 };
 
 export const handleRoomRouteShift = () => {

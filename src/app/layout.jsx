@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className="bg-black text-white" suppressHydrationWarning={true}>
         <AuthProvider>
-          <NextTopLoader/>
+          <NextTopLoader showSpinner={false} />
           <Navbar />
           {children}
           <Toaster richColors position="top-center" />

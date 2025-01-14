@@ -5,15 +5,13 @@ import clsx from "clsx";
 import Link from "next/link";
 
 const ItemsList = () => {
-  const {  isSignedIn } = useUser();
-  const {userId} = useAuth();
+  const { isSignedIn } = useUser();
+  const { userId } = useAuth();
   const router = useRouter();
   if (!isSignedIn) {
     toast.error("not signed in");
     return null;
   }
-
-
 
   const liItems = [
     {
@@ -38,7 +36,6 @@ const ItemsList = () => {
           <Link
             key={index}
             href={item.target}
-           
             className={clsx(
               "text-md px-2 p-1 rounded-sm cursor-pointer",
               index % 2 == 0 &&

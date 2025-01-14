@@ -3,11 +3,12 @@ import { useRouter } from "next/navigation";
 import Footer from "../landing_page/Footer";
 import { FeaturesSectionDemo } from "./FeatureSection";
 import { HeroScrollDemo } from "./HeroScroll";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 
 const Main = () => {
   const router = useRouter();
   const { userId } = useAuth();
+  const { isSignedIn } = useUser();
 
   return (
     <>

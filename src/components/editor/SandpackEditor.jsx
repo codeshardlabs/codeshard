@@ -18,7 +18,7 @@ import File from "../ui/icons/File";
 import React from "react";
 import Package from "../ui/icons/Package";
 import Block from "../ui/icons/Block";
-import { useModal } from "@/src/customHooks/useModal";
+import { useModal } from "@/src/hooks/useModal";
 import MonacoEditor from "./MonacoEditor.jsx";
 import Button from "../ui/Button";
 import { saveTemplateToDB } from "@/src/lib/actions";
@@ -27,7 +27,7 @@ import { ScaleLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 import Avatar from "react-avatar";
 import Settings from "../ui/icons/Settings";
-import { useUser } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 
 export default function SandpackEditor({
   id,
@@ -50,8 +50,8 @@ export default function SandpackEditor({
       const data = JSON.parse(initialShardDetails);
       console.log(data);
       const [f, dep, devDep] = makeFilesAndDependenciesUIStateLike(
-        data.files,
-        data.dependencies,
+        data.files ?? [],
+        data.dependencies ?? [],
       );
       setFiles(f);
       setDependencies(dep);
@@ -218,6 +218,7 @@ function SandpackSidebar({
 }) {
   const { sandpack } = useSandpack();
   const { user, isSignedIn } = useUser();
+  const { userId } = useAuth();
   const router = useRouter();
   const modalRef = useRef(null);
   const [isClicked, setIsClicked] = useState(false);
@@ -231,11 +232,6 @@ function SandpackSidebar({
   }, [onSaveClick]);
 
   const { files } = sandpack;
-
-  if (!isSignedIn) {
-    toast.error("not signed in");
-    return null;
-  }
 
   let modal = (
     <>
@@ -297,46 +293,46 @@ function SandpackSidebar({
       <Toaster position="top-center" richColors />
       {isClicked && modal}
       <div className="w-[15%] flex flex-col ">
-        <SandpackStack>
-          <div className="flex gap-2 mb-4 p-1 items-center justify-left">
-            {/* <p className="text-lg pr-4 pl-2 font-['Josh', sans-serif]">{template}</p> */}
-            <File
-              onClick={() => {
-                const fileName = prompt("Enter File Name: ");
-                if (fileName) addNewFile(fileName);
-              }}
-              className={
-                "size-4 fill-white hover:fill-slate-600 cursor-pointer"
-              }
-            />
-            <Package
-              onClick={() => {
-                const dependencyName = prompt("Add new dependency");
-                if (dependencyName) addNewDependency(dependencyName);
-              }}
-              className={
-                "size-4 fill-white hover:fill-slate-600 cursor-pointer"
-              }
-            />
-            <Block
-              onClick={() => {
-                const dependencyName = prompt("Add new dev. dependency");
-                if (dependencyName) addNewDevDependency(dependencyName);
-              }}
-              className={
-                "cursor-pointer hover:fill-slate-600 fill-white size-4"
-              }
-            />
-            <Settings
-              onClick={() => {
-                console.log("clicked on settings");
-                setIsClicked(true);
-              }}
-              className={
-                "size-4 hover:fill-slate-600 fill-white cursor-pointer"
-              }
-            />
-            {id && (
+        {userId && (
+          <SandpackStack>
+            <div className="flex gap-2 mb-4 p-1 items-center justify-left">
+              {/* <p className="text-lg pr-4 pl-2 font-['Josh', sans-serif]">{template}</p> */}
+              <File
+                onClick={() => {
+                  const fileName = prompt("Enter File Name: ");
+                  if (fileName) addNewFile(fileName);
+                }}
+                className={
+                  "size-4 fill-white hover:fill-slate-600 cursor-pointer"
+                }
+              />
+              <Package
+                onClick={() => {
+                  const dependencyName = prompt("Add new dependency");
+                  if (dependencyName) addNewDependency(dependencyName);
+                }}
+                className={
+                  "size-4 fill-white hover:fill-slate-600 cursor-pointer"
+                }
+              />
+              <Block
+                onClick={() => {
+                  const dependencyName = prompt("Add new dev. dependency");
+                  if (dependencyName) addNewDevDependency(dependencyName);
+                }}
+                className={
+                  "cursor-pointer hover:fill-slate-600 fill-white size-4"
+                }
+              />
+              <Settings
+                onClick={() => {
+                  console.log("clicked on settings");
+                  setIsClicked(true);
+                }}
+                className={
+                  "size-4 hover:fill-slate-600 fill-white cursor-pointer"
+                }
+              />
               <Button
                 className="font-[500] text-sm border p-1 rounded-md"
                 onClick={() => {
@@ -345,8 +341,6 @@ function SandpackSidebar({
               >
                 Save
               </Button>
-            )}
-            {session && (
               <button
                 className="text-xs cursor-pointer"
                 onClick={() => {
@@ -355,14 +349,15 @@ function SandpackSidebar({
               >
                 <Avatar
                   className="text-xs"
-                  name={session?.user?.name}
+                  name={user.username}
                   size="30"
                   round={true}
                 />
               </button>
-            )}
-          </div>
-        </SandpackStack>
+            </div>
+          </SandpackStack>
+        )}
+
         <SandpackFileExplorer style={{ height: "92vh" }} />
       </div>
     </>
