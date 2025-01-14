@@ -1,4 +1,4 @@
-import { pgEnum, pgTable, serial, text } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { comments } from "./comments";
 import { dependencies } from "./dependencies";
@@ -38,6 +38,7 @@ export const shards = pgTable("shards", {
   templateType: templateTypeEnum().default("react"),
   mode: modeEnum().default("normal"),
   type: typeEnum().default("public"),
+  lastSyncTimestamp: timestamp("last_sync_timestamp").defaultNow(),
   ...timestamps,
 });
 
