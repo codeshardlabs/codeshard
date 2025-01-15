@@ -85,7 +85,7 @@ export const findParentComment = (comments, parentId) => {
   return null;
 };
 
-export function formatFilesLikeInDb(files) {
+export function formatFilesLikeInDb(files, shardId) {
   const keys = Object.keys(files);
   const finalFiles = [];
   for (let key of keys) {
@@ -93,6 +93,7 @@ export function formatFilesLikeInDb(files) {
     finalFiles.push({
       code: code,
       name: key,
+      shardId: shardId
     });
   }
   return finalFiles;

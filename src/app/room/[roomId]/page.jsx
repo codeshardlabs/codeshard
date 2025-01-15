@@ -3,6 +3,9 @@ import CollaborativeSandpackEditor from "@/src/components/editor/CollaborativeSa
 import { formatFilesLikeInDb, templates } from "@/src/utils";
 import { SANDBOX_TEMPLATES } from "@/src/templates";
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { db } from "@/src/lib/database";
+import { shards } from "@/src/db/schema/shards";
+import { files } from "@/src/db/schema/files";
 
 export default async function CollaborativeRoomPage({ params, searchParams }) {
   const {userId} = await auth();
@@ -13,6 +16,7 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
   console.log("Template: ", template);
   connectToDB();
   let shardDetails = null;
+  let files = null;
 
   if (!userId || !roomId) {
     console.log("session not present");
@@ -24,21 +28,30 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
       console.log("Template not valid");
       redirect("/");
     }
-    
-    // shardDetails = await Shard.create({
-    //   creator: session?.user?.name,
-    //   type: "private",
-    //   mode: "collaboration",
-    //   templateType: template,
-    //   files: formatFilesLikeInDb(SANDBOX_TEMPLATES[template].files),
-    // });
 
-    if (!shardDetails) {
+    await db.transaction(async (tx) => {
+      shardDetails = await tx.insert(shards).values({
+        type: "private",
+        mode: "collaboration",
+        templateType: template,
+        userId: userId,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }).returning();
+      files = await tx.insert(files).values(
+        formatFilesLikeInDb(SANDBOX_TEMPLATES[template].files, shardId)
+      ).returning()
+    })
+  
+
+    if (!shardDetails || !files) {
       console.log("could not create shard");
       redirect("/your-work");
     }
 
-    console.log("Id: ", shardDetails?._id);
+  console.log("shard details: ", shardDetails);
+  console.log("files: ", files);
+  shardDetails.files = files;
   }
 
   if (roomId !== "new-room") {

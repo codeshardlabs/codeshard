@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import SandpackEditor from "@/src/components/editor/SandpackEditor";
 import { auth } from "@clerk/nextjs/server";
+import { db } from "@/src/lib/database";
+import { eq } from "drizzle-orm";
 
 export default async function NewShardPage({ params }) {
   const { userId } = await auth();
@@ -13,14 +15,21 @@ export default async function NewShardPage({ params }) {
     redirect("/");
   }
 
-  let shardDetails = await Shard.findOne({ _id: shardId }).lean();
+  // let shardDetails = await Shard.findOne({ _id: shardId }).lean();
+  let shardDetails = await db.query.shards.findFirst({
+    where: (shards) => eq(shards.id, shardId),
+    with: {
+      files: true,
+      dependencies: true
+    }
+  })
   if (!shardDetails) {
     console.log("shard id not valid");
     redirect("/");
   }
   console.log("Shard details: ", shardDetails);
 
-  const { templateType, type, creator, _id, mode } = shardDetails;
+  const { templateType, type, creator, id, mode } = shardDetails;
 
   if (
     session?.user?.name !== creator &&
@@ -36,7 +45,7 @@ export default async function NewShardPage({ params }) {
         shardDetails={JSON.stringify(shardDetails)}
         template={templateType ?? "react"}
         shard={true}
-        id={_id.toString() ?? null}
+        id={id.toString() ?? null}
       />
     </>
   );
