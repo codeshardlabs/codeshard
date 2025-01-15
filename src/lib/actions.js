@@ -286,8 +286,46 @@ export const getCommentsOfShard = async (shardId) => {
   }
 };
 
-export const deleteShard = (id) => {
-  await 
+export const deleteShard = async (id) => {
+  try {
+    
+   const x =  await db.delete(shards).where(eq(shards.id, id)).returning();
+   if(!x) throw new Error("could not delete shard");
+
+   return {
+    success: true,
+    error: null
+   }
+
+  } catch (error) {
+    console.log("delete shard error: ", error);
+    return {
+      error: error,
+      success: false
+    }
+  }
+}
+
+export const updateShardType = async (id, type) => {
+  try {
+    
+   const x =  await db.update(shards).set({
+    type: type
+   }).where(eq(shards.id, id)).returning();
+   if(!x) throw new Error("could not update shard");
+
+   return {
+    success: true,
+    error: null
+   }
+
+  } catch (error) {
+    console.log("update shard error: ", error);
+    return {
+      error: error,
+      success: false
+    }
+  }
 }
 // export const getRecentActivityofFollowing = async (following) => {
 //   try {

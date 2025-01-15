@@ -144,29 +144,22 @@ const ProfileCard = ({
     router.replace(`/shard/${id}`);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     setIsPopoverOpen(false);
     const isConfirmed = confirm(
       "Are you sure you want to proceed with this action?",
     );
     if (isConfirmed) {
       setIsDeleted(true);
-      fetch(`/api/shard/${id}`, {
-        method: "DELETE",
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("response success: ", data);
-          router.refresh();
-        })
-        .catch((error) => {
-          setIsDeleted(false);
-          console.log("response error: ", error.message);
-        });
+      const {error, success} = await  deleteShard(id);
+           if(!success) {
+             console.log("response error: ", error);
+            setIsDeleted(false);
+           }
     }
   };
 
-  const toggleType = () => {
+  const toggleType = async () => {
     setIsPopoverOpen(false);
 
     setType((prev) => {
@@ -175,24 +168,13 @@ const ProfileCard = ({
       }
       return "private";
     });
-    fetch(`/api/shard/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        type: type === "private" ? "public" : "private",
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("response success: ", data);
-        router.refresh();
-      })
-      .catch((error) => {
-        setType(initialType);
-        console.log("response error: ", error.message);
-      });
+    const {error, success} = await updateShardType(id, type === "private" ? "public" : "private");
+       
+       
+          if(!success) {
+            setType(initialType);
+            console.log("response error: ", error);
+          }
   };
 
   const handleLikes = async () => {

@@ -11,9 +11,11 @@ import HorizontalThreeDots from "../ui/icons/HorizontalThreeDots";
 import CustomSandpackPreview from "../editor/CustomSandpackPreview";
 import Pencil from "../ui/icons/Pencil";
 import {
+  deleteShard,
   getCommentsOfShard,
   saveShardName,
   updateLikes,
+  updateShardType,
 } from "@/src/lib/actions";
 import Button from "../ui/Button";
 import { toast } from "sonner";
@@ -26,6 +28,7 @@ import CommentTextBox from "../comment/CommentTextbox";
 import { CommentsArea } from "../comment/CommentsArea";
 import { useActiveComment } from "@/src/context/CommentContext";
 import { useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 const WorkCard = ({
   content: initialContent,
@@ -45,8 +48,9 @@ const WorkCard = ({
   const [likeStatus, setLikeStatus] = useState(initialLikeStatus);
   const { comments, setComments, setShardId, parentComment, setParentComment } =
     useActiveComment();
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, userId } = useAuth();
   const modal = useRef();
+  const router = useRouter();
 
   if (!isSignedIn) {
     toast.error("not signed in");
@@ -128,29 +132,23 @@ const WorkCard = ({
     router.replace(`/shard/${id}`);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     setIsPopoverOpen(false);
     const isConfirmed = confirm(
       "Are you sure you want to proceed with this action?",
     );
     if (isConfirmed) {
       setIsDeleted(true);
-      fetch(`/api/shard/${id}`, {
-        method: "DELETE",
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("response success: ", data);
-          router.refresh();
-        })
-        .catch((error) => {
-          setIsDeleted(false);
-          console.log("response error: ", error.message);
-        });
+     const {error, success} = await  deleteShard(id);
+     if(!success) {
+       console.log("response error: ", error);
+      setIsDeleted(false);
+     }
+     
     }
   };
 
-  const toggleType = () => {
+  const toggleType = async () => {
     setIsPopoverOpen(false);
 
     setType((prev) => {
@@ -159,24 +157,14 @@ const WorkCard = ({
       }
       return "private";
     });
-    fetch(`/api/shard/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        type: type === "private" ? "public" : "private",
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("response success: ", data);
-        router.refresh();
-      })
-      .catch((error) => {
+
+    const {error, success} = await updateShardType(id, type === "private" ? "public" : "private");
+   
+   
+      if(!success) {
         setType(initialType);
-        console.log("response error: ", error.message);
-      });
+        console.log("response error: ", error);
+      }
   };
 
   const handleLikes = async () => {
@@ -185,14 +173,14 @@ const WorkCard = ({
         return prev - 1;
       });
       setLikeStatus("unliked");
-      await updateLikes(id, likes, "unliked", session?.user?.email);
+      await updateLikes(id, likes,userId, "unliked");
     } else if (likeStatus === "unliked") {
       setLikes((prev) => {
         return prev + 1;
       });
 
       setLikeStatus("liked");
-      await updateLikes(id, likes, "liked", session?.user?.email);
+      await updateLikes(id, likes, userId, "liked");
     }
   };
 
