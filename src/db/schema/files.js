@@ -10,7 +10,7 @@ export const files = pgTable(
     code: text("code"),
     readOnly: boolean("read_only").default(false),
     hidden: boolean("hidden").default(false),
-    shardId: serial("shard_id").references(() => shards.id),
+    shardId: serial("shard_id").references(() => shards.id, {onDelete: "cascade"}).notNull(),
     ...timestamps,
   },
   (table) => [index("file_shard_id_index").on(table.shardId)],

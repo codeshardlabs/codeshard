@@ -1,6 +1,4 @@
 "use client";
-
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import Heart from "../ui/icons/Heart";
@@ -47,7 +45,7 @@ const WorkCard = ({
   const [likeStatus, setLikeStatus] = useState(initialLikeStatus);
   const { comments, setComments, setShardId, parentComment, setParentComment } =
     useActiveComment();
-  const { user, isSignedIn } = useAuth();
+  const { isSignedIn } = useAuth();
   const modal = useRef();
 
   if (!isSignedIn) {

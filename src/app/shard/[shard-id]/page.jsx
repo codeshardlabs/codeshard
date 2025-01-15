@@ -1,11 +1,12 @@
 import { redirect } from "next/navigation";
 import SandpackEditor from "@/src/components/editor/SandpackEditor";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { db } from "@/src/lib/database";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export default async function NewShardPage({ params }) {
   const { userId } = await auth();
+  const user = await currentUser();
   const shardId = params["shard-id"];
   console.log("Shard id: ", shardId);
   connectToDB();
@@ -17,7 +18,10 @@ export default async function NewShardPage({ params }) {
 
   // let shardDetails = await Shard.findOne({ _id: shardId }).lean();
   let shardDetails = await db.query.shards.findFirst({
-    where: (shards) => eq(shards.id, shardId),
+    where: (shards) =>and(
+      eq(shards.id, shardId),
+       eq(shards.type, "public"),
+      eq(shards.mode, "normal")),
     with: {
       files: true,
       dependencies: true
@@ -29,11 +33,10 @@ export default async function NewShardPage({ params }) {
   }
   console.log("Shard details: ", shardDetails);
 
-  const { templateType, type, creator, id, mode } = shardDetails;
+  const { templateType, userId: creator, id } = shardDetails;
 
   if (
-    session?.user?.name !== creator &&
-    (type === "private" || mode === "collaboration")
+    user.username !== creator 
   ) {
     console.log("shard is private or collaborative");
     redirect("/");
@@ -43,9 +46,9 @@ export default async function NewShardPage({ params }) {
     <>
       <SandpackEditor
         shardDetails={JSON.stringify(shardDetails)}
-        template={templateType ?? "react"}
+        template={templateType}
         shard={true}
-        id={id.toString() ?? null}
+        id={id}
       />
     </>
   );

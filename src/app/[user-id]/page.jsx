@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
 import Profile from "../../components/profile/Profile";
-import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
+import { auth,  currentUser } from "@clerk/nextjs/server";
 import { db } from "@/src/lib/database";
 import { Suspense } from "react";
 import NextTopLoader from "nextjs-toploader";
 import { eq } from "drizzle-orm";
+import { fetchClerkUser } from "@/src/lib/clerk";
 
 
 export const fetchUserDetails = async (userId) => {
@@ -26,15 +27,6 @@ export const fetchUserDetails = async (userId) => {
   }
 };
 
-export const fetchClerkUser = async (userId) => {
-  try {
-    const client = await clerkClient();
-    const user = await client.users.getUser(userId);
-   return user;
-  } catch (error) {
-    return null;
-  }
-}
 
 export default async function UserProfile({ params }) {
   const { userId } = await auth();

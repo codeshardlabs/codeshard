@@ -286,6 +286,9 @@ export const getCommentsOfShard = async (shardId) => {
   }
 };
 
+export const deleteShard = (id) => {
+  await 
+}
 // export const getRecentActivityofFollowing = async (following) => {
 //   try {
 //     const currentDate = new Date();

@@ -8,8 +8,8 @@ export const likes = pgTable(
   "likes",
   {
     id: serial("id").primaryKey(),
-    shardId: serial("shard_id").references(() => shards.id),
-    likedBy: text("liked_by").references(() => users.id),
+    shardId: serial("shard_id").references(() => shards.id, {onDelete: "cascade"}).notNull(),
+    likedBy: text("liked_by").references(() => users.id, {onDelete: "cascade"}).notNull(),
     ...timestamps,
   },
   (table) => [index("like_shard_id_index").on(table.shardId)],
