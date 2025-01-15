@@ -27,7 +27,6 @@ export default function CollaborativeSandpackEditor({
   shardDetails: initialShardDetails,
   template = "react",
   isNewShard,
-  creator,
 }) {
   const [shardDetails, setShardDetails] = useState(
     JSON.parse(initialShardDetails),
@@ -145,7 +144,6 @@ export default function CollaborativeSandpackEditor({
             addNewDevDependency={addNewDevDependency}
           />
           <CollaborativeMonacoEditor
-            creator={creator}
             roomId={id}
             theme={theme}
           />

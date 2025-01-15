@@ -13,7 +13,7 @@ import { FileTabs } from "@codesandbox/sandpack-react";
 import { snakeCase } from "./MonacoEditor";
 import { toast } from "sonner";
 
-const CollaborativeMonacoEditor = ({ theme, roomId, creator }) => {
+const CollaborativeMonacoEditor = ({ theme, roomId }) => {
   const editorRef = useRef(null);
   const {
     sendMessage,

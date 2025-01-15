@@ -2,9 +2,11 @@ import { redirect } from "next/navigation";
 import CollaborativeSandpackEditor from "@/src/components/editor/CollaborativeSandpackEditor";
 import { formatFilesLikeInDb, templates } from "@/src/utils";
 import { SANDBOX_TEMPLATES } from "@/src/templates";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 export default async function CollaborativeRoomPage({ params, searchParams }) {
-  const session = await auth();
+  const {userId} = await auth();
+  const user = await currentUser();
   const roomId = params["roomId"];
   console.log("Room id: ", roomId);
   const template = searchParams["template"];
@@ -12,7 +14,7 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
   connectToDB();
   let shardDetails = null;
 
-  if (!session || !roomId) {
+  if (!userId || !roomId) {
     console.log("session not present");
     redirect("/");
   }
@@ -22,13 +24,14 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
       console.log("Template not valid");
       redirect("/");
     }
-    shardDetails = await Shard.create({
-      creator: session?.user?.name,
-      type: "private",
-      mode: "collaboration",
-      templateType: template,
-      files: formatFilesLikeInDb(SANDBOX_TEMPLATES[template].files),
-    });
+    
+    // shardDetails = await Shard.create({
+    //   creator: session?.user?.name,
+    //   type: "private",
+    //   mode: "collaboration",
+    //   templateType: template,
+    //   files: formatFilesLikeInDb(SANDBOX_TEMPLATES[template].files),
+    // });
 
     if (!shardDetails) {
       console.log("could not create shard");
@@ -43,12 +46,12 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
     const response = await fetch(url, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${session?.user?.name}`,
+        Authorization: `Bearer ${userId}`,
       },
     });
     const responseBody = await response.json();
 
-    let { error, data, status } = responseBody;
+    let { error, data } = responseBody;
     if (error) {
       console.log("(error) /room/[room-id] page", error.message);
       redirect("/your-work");
@@ -60,10 +63,10 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
 
   console.log("Shard details: ", shardDetails);
 
-  const { creator, isTemplate, id } = shardDetails;
+  const { userId : creator, isTemplate, id } = shardDetails;
 
   if (session) {
-    if (roomId === "new-room" && session?.user?.name !== creator) {
+    if (roomId === "new-room" && userId !== creator) {
       console.log("shard is private or collaborative");
       redirect("/");
     }
@@ -76,7 +79,7 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
         template={isTemplate ? shardDetails.templateType : "react"}
         id={id.toString() ?? ""}
         isNewShard={roomId === "new-room"}
-        creator={creator}
+      
       />
     </>
   );
