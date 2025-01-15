@@ -5,7 +5,6 @@ import { SANDBOX_TEMPLATES } from "@/src/templates";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { db } from "@/src/lib/database";
 import { shards } from "@/src/db/schema/shards";
-import { files } from "@/src/db/schema/files";
 
 export default async function CollaborativeRoomPage({ params, searchParams }) {
   const {userId} = await auth();

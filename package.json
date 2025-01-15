@@ -11,6 +11,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@clerk/backend": "^1.22.0",
     "@clerk/nextjs": "^6.9.6",
     "@codesandbox/sandpack-react": "^2.13.10",
     "@monaco-editor/react": "^4.6.0",
