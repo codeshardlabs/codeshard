@@ -1,12 +1,11 @@
 import { redirect } from "next/navigation";
 import Profile from "../../components/profile/Profile";
-import { auth,  currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { db } from "@/src/lib/database";
 import { Suspense } from "react";
 import NextTopLoader from "nextjs-toploader";
 import { eq } from "drizzle-orm";
 import { fetchClerkUser } from "@/src/lib/clerk";
-
 
 export const fetchUserDetails = async (userId) => {
   try {
@@ -15,8 +14,8 @@ export const fetchUserDetails = async (userId) => {
       with: {
         shards: true,
         followers: true,
-        following: true
-      }
+        following: true,
+      },
     });
     console.log("user: ", user);
 
@@ -26,7 +25,6 @@ export const fetchUserDetails = async (userId) => {
     return null;
   }
 };
-
 
 export default async function UserProfile({ params }) {
   const { userId } = await auth();
@@ -42,7 +40,7 @@ export default async function UserProfile({ params }) {
   if (!userDetails || !clerkUser) {
     redirect("/");
   }
-  const isOwner = userId === userDetails.id ? true  : false;
+  const isOwner = userId === userDetails.id ? true : false;
 
   console.log("user Details: ", userDetails);
   let { followers, following, shards } = userDetails;
@@ -51,14 +49,14 @@ export default async function UserProfile({ params }) {
     <>
       <Suspense fallback={<NextTopLoader />}>
         <Profile
-        shards={shards}
-        followers={followers}
-        followersCount={followers?.length}
-        following={following?.length}
-        name={clerkUser.fullName}
-        id={user?._id.toString()}
-        isOwner={isOwner}
-      />
+          shards={shards}
+          followers={followers}
+          followersCount={followers?.length}
+          following={following?.length}
+          name={clerkUser.fullName}
+          id={user?._id.toString()}
+          isOwner={isOwner}
+        />
       </Suspense>
     </>
   );

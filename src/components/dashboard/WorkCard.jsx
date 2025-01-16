@@ -139,12 +139,11 @@ const WorkCard = ({
     );
     if (isConfirmed) {
       setIsDeleted(true);
-     const {error, success} = await  deleteShard(id);
-     if(!success) {
-       console.log("response error: ", error);
-      setIsDeleted(false);
-     }
-     
+      const { error, success } = await deleteShard(id);
+      if (!success) {
+        console.log("response error: ", error);
+        setIsDeleted(false);
+      }
     }
   };
 
@@ -158,13 +157,15 @@ const WorkCard = ({
       return "private";
     });
 
-    const {error, success} = await updateShardType(id, type === "private" ? "public" : "private");
-   
-   
-      if(!success) {
-        setType(initialType);
-        console.log("response error: ", error);
-      }
+    const { error, success } = await updateShardType(
+      id,
+      type === "private" ? "public" : "private",
+    );
+
+    if (!success) {
+      setType(initialType);
+      console.log("response error: ", error);
+    }
   };
 
   const handleLikes = async () => {
@@ -173,7 +174,7 @@ const WorkCard = ({
         return prev - 1;
       });
       setLikeStatus("unliked");
-      await updateLikes(id, likes,userId, "unliked");
+      await updateLikes(id, likes, userId, "unliked");
     } else if (likeStatus === "unliked") {
       setLikes((prev) => {
         return prev + 1;

@@ -18,7 +18,7 @@ const RoomListCard = ({
   const [isDeleted, setIsDeleted] = useState(false);
   const router = useRouter();
 
-  const handleDelete =  async (id) => {
+  const handleDelete = async (id) => {
     const isConfirmed = confirm(
       "Are you sure you want to proceed with this action?",
     );
@@ -27,11 +27,11 @@ const RoomListCard = ({
       setRooms((prev) => {
         return prev.filter((room) => room?._id !== id);
       });
-      const {error, success} = await  deleteShard(id);
-           if(!success) {
-             console.log("response error: ", error);
-            setIsDeleted(false);
-           }
+      const { error, success } = await deleteShard(id);
+      if (!success) {
+        console.log("response error: ", error);
+        setIsDeleted(false);
+      }
     }
   };
   return (

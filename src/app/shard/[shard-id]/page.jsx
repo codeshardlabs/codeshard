@@ -18,15 +18,17 @@ export default async function NewShardPage({ params }) {
 
   // let shardDetails = await Shard.findOne({ _id: shardId }).lean();
   let shardDetails = await db.query.shards.findFirst({
-    where: (shards) =>and(
-      eq(shards.id, shardId),
-       eq(shards.type, "public"),
-      eq(shards.mode, "normal")),
+    where: (shards) =>
+      and(
+        eq(shards.id, shardId),
+        eq(shards.type, "public"),
+        eq(shards.mode, "normal"),
+      ),
     with: {
       files: true,
-      dependencies: true
-    }
-  })
+      dependencies: true,
+    },
+  });
   if (!shardDetails) {
     console.log("shard id not valid");
     redirect("/");
@@ -35,9 +37,7 @@ export default async function NewShardPage({ params }) {
 
   const { templateType, userId: creator, id } = shardDetails;
 
-  if (
-    user.username !== creator 
-  ) {
+  if (user.username !== creator) {
     console.log("shard is private or collaborative");
     redirect("/");
   }

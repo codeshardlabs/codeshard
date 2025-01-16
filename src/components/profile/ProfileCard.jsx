@@ -151,11 +151,11 @@ const ProfileCard = ({
     );
     if (isConfirmed) {
       setIsDeleted(true);
-      const {error, success} = await  deleteShard(id);
-           if(!success) {
-             console.log("response error: ", error);
-            setIsDeleted(false);
-           }
+      const { error, success } = await deleteShard(id);
+      if (!success) {
+        console.log("response error: ", error);
+        setIsDeleted(false);
+      }
     }
   };
 
@@ -168,13 +168,15 @@ const ProfileCard = ({
       }
       return "private";
     });
-    const {error, success} = await updateShardType(id, type === "private" ? "public" : "private");
-       
-       
-          if(!success) {
-            setType(initialType);
-            console.log("response error: ", error);
-          }
+    const { error, success } = await updateShardType(
+      id,
+      type === "private" ? "public" : "private",
+    );
+
+    if (!success) {
+      setType(initialType);
+      console.log("response error: ", error);
+    }
   };
 
   const handleLikes = async () => {

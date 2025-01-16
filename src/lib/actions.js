@@ -164,9 +164,6 @@ export const saveTemplateToDB = async (
       await tx.insert(dependencies).values(...dependencyContent);
     });
 
-    // updatedDoc.files = fileContent;
-    // updatedDoc.dependencies = dependencyContent;
-    // await updatedDoc.save();
     return { status: 200 };
   } catch (error) {
     console.log("Could not update template: ", id, error);
@@ -288,45 +285,45 @@ export const getCommentsOfShard = async (shardId) => {
 
 export const deleteShard = async (id) => {
   try {
-    
-   const x =  await db.delete(shards).where(eq(shards.id, id)).returning();
-   if(!x) throw new Error("could not delete shard");
+    const x = await db.delete(shards).where(eq(shards.id, id)).returning();
+    if (!x) throw new Error("could not delete shard");
 
-   return {
-    success: true,
-    error: null
-   }
-
+    return {
+      success: true,
+      error: null,
+    };
   } catch (error) {
     console.log("delete shard error: ", error);
     return {
       error: error,
-      success: false
-    }
+      success: false,
+    };
   }
-}
+};
 
 export const updateShardType = async (id, type) => {
   try {
-    
-   const x =  await db.update(shards).set({
-    type: type
-   }).where(eq(shards.id, id)).returning();
-   if(!x) throw new Error("could not update shard");
+    const x = await db
+      .update(shards)
+      .set({
+        type: type,
+      })
+      .where(eq(shards.id, id))
+      .returning();
+    if (!x) throw new Error("could not update shard");
 
-   return {
-    success: true,
-    error: null
-   }
-
+    return {
+      success: true,
+      error: null,
+    };
   } catch (error) {
     console.log("update shard error: ", error);
     return {
       error: error,
-      success: false
-    }
+      success: false,
+    };
   }
-}
+};
 // export const getRecentActivityofFollowing = async (following) => {
 //   try {
 //     const currentDate = new Date();

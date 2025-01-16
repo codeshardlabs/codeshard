@@ -143,10 +143,7 @@ export default function CollaborativeSandpackEditor({
             addNewDependency={addNewDependency}
             addNewDevDependency={addNewDevDependency}
           />
-          <CollaborativeMonacoEditor
-            roomId={id}
-            theme={theme}
-          />
+          <CollaborativeMonacoEditor roomId={id} theme={theme} />
           <SandpackPreview
             showOpenInCodeSandbox={false}
             showOpenNewtab={true}

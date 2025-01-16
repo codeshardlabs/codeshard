@@ -7,7 +7,7 @@ import { db } from "@/src/lib/database";
 import { shards } from "@/src/db/schema/shards";
 
 export default async function CollaborativeRoomPage({ params, searchParams }) {
-  const {userId} = await auth();
+  const { userId } = await auth();
   const user = await currentUser();
   const roomId = params["roomId"];
   console.log("Room id: ", roomId);
@@ -29,28 +29,31 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
     }
 
     await db.transaction(async (tx) => {
-      shardDetails = await tx.insert(shards).values({
-        type: "private",
-        mode: "collaboration",
-        templateType: template,
-        userId: userId,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }).returning();
-      files = await tx.insert(files).values(
-        formatFilesLikeInDb(SANDBOX_TEMPLATES[template].files, shardId)
-      ).returning()
-    })
-  
+      shardDetails = await tx
+        .insert(shards)
+        .values({
+          type: "private",
+          mode: "collaboration",
+          templateType: template,
+          userId: userId,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .returning();
+      files = await tx
+        .insert(files)
+        .values(formatFilesLikeInDb(SANDBOX_TEMPLATES[template].files, shardId))
+        .returning();
+    });
 
     if (!shardDetails || !files) {
       console.log("could not create shard");
       redirect("/your-work");
     }
 
-  console.log("shard details: ", shardDetails);
-  console.log("files: ", files);
-  shardDetails.files = files;
+    console.log("shard details: ", shardDetails);
+    console.log("files: ", files);
+    shardDetails.files = files;
   }
 
   if (roomId !== "new-room") {
@@ -75,7 +78,7 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
 
   console.log("Shard details: ", shardDetails);
 
-  const { userId : creator, isTemplate, id } = shardDetails;
+  const { userId: creator, isTemplate, id } = shardDetails;
 
   if (session) {
     if (roomId === "new-room" && userId !== creator) {
@@ -91,7 +94,6 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
         template={isTemplate ? shardDetails.templateType : "react"}
         id={id.toString() ?? ""}
         isNewShard={roomId === "new-room"}
-      
       />
     </>
   );

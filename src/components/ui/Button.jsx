@@ -12,8 +12,7 @@ const Button = ({ children, className, onClick, type = "primary" }) => {
           "text-sm px-2 py-2 rounded-md   flex items-center justify-center gap-2",
           type === "primary" &&
             "bg-white text-black hover:bg-slate-300 border border-transparent",
-          type === "outline" &&
-            "border text-white  hover:bg-gray-900",
+          type === "outline" && "border text-white  hover:bg-gray-900",
           className,
         ),
       )}

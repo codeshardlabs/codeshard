@@ -93,7 +93,7 @@ export function formatFilesLikeInDb(files, shardId) {
     finalFiles.push({
       code: code,
       name: key,
-      shardId: shardId
+      shardId: shardId,
     });
   }
   return finalFiles;

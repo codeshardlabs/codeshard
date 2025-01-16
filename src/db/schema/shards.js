@@ -34,7 +34,9 @@ export const typeEnum = pgEnum("type", ["public", "private", "forked"]);
 export const shards = pgTable("shards", {
   id: serial("id").primaryKey(),
   title: text("title").default("Untitled"),
-  userId: text("user_id").references(() => users.id, {onDelete: "cascade"}).notNull(),
+  userId: text("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
   templateType: templateTypeEnum().default("react"),
   mode: modeEnum().default("normal"),
   type: typeEnum().default("public"),
@@ -42,9 +44,13 @@ export const shards = pgTable("shards", {
   ...timestamps,
 });
 
-export const shardsRelations = relations(shards, ({ many }) => ({
+export const shardsRelations = relations(shards, ({ many, one }) => ({
   comments: many(comments),
   files: many(files),
   dependencies: many(dependencies),
   likes: many(likes),
+  user: one(users, {
+    fields: [shards.userId],
+    references: [users.id],
+  }),
 }));

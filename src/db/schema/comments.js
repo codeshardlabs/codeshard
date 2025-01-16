@@ -9,8 +9,12 @@ export const comments = pgTable(
   {
     id: serial("id").primaryKey(),
     message: text("message").notNull(),
-    userId: text("user_id").references(() => users.id, {onDelete: "cascade"}).notNull(),
-    shardId: serial("shard_id").references(() => shards.id, {onDelete: "cascade"}).notNull(),
+    userId: text("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    shardId: serial("shard_id")
+      .references(() => shards.id, { onDelete: "cascade" })
+      .notNull(),
     ...timestamps,
   },
   (table) => [index("comm_shard_id_index").on(table.shardId)],
@@ -26,8 +30,12 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
 
 export const replies = pgTable("replies", {
   id: serial("id").primaryKey(),
-  repliedBy: serial("comment_id").references(() => comments.id, {onDelete: 'cascade'}),
-  repliedTo: serial("parent_id").references(() => comments.id, {onDelete: "cascade"}),
+  repliedBy: serial("comment_id").references(() => comments.id, {
+    onDelete: "cascade",
+  }),
+  repliedTo: serial("parent_id").references(() => comments.id, {
+    onDelete: "cascade",
+  }),
 });
 
 export const repliesRelations = relations(replies, ({ one }) => ({
