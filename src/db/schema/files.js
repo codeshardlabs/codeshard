@@ -1,6 +1,7 @@
 import { boolean, index, pgTable, serial, text } from "drizzle-orm/pg-core";
 import { shards } from "./shards";
 import { timestamps } from "../utils/timestamp";
+import { relations } from "drizzle-orm";
 
 export const files = pgTable(
   "files",
@@ -17,3 +18,10 @@ export const files = pgTable(
   },
   (table) => [index("file_shard_id_index").on(table.shardId)],
 );
+
+export const filesRelations = relations(files, ({ one }) => ({
+  shard: one(shards, {
+    fields: [files.shardId],
+    references: [shards.id],
+  }),
+}));
