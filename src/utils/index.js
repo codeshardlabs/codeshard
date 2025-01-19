@@ -22,8 +22,8 @@ export const templates = [
 ];
 
 export const makeFilesAndDependenciesUIStateLike = (
-  fileContent,
-  dependencyContent,
+  fileContent = [],
+  dependencyContent = [],
 ) => {
   const nonDevDependenices = {};
   const devDependencies = {};
