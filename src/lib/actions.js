@@ -132,18 +132,20 @@ export const saveTemplateToDB = async (
   dependenciesList,
   devDependenciesList,
 ) => {
-  const fileContent = Object.entries(filesList).map(([fileName, fileConfig]) => {
-    return {
-      name: fileName,
-      shardId: id, 
-      ...fileConfig,
-    };
-  });
+  const fileContent = Object.entries(filesList).map(
+    ([fileName, fileConfig]) => {
+      return {
+        name: fileName,
+        shardId: id,
+        ...fileConfig,
+      };
+    },
+  );
 
   const nonDevDepContent = Object.entries(dependenciesList).map(
     ([depName, version]) => {
       return {
-        shardId: id, 
+        shardId: id,
         name: depName,
         version,
         isDevDependency: false,
@@ -153,7 +155,7 @@ export const saveTemplateToDB = async (
   const devDepContent = Object.entries(devDependenciesList).map(
     ([depName, version]) => {
       return {
-        shardId: id, 
+        shardId: id,
         name: depName,
         version,
         isDevDependency: true,
@@ -162,11 +164,12 @@ export const saveTemplateToDB = async (
   );
 
   const dependencyContent = [...nonDevDepContent, ...devDepContent];
-  
+
   try {
     await db.transaction(async (tx) => {
-      if(fileContent.length > 0) await tx.insert(files).values(fileContent);
-     if(dependencyContent.length > 0) await tx.insert(dependencies).values(dependencyContent);
+      if (fileContent.length > 0) await tx.insert(files).values(fileContent).onConflictDoUpdate({target: files.id, set : fileContent });
+      if (dependencyContent.length > 0)
+        await tx.insert(dependencies).values(dependencyContent);
     });
 
     return { status: 200 };
@@ -186,9 +189,6 @@ export const saveShardName = async (id, shardName) => {
       .where({
         id: id,
       });
-    // const existingShard = await Shard.findById({ _id: id });
-    // existingShard.title = shardName;
-    // await existingShard.save();
   } catch (error) {
     console.log("Could not save shards...", error);
   }
@@ -196,22 +196,12 @@ export const saveShardName = async (id, shardName) => {
 
 export const updateLikes = async (shardId, userId, likeStatus) => {
   try {
-    // const existingShard = await Shard.findById({ _id: id });
-    // const user = await User.findOne({ email: email });
-
     if (likeStatus === "liked") {
       await db.insert(likes).values({
         shardId: shardId,
         likedBy: userId,
       });
-      // existingShard.likes++;
-      // existingShard.likedBy?.push(user._id);
-
-      // await existingShard.save();
     } else if (likeStatus === "unliked") {
-      // existingShard.liked--;
-      // existingShard.likedBy?.pop(user._id);
-      // await existingShard.save();
       await db.delete(likes).where(eq(likes.shardId, shardId));
     }
   } catch (error) {
@@ -226,13 +216,6 @@ export const addCommentToShard = async (
   parent = null,
 ) => {
   try {
-    // const commentDoc = await Comment.create({
-    //   user: user,
-    //   message: msg,
-    //   parentId: parent,
-    //   shardId: shardId,
-    // });
-
     const comment = await db
       .insert(comments)
       .values({
@@ -248,21 +231,6 @@ export const addCommentToShard = async (
         repliedBy: comment[0].id,
       });
     }
-
-    // commentDoc.threadId = shardId;
-    // await Shard.findOneAndUpdate(
-    //   {
-    //     _id: shardId,
-    //   },
-    //   {
-    //     $set: {
-    //       commentThread: shardId,
-    //     },
-    //   },
-    // );
-    // }
-
-    // const commentObj = await Comment.findById(commentDoc._id).lean();
     return comment[0];
   } catch (error) {
     console.log("Could not add comment...", error);

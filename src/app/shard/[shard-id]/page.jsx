@@ -36,7 +36,7 @@ export default async function NewShardPage({ params }) {
 
   const { templateType, userId: creator, id } = shardDetails;
 
-  if (user.username !== creator) {
+  if (userId !== creator) {
     console.log("shard is private or collaborative");
     redirect("/");
   }

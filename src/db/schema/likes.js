@@ -19,9 +19,9 @@ export const likes = pgTable(
   (table) => [index("like_shard_id_index").on(table.shardId)],
 );
 
-const likesRelations = relations(likes, ({ one }) => ({
-  user: one(users, {
-    fields: [likes.likedBy],
-    references: [users.id],
+export const likesRelations = relations(likes, ({ one }) => ({
+  shard: one(shards, {
+    fields: [likes.shardId],
+    references: [shards.id],
   }),
 }));

@@ -39,7 +39,7 @@ export const makeFilesAndDependenciesUIStateLike = (
 
   fileContent.forEach(({ name, ...rest }) => {
     files[name] = {
-      ...rest,
+      ...rest
     };
   });
 

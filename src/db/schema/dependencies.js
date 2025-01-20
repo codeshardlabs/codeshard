@@ -18,7 +18,6 @@ export const dependencies = pgTable(
   (table) => [index("dep_shard_id_index").on(table.shardId)],
 );
 
-
 export const dependenciesRelations = relations(dependencies, ({ one }) => ({
   shard: one(shards, {
     fields: [dependencies.shardId],
