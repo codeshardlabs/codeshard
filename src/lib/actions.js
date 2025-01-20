@@ -10,6 +10,7 @@ import { and, eq, or } from "drizzle-orm";
 import { shards } from "@/src/db/schema/shards";
 import { comments, replies } from "@/src/db/schema/comments";
 import { dependencies } from "@/src/db/schema/dependencies";
+import { files } from "../db/schema/files";
 
 export const handleRouteShift = () => {
   revalidateTag("shards");
@@ -127,29 +128,32 @@ export const addDependency = async (
 
 export const saveTemplateToDB = async (
   id,
-  files,
-  dependencies,
-  devDependencies,
+  filesList,
+  dependenciesList,
+  devDependenciesList,
 ) => {
-  const fileContent = Object.entries(files).map(([fileName, fileConfig]) => {
+  const fileContent = Object.entries(filesList).map(([fileName, fileConfig]) => {
     return {
       name: fileName,
+      shardId: id, 
       ...fileConfig,
     };
   });
 
-  const nonDevDepContent = Object.entries(dependencies).map(
+  const nonDevDepContent = Object.entries(dependenciesList).map(
     ([depName, version]) => {
       return {
+        shardId: id, 
         name: depName,
         version,
         isDevDependency: false,
       };
     },
   );
-  const devDepContent = Object.entries(devDependencies).map(
+  const devDepContent = Object.entries(devDependenciesList).map(
     ([depName, version]) => {
       return {
+        shardId: id, 
         name: depName,
         version,
         isDevDependency: true,
@@ -158,10 +162,11 @@ export const saveTemplateToDB = async (
   );
 
   const dependencyContent = [...nonDevDepContent, ...devDepContent];
+  
   try {
     await db.transaction(async (tx) => {
-      await tx.insert(files).values(...fileContent);
-      await tx.insert(dependencies).values(...dependencyContent);
+      if(fileContent.length > 0) await tx.insert(files).values(fileContent);
+     if(dependencyContent.length > 0) await tx.insert(dependencies).values(dependencyContent);
     });
 
     return { status: 200 };

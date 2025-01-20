@@ -12,6 +12,10 @@ const fetchShards = async (userId) => {
   try {
     const shards = await db.query.shards.findMany({
       where: (shards) => eq(shards.userId, userId),
+      with: {
+        files: true,
+        dependencies: true
+      }
     });
 
     console.log("shards: ", shards);

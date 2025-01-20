@@ -9,7 +9,6 @@ export default async function NewShardPage({ params }) {
   const user = await currentUser();
   const shardId = params["shard-id"];
   console.log("Shard id: ", shardId);
-  connectToDB();
 
   if (!userId) {
     console.log("user not present");

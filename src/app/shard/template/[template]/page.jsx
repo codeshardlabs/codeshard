@@ -43,7 +43,10 @@ const page = async ({ params }) => {
     console.log(error);
   }
 
+  shardDetails["files"] = [];
+  shardDetails["dependencies"] = [];
   console.log("shard details: ", shardDetails);
+  
 
   return (
     <div>
