@@ -2,8 +2,6 @@ import { redirect } from "next/navigation";
 import { templates } from "@/src/utils";
 import SandpackEditor from "@/src/components/editor/SandpackEditor";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { db } from "@/src/lib/database";
-import { shards } from "@/src/db/schema/shards";
 
 const page = async ({ params }) => {
   const template = params.template;
@@ -25,15 +23,15 @@ const page = async ({ params }) => {
   let shardDetails = null;
 
   try {
-    let ans = await db
-      .insert(shards)
-      .values({
-        userId: userId,
-        templateType: template,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })
-      .returning();
+    // let ans = await db
+    //   .insert(shards)
+    //   .values({
+    //     userId: userId,
+    //     templateType: template,
+    //     createdAt: new Date(),
+    //     updatedAt: new Date(),
+    //   })
+    //   .returning();
     console.log("ans: ", ans);
     if (ans.length == 0) {
       redirect("/");

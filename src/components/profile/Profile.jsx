@@ -5,7 +5,7 @@ import ProfileIcon from "../ui/icons/Profile";
 import { handleFollowersOfUser } from "../../lib/actions";
 import { useOptimistic } from "react";
 import ProfileContainer from "./ProfileContainer";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 
 const Profile = ({
   shards,

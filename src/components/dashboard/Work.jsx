@@ -3,19 +3,17 @@ import { redirect } from "next/navigation";
 import { makeFilesAndDependenciesUIStateLike } from "@/src/utils";
 import { CommentContextProvider } from "@/src/context/CommentContext";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { db } from "@/src/lib/database";
-import { eq } from "drizzle-orm";
 
 const fetchShards = async (userId) => {
   try {
-    const shards = await db.query.shards.findMany({
-      where: (shards) => eq(shards.userId, userId),
-      with: {
-        files: true,
-        dependencies: true,
-        likes: true,
-      },
-    });
+    // const shards = await db.query.shards.findMany({
+    //   where: (shards) => eq(shards.userId, userId),
+    //   with: {
+    //     files: true,
+    //     dependencies: true,
+    //     likes: true,
+    //   },
+    // });
 
     console.log("shards: ", shards);
     return shards;

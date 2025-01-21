@@ -1,22 +1,20 @@
 import { redirect } from "next/navigation";
 import Profile from "../../components/profile/Profile";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { db } from "@/src/lib/database";
 import { Suspense } from "react";
 import NextTopLoader from "nextjs-toploader";
-import { eq } from "drizzle-orm";
 import { fetchClerkUser } from "@/src/lib/clerk";
 
 export const fetchUserDetails = async (userId) => {
   try {
-    const user = await db.query.users.findFirst({
-      where: (users) => eq(users.id, userId),
-      with: {
-        shards: true,
-        followers: true,
-        following: true,
-      },
-    });
+    // const user = await db.query.users.findFirst({
+    //   where: (users) => eq(users.id, userId),
+    //   with: {
+    //     shards: true,
+    //     followers: true,
+    //     following: true,
+    //   },
+    // });
     console.log("user: ", user);
 
     return user;

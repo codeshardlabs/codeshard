@@ -1,8 +1,6 @@
 import { redirect } from "next/navigation";
 import SandpackEditor from "@/src/components/editor/SandpackEditor";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { db } from "@/src/lib/database";
-import { and, eq } from "drizzle-orm";
 
 export default async function NewShardPage({ params }) {
   const { userId } = await auth();
@@ -16,18 +14,18 @@ export default async function NewShardPage({ params }) {
   }
 
   // let shardDetails = await Shard.findOne({ _id: shardId }).lean();
-  let shardDetails = await db.query.shards.findFirst({
-    where: (shards) =>
-      and(
-        eq(shards.id, shardId),
-        eq(shards.type, "public"),
-        eq(shards.mode, "normal"),
-      ),
-    with: {
-      files: true,
-      dependencies: true,
-    },
-  });
+  // let shardDetails = await db.query.shards.findFirst({
+  //   where: (shards) =>
+  //     and(
+  //       eq(shards.id, shardId),
+  //       eq(shards.type, "public"),
+  //       eq(shards.mode, "normal"),
+  //     ),
+  //   with: {
+  //     files: true,
+  //     dependencies: true,
+  //   },
+  // });
   if (!shardDetails) {
     console.log("shard id not valid");
     redirect("/");

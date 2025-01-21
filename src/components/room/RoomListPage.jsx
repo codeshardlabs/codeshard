@@ -2,14 +2,13 @@ import RoomsList from "@/src/components/room/RoomsList";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { db } from "@/src/lib/database";
-import { and, eq } from "drizzle-orm";
+import NextTopLoader from "nextjs-toploader";
 
 const fetchRooms = async (userId) => {
-  const collaborativeShards = await db.query.shards.findMany({
-    where: (shards) =>
-      and(eq(shards.mode, "collaboration"), eq(shards.userId, userId)),
-  });
+  // const collaborativeShards = await db.query.shards.findMany({
+  //   where: (shards) =>
+  //     and(eq(shards.mode, "collaboration"), eq(shards.userId, userId)),
+  // });
 
   return collaborativeShards;
 };
@@ -24,7 +23,7 @@ const RoomListPage = async () => {
   console.log("Rooms: ", rooms);
   return (
     <div>
-      <Suspense fallback={<p>Loading...</p>}>
+      <Suspense fallback={<NextTopLoader/>}>
         <RoomsList rooms={rooms} />
       </Suspense>
     </div>
