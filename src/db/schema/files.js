@@ -1,4 +1,4 @@
-import { boolean, index, pgTable, serial, text } from "drizzle-orm/pg-core";
+import { boolean, index, integer, pgTable, serial, text } from "drizzle-orm/pg-core";
 import { shards } from "./shards";
 import { timestamps } from "../utils/timestamp";
 import { relations } from "drizzle-orm";
@@ -9,6 +9,7 @@ export const files = pgTable(
     id: serial("id").primaryKey(),
     name: text("name"),
     code: text("code"),
+    hash: integer("hash").default(0),
     readOnly: boolean("read_only").default(false),
     hidden: boolean("hidden").default(false),
     shardId: serial("shard_id")

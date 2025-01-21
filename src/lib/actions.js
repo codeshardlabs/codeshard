@@ -83,31 +83,6 @@ export const handleFollowersOfUser = async (
           ),
         );
     }
-    // connectToDB();
-    // const mainUserDetails = await User.findOne({ name: mainUser });
-    // const guestUserDetails = await User.findOne({ name: guestUser });
-
-    // if (!mainUserDetails || !guestUserDetails) {
-    //   throw new Error("Main user or guest user not found");
-    // }
-
-    // let isValidActivity = false;
-
-    // if (!hasFollowed) {
-    //   mainUserDetails.followers.push(guestUser);
-    //   guestUserDetails.following.push(mainUser);
-
-    //   isValidActivity = true;
-    // }
-
-    // if (hasFollowed) {
-    //   if (mainUserDetails.followers.length > 0)
-    //     mainUserDetails.followers.pull(guestUser);
-    //   if (guestUserDetails.following.length > 0)
-    //     guestUserDetails.following.pull(mainUser);
-    // }
-
-    // await Promise.all([mainUserDetails.save(), guestUserDetails.save()]);
   } catch (error) {
     console.log("Could not handle followers of user");
     console.log(error.message);
@@ -126,6 +101,7 @@ export const addDependency = async (
   });
 };
 
+// TODO: optimize the queries
 export const saveTemplateToDB = async (
   id,
   filesList,
@@ -167,7 +143,11 @@ export const saveTemplateToDB = async (
 
   try {
     await db.transaction(async (tx) => {
-      if (fileContent.length > 0) await tx.insert(files).values(fileContent).onConflictDoUpdate({target: files.id, set : fileContent });
+      if (fileContent.length > 0)
+        await tx
+          .insert(files)
+          .values(fileContent)
+          .onConflictDoUpdate({ target: files.id, set: fileContent });
       if (dependencyContent.length > 0)
         await tx.insert(dependencies).values(dependencyContent);
     });

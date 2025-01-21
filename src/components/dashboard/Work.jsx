@@ -50,7 +50,6 @@ async function Work() {
       (temp) => temp.shardId === shard.id && temp.likedBy === userId,
     );
     let likeStatus = ind === -1 ? "unliked" : "liked";
-    
 
     return (
       <CommentContextProvider key={shard.id}>
@@ -75,9 +74,7 @@ async function Work() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-      {
-        shardsCollection
-      }
+      {shardsCollection}
     </div>
   );
 }
