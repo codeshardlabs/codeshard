@@ -8,7 +8,6 @@ import { useAuth, useUser } from "@clerk/nextjs";
 const Main = () => {
   const router = useRouter();
   const { userId } = useAuth();
-  const { isSignedIn } = useUser();
 
   return (
     <>
