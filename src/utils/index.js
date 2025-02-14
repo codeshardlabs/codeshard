@@ -85,20 +85,6 @@ export const findParentComment = (comments, parentId) => {
   return null;
 };
 
-export function formatFilesLikeInDb(files, shardId) {
-  const keys = Object.keys(files);
-  const finalFiles = [];
-  for (let key of keys) {
-    let code = files[key].code;
-    finalFiles.push({
-      code: code,
-      name: key,
-      shardId: shardId,
-    });
-  }
-  return finalFiles;
-}
-
 export function getIncrementalHash(content) {
   let hash = 0;
   for (let i = 0; i < content.length; i++) {
