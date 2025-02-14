@@ -7,18 +7,14 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
   const { userId } = await auth();
   const user = await currentUser();
   const roomId = params["roomId"];
-  console.log("Room id: ", roomId);
   const template = searchParams["template"];
   console.log("Template: ", template);
-  connectToDB();
   let shardDetails = null;
   let files = null;
-
   if (!userId || !roomId) {
     console.log("session not present");
     redirect("/");
   }
-
   if (roomId === "new-room") {
     if (!template || !templates.includes(template)) {
       console.log("Template not valid");
