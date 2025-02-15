@@ -1,9 +1,42 @@
 import { HttpMethod } from "../utils/enums";
-import { jsonify, protectedRouteHeaders } from "./utils";
 
 const apiOrigin = process.env.NEXT_PUBLIC_BACKEND_URL;
 const apiVersion = "v1";
 let backendEndpoint = `${apiOrigin}/api/${apiVersion}`;
+/************************************UTILITY FUNCTIONS***********************************/
+ function jsonify(content) {
+    return JSON.stringify(content);
+  }
+
+  export function protectedRouteHeaders(userId, hasJsonBody= false) {
+    let headers = {
+      "Authorization": `Bearer ${userId}`
+    }
+  
+    if(hasJsonBody) {
+      headers["Content-Type"] = "application/json"
+    }
+  
+    return headers;
+  }
+  
+  export function throwFailureCb(out,metadata) {
+    let errorMessage = metadata.src + " response does not contain valid output: " + out;
+    if(userDetails.error) errorMessage = userDetails.error.message;
+    throw new Error(errorMessage);
+  }
+
+  export function logFailureCb(out, metadata) {
+    if (out.error) console.log("error message: ", out.error.message)
+        console.log("unexpected error happened while invoking" + `${metadata.src}: ` + out)
+  }
+
+  export function handleFailureCase(out, successDataFields, metadata, failureCb) {
+    if (!out || typeof out !== "object" || out.error || !out.data || !successDataFields.every((field) => field in out.data)) {
+        failureCb(out, metadata);
+      }
+  }
+  
 
 /**************************************USER ROUTES ******************************/
 
@@ -234,6 +267,23 @@ export async function fetchLatestRoomFilesState(userId, shardId) {
 
     } catch (error) {
         console.log("error occured in fetchAllRooms", error)
+        return null;
+    }
+}
+
+export async function createNewRoom(userId, content) {
+    try {
+        const res = await fetch(`${backendEndpoint}/rooms`,{
+            method: HttpMethod.Post,
+            body: jsonify({
+                templateType: content.templateType
+            }),
+            headers: protectedRouteHeaders(userId, true)
+        });
+        return res.json();
+
+    } catch (error) {
+        console.log("error occured in getComments", error)
         return null;
     }
 }

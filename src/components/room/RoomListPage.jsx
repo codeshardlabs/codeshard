@@ -3,14 +3,23 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import NextTopLoader from "nextjs-toploader";
+import { fetchAllRooms } from "@/src/lib/actions";
 
 const fetchRooms = async (userId) => {
-  // const collaborativeShards = await db.query.shards.findMany({
-  //   where: (shards) =>
-  //     and(eq(shards.mode, "collaboration"), eq(shards.userId, userId)),
-  // });
-
-  return collaborativeShards;
+  try {
+    const out = await fetchAllRooms(userId, 10, 0);
+    if(!out || typeof out !== "object" || out.error || !out.data || !("rooms" in out.data)) {
+      let errorMsg = "result data not valid";
+      if(out.error) errorMsg = out.error.message;
+      throw new Error(errorMsg)
+    }
+  
+    return out.data.rooms;
+    
+  } catch (error) {
+    console.log("could not fetchRooms()", error)
+    return null;
+  }
 };
 const RoomListPage = async () => {
   const { userId } = await auth();

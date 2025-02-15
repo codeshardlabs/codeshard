@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import SandpackEditor from "@/src/components/editor/SandpackEditor";
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { fetchShardById, handleFailureCase } from "@/src/lib/actions";
 
 export default async function NewShardPage({ params }) {
   const { userId } = await auth();
@@ -13,7 +14,8 @@ export default async function NewShardPage({ params }) {
     redirect("/");
   }
 
-  // let shardDetails = await Shard.findOne({ _id: shardId }).lean();
+ const out =  await fetchShardById(userId, shardId);
+ handleFailureCase()
   // let shardDetails = await db.query.shards.findFirst({
   //   where: (shards) =>
   //     and(

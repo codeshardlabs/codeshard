@@ -4,20 +4,16 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { Suspense } from "react";
 import NextTopLoader from "nextjs-toploader";
 import { fetchClerkUser } from "@/src/lib/clerk";
+import { getUserInfo, handleFailureCase, throwFailureCb } from "@/src/lib/actions";
 
 export const fetchUserDetails = async (userId) => {
   try {
-    // const user = await db.query.users.findFirst({
-    //   where: (users) => eq(users.id, userId),
-    //   with: {
-    //     shards: true,
-    //     followers: true,
-    //     following: true,
-    //   },
-    // });
-    console.log("user: ", user);
-
-    return user;
+    const userDetails = await getUserInfo(userId);
+    // consider all the failing cases first
+    handleFailureCase(userDetails, ["user"], {
+      src: "fetchUserDetails()"
+    }, throwFailureCb);
+    return userDetails.data.user;
   } catch (error) {
     console.log("could not fetch user details", error);
     return null;
