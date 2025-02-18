@@ -1,4 +1,6 @@
+"use server";
 import { HttpMethod } from "../utils/enums";
+import { redirect } from "next/navigation";
 
 const apiOrigin = process.env.NEXT_PUBLIC_BACKEND_URL;
 const apiVersion = "v1";
@@ -28,7 +30,8 @@ let backendEndpoint = `${apiOrigin}/api/${apiVersion}`;
 
   export function logFailureCb(out, metadata) {
     if (out.error) console.log("error message: ", out.error.message)
-        console.log("unexpected error happened while invoking" + `${metadata.src}: ` + out)
+        console.log("unexpected error happened while invoking" + `${metadata.src}: ` + out);
+    redirect(metadata.redirectUri)
   }
 
   export function handleFailureCase(out, successDataFields, metadata, failureCb) {
@@ -76,6 +79,44 @@ export async function saveUserMetadata(userId) {
 }
 
 /************************************SHARD ROUTES *******************************/
+
+export async function createShard(userId, content) {
+    try {
+        const res = await fetch(`${backendEndpoint}/shards`,{
+            method: HttpMethod.Post,
+            body: jsonify({
+                templateType: content.templateType,
+                mode: content.mode,
+                type: content.type
+            }),
+            headers: protectedRouteHeaders(userId, true)
+        });
+        return res.json();
+
+    } catch (error) {
+        console.log("error occured in getComments", error)
+        return null;
+    }
+}
+
+export async function fetchShards(userId) {
+    //protected route
+    let url = new URL(`${backendEndpoint}/shards`);
+    url.searchParams.append("limit", limit);
+    url.searchParams.append("offset", offset);
+    try {
+        const res = await fetch(url.toString(), {
+            method: HttpMethod.Get,
+            headers: protectedRouteHeaders(userId)
+        });
+        return res.json();
+
+    } catch (error) {
+        console.log("error occured in fetchShards", error)
+        return null;
+    }
+}
+
 export async function saveShard(userId, shardId, content) {
     // protected route
     let url = `${backendEndpoint}/shards/${shardId}`;
@@ -219,6 +260,7 @@ export async function dislikeShard(userId,shardId) {
 
 
 /**************************COMMENT ROUTE************************/
+
 export async function deleteComment(userId, commentId, content) {
     try {
         const res = await fetch(`${backendEndpoint}/comments/${commentId}`, {
@@ -287,3 +329,4 @@ export async function createNewRoom(userId, content) {
         return null;
     }
 }
+

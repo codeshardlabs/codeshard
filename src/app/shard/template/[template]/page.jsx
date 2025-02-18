@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { templates } from "@/src/utils";
 import SandpackEditor from "@/src/components/editor/SandpackEditor";
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { create, createShard, handleFailureCase, logFailureCb } from "@/src/lib/actions";
 
 const page = async ({ params }) => {
   const template = params.template;
@@ -20,30 +21,16 @@ const page = async ({ params }) => {
   }
 
   console.log("Session user: ", user.username);
-  let shardDetails = null;
+  const out =   await createShard(userId, {
+      templateType: template,
+      mode: "normal",
+      type: "public"
+    })
 
-  try {
-    // let ans = await db
-    //   .insert(shards)
-    //   .values({
-    //     userId: userId,
-    //     templateType: template,
-    //     createdAt: new Date(),
-    //     updatedAt: new Date(),
-    //   })
-    //   .returning();
-    console.log("ans: ", ans);
-    if (ans.length == 0) {
-      redirect("/");
-    }
-    shardDetails = ans[0];
-  } catch (error) {
-    console.log(error);
-  }
-
+  handleFailureCase(out, ["shard"], {src: "createShard()", redirectUri: "/"}, logFailureCb);
+  let shardDetails = out.data.shard;
   shardDetails["files"] = [];
   shardDetails["dependencies"] = [];
-  console.log("shard details: ", shardDetails);
 
   return (
     <div>

@@ -3,20 +3,14 @@ import { redirect } from "next/navigation";
 import { makeFilesAndDependenciesUIStateLike } from "@/src/utils";
 import { CommentContextProvider } from "@/src/context/CommentContext";
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { fetchShards, handleFailureCase, throwFailureCb } from "@/src/lib/actions";
 
-const fetchShards = async (userId) => {
+const fetchShardsByUserId = async (userId) => {
   try {
-    // const shards = await db.query.shards.findMany({
-    //   where: (shards) => eq(shards.userId, userId),
-    //   with: {
-    //     files: true,
-    //     dependencies: true,
-    //     likes: true,
-    //   },
-    // });
 
-    console.log("shards: ", shards);
-    return shards;
+    const out = await fetchShards(userId);
+    handleFailureCase(out, ["shards"], {src: "fetchShards()"}, throwFailureCb);
+    return out.data.shards;
   } catch (error) {
     console.log("error in fetching shards: ", error);
     return null;
@@ -31,9 +25,8 @@ async function Work() {
     redirect("/signin");
   }
 
-  const shards = await fetchShards(userId);
+  const shards = await fetchShardsByUserId(userId);
   if (!shards) {
-    console.log("hello");
     redirect("/");
   }
   console.log("Shards: ", shards);

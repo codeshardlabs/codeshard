@@ -3,16 +3,14 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import NextTopLoader from "nextjs-toploader";
-import { fetchAllRooms } from "@/src/lib/actions";
+import { fetchAllRooms, handleFailureCase, throwFailureCb } from "@/src/lib/actions";
 
 const fetchRooms = async (userId) => {
   try {
     const out = await fetchAllRooms(userId, 10, 0);
-    if(!out || typeof out !== "object" || out.error || !out.data || !("rooms" in out.data)) {
-      let errorMsg = "result data not valid";
-      if(out.error) errorMsg = out.error.message;
-      throw new Error(errorMsg)
-    }
+    handleFailureCase(out, ["rooms"], {
+      src: "fetchRooms()"
+    }, throwFailureCb);
   
     return out.data.rooms;
     
