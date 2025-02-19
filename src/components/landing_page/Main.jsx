@@ -3,15 +3,19 @@ import { useRouter } from "next/navigation";
 import Footer from "../landing_page/Footer";
 import { FeaturesSectionDemo } from "./FeatureSection";
 import { HeroScrollDemo } from "./HeroScroll";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
+import PgModal from "../common/PgModal";
 
 const Main = () => {
   const router = useRouter();
   const { userId } = useAuth();
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   return (
     <>
-      {/* Main Container */}
+     {
+      isPopoverOpen && <PgModal isPopoverOpen={true} />
+     }
       <div className="w-full dark:bg-black/90 bg-black dark:bg-grid-black/[0.2] bg-grid-white/[0.2] relative flex items-center justify-center">
         {/* Radial gradient for the container to give a faded look */}
         <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-white bg-black [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
@@ -27,11 +31,9 @@ const Main = () => {
           </p>
 
           <button
-            onClick={() => {
+            onClick={async () => {
               if (userId) {
-                const id = ObjectID();
-                router.push(`/shard/${id.toHexString()}`);
-                return;
+                 setIsPopoverOpen(true);
               }
               router.push("/sign-up");
             }}
