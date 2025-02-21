@@ -1,4 +1,4 @@
-import Terms from "@/src/components/landing_page/Terms";
+import Terms from "@/src/components/landing_page/terms";
 
 const TermsPage = () => {
   return (
