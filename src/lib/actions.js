@@ -2,6 +2,7 @@
 import { HttpMethod } from "../utils/enums";
 import { redirect } from "next/navigation";
 import { protectedRouteHeaders, jsonify } from "./utils";
+import { auth } from "@clerk/nextjs/server";
 const apiOrigin = process.env.NEXT_PUBLIC_BACKEND_URL;
 const apiVersion = "v1";
 let backendEndpoint = `${apiOrigin}/api/${apiVersion}`;
@@ -375,5 +376,93 @@ export async function createNewRoom(userId, content) {
         console.log("error occured in getComments", error)
         return null;
     }
+}
+
+/************************************ASSIGNMENT ROUTES *******************************/
+
+export async function createAssignment(formData) {
+  const { userId } = await auth();
+  
+  try {
+    const response = await fetch(`${backendEndpoint}/assignments`, {
+      method: HttpMethod.Post,
+      headers: protectedRouteHeaders(userId, true),
+      body: jsonify({
+        ...formData,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || "Failed to create assignment");
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error creating assignment:", error);
+    throw error;
+  }
+}
+
+export async function getAssignments() {
+  try {
+    const response = await fetch(`${backendEndpoint}/assignments`, {
+      method: HttpMethod.Get,
+    });
+    if (!response.ok) throw new Error("Failed to fetch assignments");
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching assignments:", error);
+    throw error;
+  }
+}
+
+export async function submitProject(assignmentId, submissionData) {
+  const { userId } = await auth();
+  
+  try {
+    const response = await fetch(
+      `${backendEndpoint}/assignments/${assignmentId}/submit`,
+      {
+        method: HttpMethod.Post,
+        headers: protectedRouteHeaders(userId, true),
+        body: jsonify(submissionData),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || "Failed to submit project");
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error submitting project:", error);
+    throw error;
+  }
+}
+
+export async function getSubmissions(assignmentId) {
+  const { userId } = await auth();
+  
+  try {
+    const response = await fetch(
+      `${backendEndpoint}/assignments/${assignmentId}/submissions`,
+      {
+        method: HttpMethod.Get,
+        headers: protectedRouteHeaders(userId),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || "Failed to fetch submissions");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching submissions:", error);
+    throw error;
+  }
 }
 

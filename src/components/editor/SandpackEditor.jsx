@@ -35,6 +35,7 @@ export default function SandpackEditor({
   shardDetails: initialShardDetails,
   template = "react",
   room = false,
+  readOnly = false,
 }) {
   const [shardDetails, setShardDetails] = useState(null);
   const [domLoaded, setDomLoaded] = useState(false);
@@ -127,7 +128,8 @@ export default function SandpackEditor({
         }}
       >
         <SandpackLayout>
-          <SandpackSidebar
+          {
+            !readOnly && <SandpackSidebar
             id={id}
             theme={theme}
             setTheme={setTheme}
@@ -138,7 +140,9 @@ export default function SandpackEditor({
             addNewDependency={addNewDependency}
             addNewDevDependency={addNewDevDependency}
           />
-          <MonacoEditor theme={theme} />
+          }
+          
+          <MonacoEditor theme={theme} readOnly={readOnly} />
           <SandpackPreview
             showOpenInCodeSandbox={false}
             showOpenNewtab={true}

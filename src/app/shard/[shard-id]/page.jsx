@@ -20,9 +20,9 @@ export default async function NewShardPage({ params }) {
  handleFailureCase(out, ["shard"], {src: "fetchShardById()", redirectUri: "/"}, logFailureCb);
   let shardDetails = out.data.shard;
   console.log("Shard details: ", shardDetails);
-  const { templateType, userId: creator, id } = shardDetails;
+  const { templateType, userId: creator, id, type } = shardDetails;
 
-  if (userId !== creator) {
+  if (type === "private" && userId !== creator) {
     console.log("shard is private or collaborative");
     redirect("/");
   }
@@ -32,5 +32,6 @@ export default async function NewShardPage({ params }) {
         template={templateType}
         shard={true}
         id={id}
+        readOnly={userId !== creator}
       />
 }

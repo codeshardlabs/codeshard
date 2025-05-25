@@ -153,7 +153,7 @@ export default function Navbar() {
   let joinRoomModal = (
     <div
       ref={joinModal}
-      className="flex border border-white/20 w-[400px] flex-col gap-6 bg-black/95 p-8 z-20 rounded-lg absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 shadow-2xl backdrop-blur-sm"
+      className="flex border border-white/20 w-[400px] flex-col gap-6 bg-black/95 p-8 z-50 rounded-lg absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 shadow-2xl backdrop-blur-sm"
     >
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold">Join Room</h1>
