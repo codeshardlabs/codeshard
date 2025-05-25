@@ -5,6 +5,8 @@ import CopyLink from "../ui/icons/Link";
 import Delete from "../ui/icons/Delete";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
+import { deleteShardById } from "@/src/lib/actions";
+import { useUser } from "@clerk/nextjs";
 
 const RoomListCard = ({
   index,
@@ -16,6 +18,7 @@ const RoomListCard = ({
   onLinkCopy,
 }) => {
   const [isDeleted, setIsDeleted] = useState(false);
+  const { user } = useUser();
   const router = useRouter();
 
   const handleDelete = async (id) => {
@@ -25,12 +28,14 @@ const RoomListCard = ({
     if (isConfirmed) {
       setIsDeleted(true);
       setRooms((prev) => {
-        return prev.filter((room) => room?._id !== id);
+        return prev.filter((room) => room?.id !== id);
       });
-      const { error, success } = await deleteShard(id);
-      if (!success) {
+      const { error, data } = await deleteShardById(user.id,id);
+      if (error) {
         console.log("response error: ", error);
         setIsDeleted(false);
+      } else {
+        console.log("response data: ", data);
       }
     }
   };

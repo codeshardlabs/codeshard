@@ -61,7 +61,7 @@ export default function MonacoEditor({ theme, readOnly = false }) {
             : null;
 
   return (
-    <SandpackStack style={{ height: "100vh", margin: 0 }}>
+    <SandpackStack style={{ height: "92vh", margin: 0 }}>
       <FileTabs />
       {/* {provider ? <Cursors yProvider={provider} /> : null} */}
       <div style={{ flex: 1, background: "#1e1e1e" }}>

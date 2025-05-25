@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
-import Heart from "../ui/icons/Heart";
-import Comment from "../ui/icons/Comment";
+// import Heart from "../ui/icons/Heart";
+// import Comment from "../ui/icons/Comment";
 import Delete from "../ui/icons/Delete";
 import Lock from "../ui/icons/Lock";
 import Unlock from "../ui/icons/Unlock";
@@ -11,22 +11,22 @@ import HorizontalThreeDots from "../ui/icons/HorizontalThreeDots";
 import CustomSandpackPreview from "../editor/CustomSandpackPreview";
 import Pencil from "../ui/icons/Pencil";
 import {
-  deleteShard,
-  getCommentsOfShard,
-  saveShardName,
-  updateLikes,
-  updateShardType,
+  deleteShardById,
+  // dislikeShard,
+  // getComments,
+  // likeShard,
+  updateShard
 } from "@/src/lib/actions";
-import Button from "../ui/Button";
+// import Button from "../ui/Button";
 import { toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/src/components/ui/dialog";
-import CommentTextBox from "../comment/CommentTextbox";
-import { CommentsArea } from "../comment/CommentsArea";
-import { useActiveComment } from "@/src/context/CommentContext";
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogTrigger,
+// } from "@/src/components/ui/dialog";
+// import CommentTextBox from "../comment/CommentTextbox";
+// import { CommentsArea } from "../comment/CommentsArea";
+// import { useActiveComment } from "@/src/context/CommentContext";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
@@ -35,8 +35,8 @@ const WorkCard = ({
   title,
   id,
   type: initialType,
-  likes: initialLikes,
-  likeStatus: initialLikeStatus,
+  // likes: initialLikes,
+  // likeStatus: initialLikeStatus,
 }) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [content, setContent] = useState(initialContent);
@@ -44,41 +44,13 @@ const WorkCard = ({
   const [type, setType] = useState(initialType);
   const [pencilClicked, setPencilClick] = useState(false);
   const [shardName, setShardName] = useState(title);
-  const [likes, setLikes] = useState(initialLikes);
-  const [likeStatus, setLikeStatus] = useState(initialLikeStatus);
-  const { comments, setComments, setShardId, parentComment, setParentComment } =
-    useActiveComment();
+  // const [likes, setLikes] = useState(initialLikes);
+  // const [likeStatus, setLikeStatus] = useState(initialLikeStatus);
+  // const { comments, setComments, setShardId, parentComment, setParentComment } =
+    // useActiveComment();
   const { isSignedIn, userId } = useAuth();
   const modal = useRef();
   const router = useRouter();
-
-  if (!isSignedIn) {
-    toast.error("not signed in");
-    return null;
-  }
-
-  useEffect(() => {
-    if (id) {
-      getCommentsOfShard(id)
-        .then((result) => {
-          console.log("Comments: ", result);
-          setComments(JSON.parse(result));
-        })
-        .catch((error) => {
-          console.log("Comment fetching error: ", error);
-        });
-
-      setShardId(id);
-    }
-  }, [id]);
-
-  console.log("Comments: ", comments);
-
-  useEffect(() => {
-    if (parentComment) {
-      setParentComment(null);
-    }
-  }, [parentComment]);
 
   useEffect(() => {
     setType(type);
@@ -93,8 +65,12 @@ const WorkCard = ({
       if (e.key === "Enter") {
         setPencilClick(false);
         if (shardName !== "") {
-          saveShardName(id, shardName)
-            .then(() => console.log("success"))
+          updateShard(userId, id, {
+            title: shardName
+          })
+            .then((res) => {
+              console.log("response: ", res);
+            })
             .catch((err) => {
               console.log("could not save shard name");
               setShardName(title);
@@ -128,6 +104,11 @@ const WorkCard = ({
     };
   }, [isPopoverOpen]);
 
+  if (!isSignedIn) {
+    toast.error("not signed in");
+    return null;
+  }
+
   const handleClick = () => {
     router.replace(`/shard/${id}`);
   };
@@ -139,10 +120,14 @@ const WorkCard = ({
     );
     if (isConfirmed) {
       setIsDeleted(true);
-      const { error, success } = await deleteShard(id);
-      if (!success) {
+      const { error, data } = await deleteShardById(userId, id);
+      if (error) {
         console.log("response error: ", error);
+        toast.error("Could not delete shard");
         setIsDeleted(false);
+      } else {
+        console.log("response data: ", data);
+        setIsDeleted(true);
       }
     }
   };
@@ -157,33 +142,36 @@ const WorkCard = ({
       return "private";
     });
 
-    const { error, success } = await updateShardType(
+    const result = await updateShard(
+      userId,
       id,
-      type === "private" ? "public" : "private",
+      {
+        type: type
+      }
     );
 
-    if (!success) {
+    if (!result?.data) {
       setType(initialType);
-      console.log("response error: ", error);
+      console.log("response error: ", result?.error);
     }
   };
 
-  const handleLikes = async () => {
-    if (likeStatus === "liked") {
-      setLikes((prev) => {
-        return prev - 1;
-      });
-      setLikeStatus("unliked");
-      await updateLikes(id, likes, userId, "unliked");
-    } else if (likeStatus === "unliked") {
-      setLikes((prev) => {
-        return prev + 1;
-      });
+  // const handleLikes = async () => {
+  //   if (likeStatus === "liked") {
+  //     setLikes((prev) => {
+  //       return prev - 1;
+  //     });
+  //     setLikeStatus("unliked");
+  //     await dislikeShard(userId ?? "", id);
+  //   } else if (likeStatus === "unliked") {
+  //     setLikes((prev) => {
+  //       return prev + 1;
+  //     });
 
-      setLikeStatus("liked");
-      await updateLikes(id, likes, userId, "liked");
-    }
-  };
+  //     setLikeStatus("liked");
+  //     await likeShard(userId ?? "", id);
+  //   }
+  // };
 
   return (
     <div
@@ -200,10 +188,10 @@ const WorkCard = ({
           <FullScreen className="size-4 sm:size-5" />
         </span>
         <CustomSandpackPreview
-          template={content.templateType}
-          files={content.files}
-          dependencies={content.dependencies}
-          devDependencies={content.devDependencies}
+          template={content.templateType ?? "react"}
+          files={content.files ?? []}
+          dependencies={content.dependencies ?? []}
+          devDependencies={content.devDependencies ?? []}
           className="pointer-events-none bg-white h-[8rem] sm:h-[12rem] rounded-lg"
         />
       </div>
@@ -272,7 +260,7 @@ const WorkCard = ({
           />
         </div>
       </div>
-      <div className="flex gap-2 flex-wrap">
+      {/* <div className="flex gap-2 flex-wrap">
         <Button
           onClick={handleLikes}
           className="flex items-center bg-black hover:bg-red-500 text-white text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3"
@@ -296,7 +284,7 @@ const WorkCard = ({
             <CommentsArea comments={comments} isReplyArea={true} />
           </DialogContent>
         </Dialog>
-      </div>
+      </div> */}
     </div>
   );
 };

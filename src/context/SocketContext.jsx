@@ -29,27 +29,19 @@ const SocketProvider = ({ children }) => {
   const [latestData, setLatestData] = useState({});
   const [latestVisibleFiles, setLatestVisibleFiles] = useState([]);
   const { user, isSignedIn } = useUser();
-  if (!isSignedIn) {
-    toast.error("not signed in");
-    return null;
-  }
-  const username = isSignedIn ? user.username : "";
 
   const sendMessage = useCallback(
     ({ activeFile, data, roomId }) => {
-      console.log("Sending message: ", activeFile, data);
-
       if (!socket) {
         console.log("socket not found");
+        return;
       }
-      if (socket) {
-        console.log("socket is available");
-        socket.emit("event:message", {
-          activeFile: activeFile,
-          data: data,
-          roomId: roomId,
-        });
-      }
+      console.log("socket is available");
+      socket.emit("event:message", {
+        activeFile: activeFile,
+        data: data,
+        roomId: roomId,
+      });
     },
     [socket],
   );
@@ -58,27 +50,24 @@ const SocketProvider = ({ children }) => {
     ({ roomId }) => {
       if (!socket) {
         console.log("socket not found");
+        return;
       }
-      if (socket) {
-        console.log("socket is available");
-        console.log("event:join-room", roomId);
-        socket.emit("event:join-room", {
-          roomId: roomId,
-        });
-      }
+      console.log("socket is available");
+      console.log("event:join-room", roomId);
+      socket.emit("event:join-room", {
+        roomId: roomId,
+      });
     },
     [socket],
   );
 
   const sendVisibleFiles = useCallback(
     ({ visibleFiles }) => {
-      console.log("Visible files: ", visibleFiles);
-
       if (!socket) {
         console.log("socket not available in visible files");
         return;
       }
-
+      console.log("Visible files: ", visibleFiles);
       socket.emit("event:visible-files", {
         visibleFiles,
       });
@@ -130,21 +119,26 @@ const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     let _socket;
-    if (username) {
+    if (user) {
       _socket = io(process.env.NEXT_PUBLIC_BACKEND_URL, {
         auth: {
-          token: username,
+          token: user?.id ?? "",
         },
       });
       setSocket(_socket);
     } else {
-      toast.error("username not found");
+      toast.error("user not found");
     }
 
     return () => {
       _socket?.disconnect();
     };
-  }, [username]);
+  }, [user]);
+
+  if (!isSignedIn) {
+    toast.error("not signed in");
+    return null;
+  }
 
   return (
     <>

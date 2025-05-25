@@ -14,10 +14,10 @@ const ItemsList = () => {
   }
 
   const liItems = [
-    {
-      content: "View Profile",
-      target: `/${userId}`,
-    },
+    // {
+    //   content: "View Profile",
+    //   target: `/${userId}`,
+    // },
     {
       content: "Your Work",
       target: "/your-work",
@@ -36,13 +36,12 @@ const ItemsList = () => {
           <Link
             key={index}
             href={item.target}
-            className={clsx(
+            className={
+              clsx(
               "text-md px-2 p-1 rounded-sm cursor-pointer",
-              index % 2 == 0 &&
-                "text-black bg-slate-200 border border-transparent hover:text-white  hover:border-white hover:bg-transparent",
-              index % 2 != 0 &&
-                "hover:text-black hover:bg-slate-200 border hover:border-transparent text-white  border-white bg-transparent",
-            )}
+              "text-black bg-slate-200 border border-transparent hover:text-white  hover:border-white hover:bg-transparent"
+            )
+            }
           >
             {item.content}
           </Link>

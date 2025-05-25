@@ -12,6 +12,7 @@ import {
 import { FileTabs } from "@codesandbox/sandpack-react";
 import { snakeCase } from "./MonacoEditor";
 import { toast } from "sonner";
+import { debounce } from "@/src/lib/utils";
 
 const CollaborativeMonacoEditor = ({ theme, roomId }) => {
   const editorRef = useRef(null);
@@ -55,7 +56,7 @@ const CollaborativeMonacoEditor = ({ theme, roomId }) => {
     joinRoom({
       roomId: roomId,
     });
-  }, []);
+  }, [roomId, joinRoom]);
 
   useEffect(() => {
     setIsClient(true);
@@ -81,18 +82,18 @@ const CollaborativeMonacoEditor = ({ theme, roomId }) => {
 
   useEffect(() => {
     if (visibleFiles?.length > 0) {
-      if (
-        !window.localStorage.getItem("visibleFiles") ||
-        JSON.parse(window.localStorage.getItem("visibleFiles"))?.length !==
-          visibleFiles.length
-      )
+      const storedFiles = window.localStorage.getItem("visibleFiles");
+      const parsedStoredFiles = storedFiles ? JSON.parse(storedFiles) : [];
+      
+      if (JSON.stringify(parsedStoredFiles) !== JSON.stringify(visibleFiles)) {
         sendVisibleFiles({
           visibleFiles,
           roomId: roomId,
         });
-      window.localStorage.setItem("visibleFiles", JSON.stringify(visibleFiles));
+        window.localStorage.setItem("visibleFiles", JSON.stringify(visibleFiles));
+      }
     }
-  }, [visibleFiles]);
+  }, [visibleFiles, roomId, sendVisibleFiles]);
 
   useEffect(() => {
     if (!isClient || !editorRef.current || !roomId) {
@@ -142,8 +143,8 @@ const CollaborativeMonacoEditor = ({ theme, roomId }) => {
   const onEditorChange = useCallback((value) => {
     // setEditorData(value);
     updateCurrentFile(value, true);
-    sendMessage({
-      activeFile: activeFile,
+    debounce(sendMessage, 500)({
+      activeFile: activeFile, 
       data: value,
       roomId: roomId,
     });
@@ -171,7 +172,7 @@ const CollaborativeMonacoEditor = ({ theme, roomId }) => {
 
   return (
     <>
-      <SandpackStack style={{ height: "100vh", margin: 0 }}>
+      <SandpackStack style={{ height: "92vh", margin: 0 }}>
         <FileTabs />
         <Editor
           key={activeFile}

@@ -3,7 +3,8 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import NextTopLoader from "nextjs-toploader";
-import { fetchAllRooms, handleFailureCase, throwFailureCb } from "@/src/lib/actions";
+import { fetchAllRooms } from "@/src/lib/actions";
+import { handleFailureCase, throwFailureCb } from "@/src/lib/utils";
 
 const fetchRooms = async (userId) => {
   try {

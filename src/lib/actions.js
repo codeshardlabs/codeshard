@@ -1,44 +1,10 @@
 "use server";
 import { HttpMethod } from "../utils/enums";
 import { redirect } from "next/navigation";
-
+import { protectedRouteHeaders, jsonify } from "./utils";
 const apiOrigin = process.env.NEXT_PUBLIC_BACKEND_URL;
 const apiVersion = "v1";
 let backendEndpoint = `${apiOrigin}/api/${apiVersion}`;
-/************************************UTILITY FUNCTIONS***********************************/
- function jsonify(content) {
-    return JSON.stringify(content);
-  }
-
-  export function protectedRouteHeaders(userId, hasJsonBody= false) {
-    let headers = {
-      "Authorization": `Bearer ${userId}`
-    }
-  
-    if(hasJsonBody) {
-      headers["Content-Type"] = "application/json"
-    }
-  
-    return headers;
-  }
-  
-  export function throwFailureCb(out,metadata) {
-    let errorMessage = metadata.src + " response does not contain valid output: " + out;
-    if(userDetails.error) errorMessage = userDetails.error.message;
-    throw new Error(errorMessage);
-  }
-
-  export function logFailureCb(out, metadata) {
-    if (out.error) console.log("error message: ", out.error.message)
-        console.log("unexpected error happened while invoking" + `${metadata.src}: ` + out);
-    redirect(metadata.redirectUri)
-  }
-
-  export function handleFailureCase(out, successDataFields, metadata, failureCb) {
-    if (!out || typeof out !== "object" || out.error || !out.data || !successDataFields.every((field) => field in out.data)) {
-        failureCb(out, metadata);
-      }
-  }
   
 
 /**************************************USER ROUTES ******************************/
@@ -50,13 +16,45 @@ export async function getUserInfo(userId) {
             method: HttpMethod.Get
         });
     
-        return res.json();
+        return await res.json();
     }
         catch (error) {
             console.log("error occurred in saveUserMetadata", error)
             return null;
         }
 }
+
+export async function followUser(userId, userToBeFollowed) {
+    let url = `${backendEndpoint}/users/${userToBeFollowed}/follow`;
+    try {
+        const res = await fetch(url, {
+            method: HttpMethod.Post,
+            headers: protectedRouteHeaders(userId)
+        });
+        return await res.json();
+    }
+    catch (error) {
+        console.log("error occurred in followUser", error)
+        return null;
+    }
+}
+
+export async function unfollowUser(userId, userToBeUnfollowed) {
+    let url = `${backendEndpoint}/users/${userToBeUnfollowed}/follow`;
+    try {
+        const res = await fetch(url, {
+            method: HttpMethod.Delete,
+            headers: protectedRouteHeaders(userId)
+        });
+        return await res.json();
+    }
+    catch (error) {
+        console.log("error occurred in unfollowUser", error)
+        return null;
+    }
+}
+
+
 export async function saveUserMetadata(userId) {
    try {
     let url = `${backendEndpoint}/users`;
@@ -70,7 +68,7 @@ export async function saveUserMetadata(userId) {
         }
     });
 
-    return res.json();
+    return await res.json();
 }
     catch (error) {
         console.log("error occurred in saveUserMetadata", error)
@@ -91,7 +89,7 @@ export async function createShard(userId, content) {
             }),
             headers: protectedRouteHeaders(userId, true)
         });
-        return res.json();
+        return await res.json();
 
     } catch (error) {
         console.log("error occured in getComments", error)
@@ -99,7 +97,7 @@ export async function createShard(userId, content) {
     }
 }
 
-export async function fetchShards(userId) {
+export async function fetchShards(userId, limit=10, offset=0) {
     //protected route
     let url = new URL(`${backendEndpoint}/shards`);
     url.searchParams.append("limit", limit);
@@ -109,7 +107,7 @@ export async function fetchShards(userId) {
             method: HttpMethod.Get,
             headers: protectedRouteHeaders(userId)
         });
-        return res.json();
+        return await res.json();
 
     } catch (error) {
         console.log("error occured in fetchShards", error)
@@ -123,18 +121,67 @@ export async function saveShard(userId, shardId, content) {
     try {
         const res = await fetch(url, {
             method: HttpMethod.Put,
-            body: jsonify({
-                files: content.files,
-                dependencies: content.dependencies
-            }),
+            body: jsonify(formatSaveShardBody(content, shardId)),
             headers: protectedRouteHeaders(userId, true)
         });
 
-        return res.json();
+        return await res.json();
 
     } catch (error) {
         console.log("error occurred in saveShard", error)
         return null;
+    }
+}
+
+export async function makeRequestToCodingAssistant(userId, shardId, query) {
+    // protected route
+    let url = `${backendEndpoint}/shards/${shardId}/assistant`;
+    try {
+        const res = await fetch(url, {
+            method: HttpMethod.Post,
+            body: jsonify({
+                query: query
+            }),
+            headers: protectedRouteHeaders(userId, true)
+        });
+
+        return await res.json();
+
+    } catch (error) {
+        console.log("error occurred in saveShard", error)
+        return null;
+    }
+}
+
+function formatSaveShardBody(content, shardId) {
+    const files = Object.keys(content?.files ?? {}).map((file) => {
+        return {
+            name: file,
+            code: content.files[file].code,
+        }
+    })
+
+    const dependencies = Object.keys(content?.dependencies ?? {}).map((dependency) => {
+            return {
+                name: dependency,
+                version: content.dependencies[dependency] ?? "latest",
+                isDevDependency: false,
+                shardId: shardId
+            }
+    })
+
+    const devDependencies = Object.keys(content?.devDependencies ?? {}).map((dependency) => {
+        return {
+            name: dependency,
+            version: content.devDependencies[dependency] ?? "latest",
+            isDevDependency: true,
+            shardId: shardId
+        }
+    })
+
+    return {
+        files,
+        dependencies: [...dependencies, ...devDependencies],
     }
 }
 
@@ -146,7 +193,7 @@ export async function fetchShardById(userId, shardId) {
             method: HttpMethod.Get,
             headers: protectedRouteHeaders(userId)
         });
-        return res.json();
+        return await res.json();
 
     } catch (error) {
         console.log("error occured in fetchShardById", error)
@@ -161,7 +208,7 @@ export async function deleteShardById(userId, shardId) {
             method: HttpMethod.Delete,
             headers: protectedRouteHeaders(userId)
         });
-        return res.json();
+        return await res.json();
 
     } catch (error) {
         console.log("error occured in deleteShardById", error)
@@ -170,18 +217,18 @@ export async function deleteShardById(userId, shardId) {
 }
 
 export async function updateShard(userId, shardId, content) {
-    let title = content.title ?? "";
-    let type = content.type ?? "public";
+    let title = content.title;
+    let type = content.type;
     let url = new URL(`${backendEndpoint}/shards/${shardId}`);
-    url.searchParams.append("title", title);
-    url.searchParams.append("type", type);
+    if(title) url.searchParams.append("title", title);
+    if(type) url.searchParams.append("type", type);
 
     try {
         const res = await fetch(url.toString(), {
             method: HttpMethod.Patch,
-            headers: protectedRouteHeaders(userId, true)
+            headers: protectedRouteHeaders(userId)
         });
-        return res.json();
+        return await res.json();
 
     } catch (error) {
         console.log("error occured in updateShard", error)
@@ -189,7 +236,7 @@ export async function updateShard(userId, shardId, content) {
     }
 }
 
-export async function getComments(userId, limit=10, offset=0) {
+export async function getComments(userId, shardId, limit=10, offset=0) {
     let url = new URL(`${backendEndpoint}/shards/${shardId}/comments`);
     url.searchParams.append("limit", limit);
     url.searchParams.append("offset", offset);
@@ -199,7 +246,7 @@ export async function getComments(userId, limit=10, offset=0) {
             method: HttpMethod.Get,
             headers: protectedRouteHeaders(userId)
         });
-        return res.json();
+        return await res.json();
 
     } catch (error) {
         console.log("error occured in getComments", error)
@@ -220,7 +267,7 @@ if(message === "") throw new Error("message string empty");
             }),
             headers: protectedRouteHeaders(userId, true)
         });
-        return res.json();
+        return await res.json();
 
     } catch (error) {
         console.log("error occured in addComment", error)
@@ -234,7 +281,7 @@ export async function likeShard(userId,shardId) {
             method: HttpMethod.Post,
             headers: protectedRouteHeaders(userId)
         })
-        return res.json();
+        return await res.json();
 
     } catch (error) {
         console.log("error occured in likeShard", error)
@@ -250,7 +297,7 @@ export async function dislikeShard(userId,shardId) {
             headers: protectedRouteHeaders(userId)
         });
 
-        return res.json();
+        return await res.json();
 
     } catch (error) {
         console.log("error occured in dislikeShard", error)
@@ -270,7 +317,7 @@ export async function deleteComment(userId, commentId, content) {
             }),
             headers: protectedRouteHeaders(userId, true)
         });
-        return res.json();
+        return await res.json();
 
     } catch (error) {
         console.log("error occured in getComments", error)
@@ -289,7 +336,7 @@ export async function fetchAllRooms(userId, limit=10, offset=0) {
             method: HttpMethod.Get,
             headers: protectedRouteHeaders(userId)
         });
-        return res.json();
+        return await res.json();
 
     } catch (error) {
         console.log("error occured in fetchAllRooms", error)
@@ -298,14 +345,14 @@ export async function fetchAllRooms(userId, limit=10, offset=0) {
 }
 
 export async function fetchLatestRoomFilesState(userId, shardId) {
-    let url = new URL(`${backendEndpoint}/rooms/${shardId}`);
+    let url = `${backendEndpoint}/rooms/${shardId}`;
 
     try {
-        const res = await fetch(url.toString(), {
+        const res = await fetch(url, {
             method: HttpMethod.Get,
             headers: protectedRouteHeaders(userId)
         });
-        return res.json();
+        return await res.json();
 
     } catch (error) {
         console.log("error occured in fetchAllRooms", error)
@@ -322,7 +369,7 @@ export async function createNewRoom(userId, content) {
             }),
             headers: protectedRouteHeaders(userId, true)
         });
-        return res.json();
+        return await res.json();
 
     } catch (error) {
         console.log("error occured in getComments", error)

@@ -2,7 +2,10 @@ import { redirect } from "next/navigation";
 import CollaborativeSandpackEditor from "@/src/components/editor/CollaborativeSandpackEditor";
 import { templates } from "@/src/utils";
 import { auth } from "@clerk/nextjs/server";
-import { createNewRoom, fetchLatestRoomFilesState, handleFailureCase, logFailureCb } from "@/src/lib/actions";
+import { createNewRoom, fetchLatestRoomFilesState } from "@/src/lib/actions";
+import { logFailureCb, handleFailureCase } from "@/src/lib/utils";
+
+
 
 export default async function CollaborativeRoomPage({ params, searchParams }) {
   const { userId } = await auth();
@@ -14,6 +17,8 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
     console.log("session not present");
     redirect("/");
   }
+
+  let shardDetails; 
   if (roomId === "new-room") {
     if (!template || !templates.includes(template)) {
       console.log("Template not valid");
@@ -28,7 +33,7 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
       src: "createNewRoom()"
     }, logFailureCb);
 
-    const shardDetails = out.data.shards;
+    shardDetails = out.data.shards;
     const files = out.data.files;
     console.log("shard details: ", shardDetails);
     console.log("files: ", files);
@@ -37,9 +42,9 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
 
   if (roomId !== "new-room") {
     let out = await fetchLatestRoomFilesState(userId, roomId);
-    if (!out || out.error || !out.data) {
+    if (!out || out?.error || !out?.data) {
       console.log("could not fetch latest room state: "+ out);
-      if(out.error) console.log("explicit error message: " + out.error.message)
+      if(out?.error) console.log("explicit error message: " + out?.error?.message)
         redirect("/your-work");
     }
 
@@ -50,13 +55,6 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
   console.log("Shard details: ", shardDetails);
 
   const { userId: creator, isTemplate, id } = shardDetails;
-
-  if (session) {
-    if (roomId === "new-room" && userId !== creator) {
-      console.log("shard is private or collaborative");
-      redirect("/");
-    }
-  }
 
   return (
     <>

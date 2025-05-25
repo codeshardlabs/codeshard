@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import Avatar from "react-avatar";
 import Settings from "@/src/components/ui/icons/Settings";
 import CollaborativeMonacoEditor from "./CollaborativeMonacoEditor";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
 
 export default function CollaborativeSandpackEditor({
@@ -80,7 +80,9 @@ export default function CollaborativeSandpackEditor({
   if (!domLoaded) {
     return (
       <>
-        <ScaleLoader />
+        <div className="flex justify-center items-center h-[40vh]">
+          <ScaleLoader />
+        </div>
       </>
     );
   }
@@ -138,16 +140,16 @@ export default function CollaborativeSandpackEditor({
             setTheme={setTheme}
             template={template}
             addNewFile={addNewFile}
-            dependencies={dependencies}
-            devDependencies={devDependencies}
-            addNewDependency={addNewDependency}
-            addNewDevDependency={addNewDevDependency}
+            // dependencies={dependencies}
+            // devDependencies={devDependencies}
+            // addNewDependency={addNewDependency}
+            // addNewDevDependency={addNewDevDependency}
           />
           <CollaborativeMonacoEditor roomId={id} theme={theme} />
           <SandpackPreview
             showOpenInCodeSandbox={false}
             showOpenNewtab={true}
-            style={{ height: "100vh" }}
+            style={{ height: "92vh" }}
           />
         </SandpackLayout>
       </SandpackProvider>
@@ -214,25 +216,21 @@ const themes = [
 ];
 
 function SandpackSidebar({
-  addNewFile,
+  // addNewFile,
   theme,
   setTheme,
-  dependencies,
-  devDependencies,
-  addNewDependency,
-  addNewDevDependency,
+  // dependencies,
+  // devDependencies,
+  // addNewDependency,
+  // addNewDevDependency,
   id,
 }) {
-  const { user, isSignedIn } = useAuth();
+  const { userId,  isSignedIn } = useAuth();
+  const { user } = useUser();
   const router = useRouter();
   const modalRef = useRef(null);
   const [isClicked, setIsClicked] = useState(false);
   useModal(isClicked, setIsClicked, modalRef);
-
-  if (!isSignedIn) {
-    toast.error("not signed in");
-    return null;
-  }
 
   let modal = (
     <>
@@ -260,6 +258,11 @@ function SandpackSidebar({
     </>
   );
 
+  if (!isSignedIn) {
+    toast.error("not signed in");
+    return null;
+  }
+
   return (
     <>
       <Toaster position="top-center" richColors />
@@ -273,10 +276,10 @@ function SandpackSidebar({
                 setIsClicked(true);
               }}
               className={
-                "size-4 hover:fill-slate-600 fill-white cursor-pointer"
+                "size-6 hover:fill-slate-600 fill-white cursor-pointer"
               }
             />
-            {session && (
+            {user && (
               <button
                 className="text-xs cursor-pointer"
                 onClick={() => {
@@ -285,7 +288,7 @@ function SandpackSidebar({
               >
                 <Avatar
                   className="text-xs"
-                  name={session?.user?.name}
+                  name={user.fullName}
                   size="30"
                   round={true}
                 />

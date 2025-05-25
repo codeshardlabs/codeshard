@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import ProfileIcon from "../ui/icons/Profile";
-import { handleFollowersOfUser } from "../../lib/actions";
+import { followUser, handleFollowersOfUser, unfollowUser } from "../../lib/actions";
 import { useOptimistic } from "react";
 import ProfileContainer from "./ProfileContainer";
 import { useUser } from "@clerk/nextjs";
@@ -48,7 +48,11 @@ const Profile = ({
       setOptimisticFollowers((prev) => prev + 1);
     }
 
-    await handleFollowersOfUser(name, user.username, optimisticHasFollowed);
+    if(optimisticHasFollowed) {
+      await unfollowUser(user.id, id);
+    } else {
+      await followUser(user.id, id);
+    }
   };
 
   return (

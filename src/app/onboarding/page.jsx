@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import { saveUserMetadeta } from "@/src/lib/actions";
+import { saveUserMetadata } from "@/src/lib/actions";
 import { useAuth, useUser } from "@clerk/nextjs";
 
 const AuthRedirect = () => {
@@ -10,28 +10,20 @@ const AuthRedirect = () => {
 
   useEffect(() => {
     const saveMetadataAndRedirect = async () => {
-      sessionStorage.setItem("onBoardingStatus", "loading");
       try {
-        const user = await saveUserMetadeta(userId);
+        const user = await saveUserMetadata(userId);
         if (!user) throw new Error("internal server error");
-        sessionStorage.setItem("onBoardingStatus", "success");
         window.location.href = "/";
       } catch (error) {
         console.error("Error saving metadata:", error);
-        sessionStorage.setItem("onBoardingStatus", "failed");
       }
     };
-    const onBoardingStatus = sessionStorage.getItem("onBoardingStatus");
 
-    if (
-      isSignedIn &&
-      (onBoardingStatus === null || onBoardingStatus !== "success")
-    )
-      saveMetadataAndRedirect();
+    if (isSignedIn) saveMetadataAndRedirect();
   }, [isSignedIn, userId]);
 
   return (
-    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
+    <div className="min-h screen bg-black flex flex-col items-center justify-center p-4">
       <div className="text-center space-y-6">
         <Loader2 className="h-12 w-12 animate-spin text-white mx-auto" />
 

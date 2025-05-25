@@ -24,6 +24,9 @@ export default function Navbar() {
   const [isJoinRoomModalOpen, setIsJoinRoomOpen] = useState(false);
   const [roomOpen, setRoomOpen] = useState(false);
   const [roomInput, setRoomInput] = useState("");
+  const [pgModalOpen, setPgModalOpen] = useState(false);
+  const pgModalRef = useRef();
+ useModal(pgModalOpen, setPgModalOpen, pgModalRef);
   const modal = useRef();
   const joinModal = useRef();
 
@@ -64,6 +67,50 @@ export default function Navbar() {
 
     router.push(`/room/${roomInput}`);
   };
+
+  let PgModal = () => (
+    <>
+      <dialog
+        onClose={() => setPgModalOpen(false)}
+        className={clsx(
+          "flex flex-col gap-5 w-[90%] h-[75vh absolute left-3 top-12 z-40 p-4 py-8   bg-[#090C08]",
+          styles.container,
+        )}
+        ref={pgModalRef}
+      >
+        <button
+          onClick={() => setPgModalOpen(false)}
+          className="self-end border border-transparent p-1 hover:opacity-60 hover:border-white hover:rounded-md"
+        >
+          <Close className="fill-black size-4" />
+        </button>
+        <div className="grid grid-cols-5 gap-16">
+          {templates.map((template) => {
+            return (
+              <Link
+                className="text-white border text-xl p-2 cursor-pointer hover:opacity-65"
+                href={(function () {
+                  const roomRoute = `/room/new-room?template=${template}`;
+                  const shardRoute = `/shard/template/${template}`;
+                  const tryEditorRoute = `/try-editor/${template}`;
+                  const routeToPushTo = userId
+                    ? roomOpen
+                      ? roomRoute
+                      : shardRoute
+                    : tryEditorRoute;
+                  // router.push(routeToPushTo);
+                  return routeToPushTo;
+                })()}
+                key={template}
+              >
+                {template}
+              </Link>
+            );
+          })}
+        </div>
+      </dialog>
+    </>
+  );
 
   
 
@@ -106,22 +153,43 @@ export default function Navbar() {
   let joinRoomModal = (
     <div
       ref={joinModal}
-      className="flex border border-white w-[30vw] flex-col gap-4 bg-black p-4 z-20 rounded-md absolute left-1/3 top-1/3"
+      className="flex border border-white/20 w-[400px] flex-col gap-6 bg-black/95 p-8 z-20 rounded-lg absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 shadow-2xl backdrop-blur-sm"
     >
-      <h1 className="text-xl">Enter Room ID: </h1>
+      <div className="flex flex-col gap-2">
+        <h1 className="text-2xl font-semibold">Join Room</h1>
+        <p className="text-sm text-gray-400">Enter a room ID to join an existing collaborative session</p>
+      </div>
+      
       <form
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-6"
         onSubmit={(e) => e.preventDefault()}
       >
-        <input
-          value={roomInput}
-          onChange={(e) => setRoomInput(e.target.value)}
-          className="h-8 rounded-md text-black caret-black"
-          type="text"
-        />
-        <Button onClick={joinRoom} className={"self-end w-fit"}>
-          Join
-        </Button>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="roomId" className="text-sm text-gray-300">Room ID</label>
+          <input
+            id="roomId"
+            value={roomInput}
+            onChange={(e) => setRoomInput(e.target.value)}
+            placeholder="Enter room ID..."
+            className="h-10 rounded-md bg-gray-800 border border-gray-700 px-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+            type="text"
+          />
+        </div>
+        <div className="flex justify-end gap-3">
+          <Button 
+            onClick={() => setIsJoinRoomOpen(false)}
+            className="bg-transparent hover:bg-gray-800 text-gray-400"
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={joinRoom}
+            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!roomInput}
+          >
+            Join Room
+          </Button>
+        </div>
       </form>
     </div>
   );

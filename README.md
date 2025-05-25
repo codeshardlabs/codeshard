@@ -29,10 +29,18 @@ pnpm install
 ```bash
 
 ## Replace with your values
-AUTH_SECRET="<random-hash-value>"
-MONGODB_URI="<your-mongodb-url-here>"
 HOST_URL="http://localhost:3000"
 NEXT_PUBLIC_BACKEND_URL="http://localhost:8080"
+NEXT_PUBLIC_WS_ENDPOINT="ws://localhost:8080"
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=<your-clerk-publishable-key>
+CLERK_SECRET_KEY=<clerk-secret-here>
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+```
+
+5. Disable Next.js from scraping telemetry data from your system
+```bash
+pnpm exec next telemetry disable
 ```
 
 ## Overview

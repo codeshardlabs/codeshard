@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
 import SandpackEditor from "@/src/components/editor/SandpackEditor";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { fetchShardById, handleFailureCase, logFailureCb } from "@/src/lib/actions";
+import { fetchShardById } from "@/src/lib/actions";
+import { handleFailureCase, logFailureCb } from "@/src/lib/utils";
+
 
 export default async function NewShardPage({ params }) {
   const { userId } = await auth();

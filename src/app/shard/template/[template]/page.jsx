@@ -2,7 +2,9 @@ import { redirect } from "next/navigation";
 import { templates } from "@/src/utils";
 import SandpackEditor from "@/src/components/editor/SandpackEditor";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { create, createShard, handleFailureCase, logFailureCb } from "@/src/lib/actions";
+import {  createShard } from "@/src/lib/actions";
+import { handleFailureCase, logFailureCb } from "@/src/lib/utils";
+
 
 const page = async ({ params }) => {
   const template = params.template;
@@ -20,7 +22,7 @@ const page = async ({ params }) => {
     redirect("/");
   }
 
-  console.log("Session user: ", user.username);
+  console.log("Session user: ", userId);
   const out =   await createShard(userId, {
       templateType: template,
       mode: "normal",

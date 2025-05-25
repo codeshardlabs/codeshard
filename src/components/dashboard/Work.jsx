@@ -1,19 +1,21 @@
 import WorkCard from "./WorkCard";
 import { redirect } from "next/navigation";
 import { makeFilesAndDependenciesUIStateLike } from "@/src/utils";
-import { CommentContextProvider } from "@/src/context/CommentContext";
+// import { CommentContextProvider } from "@/src/context/CommentContext";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { fetchShards, handleFailureCase, throwFailureCb } from "@/src/lib/actions";
-
-const fetchShardsByUserId = async (userId) => {
+import { fetchShards } from "@/src/lib/actions";
+import { handleFailureCase, throwFailureCb } from "@/src/lib/utils";
+import { GlobalConstants } from "@/src/constants/global-constants";
+import { Fragment } from "react";
+const fetchShardsByUserId = async (userId, limit=10, offset=0) => {
   try {
 
-    const out = await fetchShards(userId);
+    const out = await fetchShards(userId, limit, offset);
     handleFailureCase(out, ["shards"], {src: "fetchShards()"}, throwFailureCb);
     return out.data.shards;
   } catch (error) {
     console.log("error in fetching shards: ", error);
-    return null;
+    return [];
   }
 };
 
@@ -22,31 +24,29 @@ async function Work() {
   const user = await currentUser();
 
   if (!userId) {
-    redirect("/signin");
+    redirect("/sign-in");
   }
 
-  const shards = await fetchShardsByUserId(userId);
-  if (!shards) {
-    redirect("/");
-  }
+  const shards = await fetchShardsByUserId(userId, GlobalConstants.GET_REQUEST_DEFAULT_LIMIT, GlobalConstants.GET_REQUEST_DEFAULT_OFFSET);
   console.log("Shards: ", shards);
   if (shards.length == 0) {
     return <>No Shards Yet...</>;
   }
-  const shardsCollection = shards.map(async (shard) => {
+  const shardsCollection = shards.map((shard) => {
     const [files, dependencies, devDependencies] =
       makeFilesAndDependenciesUIStateLike(shard.files, shard.dependencies);
 
-    const ind = shard.likes.findIndex(
-      (temp) => temp.shardId === shard.id && temp.likedBy === userId,
-    );
-    let likeStatus = ind === -1 ? "unliked" : "liked";
+    // const ind = shard.likes.findIndex(
+    //   (temp) => temp.shardId === shard.id && temp.likedBy === userId,
+    // );
+    // let likeStatus = ind === -1 ? "unliked" : "liked";
 
     return (
-      <CommentContextProvider key={shard.id}>
+      // <CommentContextProvider key={shard.id}>
+      <Fragment key={shard.id}>
         <WorkCard
-          likeStatus={likeStatus}
-          likes={shard.likes.length}
+          // likeStatus={likeStatus}
+          // likes={shard.likes.length}
           isTemplate={shard.isTemplate}
           content={{
             templateType: shard.templateType,
@@ -59,7 +59,8 @@ async function Work() {
           title={shard.title}
           id={shard.id}
         />
-      </CommentContextProvider>
+      </Fragment>
+    //   </CommentContextProvider> 
     );
   });
 

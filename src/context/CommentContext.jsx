@@ -1,6 +1,6 @@
 "use client";
 
-import { addCommentToShard } from "@/src/lib/actions";
+import { addComment } from "@/src/lib/actions";
 import { findParentComment } from "@/src/utils";
 import { createContext, useContext, useState } from "react";
 import { toast } from "sonner";
@@ -27,7 +27,7 @@ export const CommentContextProvider = ({ children }) => {
   const createNewComment = async (message, creator, shardId) => {
     try {
       toast.promise(
-        addCommentToShard(message, shardId, creator, activeComment),
+        addComment(creator, shardId, message),
         {
           loading: "Adding New Comment...",
           success: (data) => {

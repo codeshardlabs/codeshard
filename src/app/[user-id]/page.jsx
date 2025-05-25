@@ -4,7 +4,8 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { Suspense } from "react";
 import NextTopLoader from "nextjs-toploader";
 import { fetchClerkUser } from "@/src/lib/clerk";
-import { getUserInfo, handleFailureCase, throwFailureCb } from "@/src/lib/actions";
+import { getUserInfo } from "@/src/lib/actions";
+import { throwFailureCb, handleFailureCase } from "@/src/lib/utils";
 
 export const fetchUserDetails = async (userId) => {
   try {
@@ -48,7 +49,7 @@ export default async function UserProfile({ params }) {
           followersCount={followers?.length}
           following={following?.length}
           name={clerkUser.fullName}
-          id={user?._id.toString()}
+          id={userDetails.id}
           isOwner={isOwner}
         />
       </Suspense>

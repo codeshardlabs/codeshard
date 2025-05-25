@@ -13,9 +13,10 @@ import HorizontalThreeDots from "../ui/icons/HorizontalThreeDots";
 import CustomSandpackPreview from "../editor/CustomSandpackPreview";
 import Pencil from "../ui/icons/Pencil";
 import {
-  getCommentsOfShard,
-  saveShardName,
-  updateLikes,
+  dislikeShard,
+  getComments,
+  likeShard,
+  updateShard
 } from "../../lib/actions";
 import Button from "../ui/Button";
 import { toast } from "sonner";
@@ -73,7 +74,7 @@ const ProfileCard = ({
 
   useEffect(() => {
     if (id) {
-      getCommentsOfShard(id)
+      getComments(user.id, id)
         .then((result) => {
           console.log("Comments: ", result);
           setComments(JSON.parse(result));
@@ -105,7 +106,9 @@ const ProfileCard = ({
       if (e.key === "Enter") {
         setPencilClick(false);
         if (shardName !== "") {
-          saveShardName(id, shardName)
+          updateShard(user?.id ?? "", id, {
+            title: shardName
+          })
             .then(() => console.log("success"))
             .catch((err) => {
               console.log("could not save shard name");
@@ -185,14 +188,14 @@ const ProfileCard = ({
         return prev - 1;
       });
       setLikeStatus("unliked");
-      await updateLikes(id, likes, "unliked", user.primaryEmailAddress);
+      await dislikeShard(user?.id ?? "", id);
     } else if (likeStatus === "unliked") {
       setLikes((prev) => {
         return prev + 1;
       });
 
       setLikeStatus("liked");
-      await updateLikes(id, likes, "liked", user.primaryEmailAddress);
+      await likeShard(user?.id ?? "", id);
     }
   };
 

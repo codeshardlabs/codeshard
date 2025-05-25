@@ -11,8 +11,7 @@ import {
 } from "@codesandbox/sandpack-react";
 
 import { Toaster, toast } from "sonner";
-
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import File from "../ui/icons/File";
 
 import React from "react";
@@ -21,13 +20,15 @@ import Block from "../ui/icons/Block";
 import { useModal } from "@/src/hooks/useModal";
 import MonacoEditor from "./MonacoEditor.jsx";
 import Button from "../ui/Button";
-import { saveTemplateToDB } from "@/src/lib/actions";
+import { makeRequestToCodingAssistant, saveShard } from "@/src/lib/actions";
 import { makeFilesAndDependenciesUIStateLike } from "@/src/utils";
 import { ScaleLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 import Avatar from "react-avatar";
 import Settings from "../ui/icons/Settings";
 import { useAuth, useUser } from "@clerk/nextjs";
+import { isJson } from "@/src/lib/utils";
+import ReactMarkdown from "react-markdown";
 
 export default function SandpackEditor({
   id,
@@ -46,9 +47,8 @@ export default function SandpackEditor({
   useModal(isModalOpen, setIsModalOpen, modalRef);
 
   useEffect(() => {
-    if (initialShardDetails) {
+    if (initialShardDetails && isJson(initialShardDetails)) {
       const data = JSON.parse(initialShardDetails);
-      console.log(data);
       const [f, dep, devDep] = makeFilesAndDependenciesUIStateLike(
         data.files ?? [],
         data.dependencies ?? [],
@@ -74,7 +74,9 @@ export default function SandpackEditor({
   if (!domLoaded) {
     return (
       <>
-        <ScaleLoader />
+        <div className="flex justify-center items-center h-[80vh]">
+          <ScaleLoader />
+        </div>
       </>
     );
   }
@@ -140,7 +142,7 @@ export default function SandpackEditor({
           <SandpackPreview
             showOpenInCodeSandbox={false}
             showOpenNewtab={true}
-            style={{ height: "100vh" }}
+            style={{ height: "92vh" }}
           />
         </SandpackLayout>
       </SandpackProvider>
@@ -224,6 +226,7 @@ function SandpackSidebar({
   const [isClicked, setIsClicked] = useState(false);
   useModal(isClicked, setIsClicked, modalRef);
   const [onSaveClick, setOnSaveClick] = useState(false);
+  const [queryOutput, setQueryOutput] = useState("");
 
   useEffect(() => {
     if (onSaveClick) {
@@ -242,14 +245,14 @@ function SandpackSidebar({
           onChange={(e) => {
             setTheme(e.target.value);
           }}
-          className="bg-white text-black rounded-md py-1"
+          className="bg-[#1F1F25] text-gray-200 rounded-md border border-gray-700 focus:outline-none focus:border-gray-500 hover:border-gray-500 transition-colors cursor-pointer"
           value={theme}
         >
-          <option value="vs-dark">vs-dark</option>
-          <option value="light">light</option>
+          <option value="vs-dark" className="bg-[#1F1F25] text-gray-200 hover:bg-gray-700">vs-dark</option>
+          <option value="light" className="bg-[#1F1F25] text-gray-200 hover:bg-gray-700">light</option>
           {themes.map((theme) => {
             return (
-              <option key={theme} value={theme}>
+              <option key={theme} value={theme} className="bg-[#1F1F25] text-gray-200 hover:bg-gray-700">
                 {theme}
               </option>
             );
@@ -264,18 +267,24 @@ function SandpackSidebar({
     try {
       // const userName = session?.name;
       loadingId = toast.loading("Saving...");
-      const { status } = await saveTemplateToDB(
+      console.log("files", files);
+      console.log("dependencies", dependencies);
+      console.log("devDependencies", devDependencies);
+      const { data, error } = await saveShard(
+        userId, 
         id,
-        files,
-        dependencies,
-        devDependencies,
+        {
+          files,
+          dependencies,
+          devDependencies
+        }
       );
       setOnSaveClick(false);
-      if (status === 500) {
+      if (error) {
         toast.dismiss(loadingId);
         toast.error("Could not save shard. Try Again!");
         return;
-      } else if (status === 200) {
+      } else if (data) {
         // window.alert("Shard Updated Successfully")
         toast.dismiss(loadingId);
         toast.info("Shard saved successfully");
@@ -296,14 +305,13 @@ function SandpackSidebar({
         {userId && (
           <SandpackStack>
             <div className="flex gap-2 mb-4 p-1 items-center justify-left">
-              {/* <p className="text-lg pr-4 pl-2 font-['Josh', sans-serif]">{template}</p> */}
               <File
                 onClick={() => {
                   const fileName = prompt("Enter File Name: ");
                   if (fileName) addNewFile(fileName);
                 }}
                 className={
-                  "size-4 fill-white hover:fill-slate-600 cursor-pointer"
+                  "size-5 cursor-pointer"
                 }
               />
               <Package
@@ -312,7 +320,7 @@ function SandpackSidebar({
                   if (dependencyName) addNewDependency(dependencyName);
                 }}
                 className={
-                  "size-4 fill-white hover:fill-slate-600 cursor-pointer"
+                  "size-5 cursor-pointer"
                 }
               />
               <Block
@@ -321,7 +329,7 @@ function SandpackSidebar({
                   if (dependencyName) addNewDevDependency(dependencyName);
                 }}
                 className={
-                  "cursor-pointer hover:fill-slate-600 fill-white size-4"
+                  "size-5 cursor-pointer"
                 }
               />
               <Settings
@@ -330,11 +338,11 @@ function SandpackSidebar({
                   setIsClicked(true);
                 }}
                 className={
-                  "size-4 hover:fill-slate-600 fill-white cursor-pointer"
+                  "size-5 fill-white cursor-pointer transition-colors"
                 }
               />
               <Button
-                className="font-[500] text-sm border p-1 rounded-md"
+                className="font-[500] text-sm border border-gray-700 p-1 rounded-md bg-[#1F1F25] text-white hover:bg-gray-700"
                 onClick={() => {
                   setOnSaveClick(true);
                 }}
@@ -349,16 +357,56 @@ function SandpackSidebar({
               >
                 <Avatar
                   className="text-xs"
-                  name={user.username}
+                  name={user.fullName}
                   size="30"
                   round={true}
                 />
               </button>
             </div>
+            <div> 
+              
+            </div>
+            
           </SandpackStack>
         )}
 
-        <SandpackFileExplorer style={{ height: "92vh" }} />
+        <SandpackFileExplorer style={{ height: queryOutput ? "19vh" : "80vh" }} />
+        <SandpackStack className="absolute right-0 bottom-0 w-[400px]">
+          <div className={`${queryOutput ? "h-[500px]" : "hidden"} overflow-y-auto border border-gray-700 rounded-md p-2  text-white`}>
+              <ReactMarkdown>{queryOutput}</ReactMarkdown>
+          </div>
+          <div className="flex gap-2 items-center p-2">
+            <input 
+              type="text"
+              placeholder="Ask coding assistant..."
+              className="w-full p-2 rounded-md bg-[#1F1F25] text-white border border-gray-700 focus:outline-none focus:border-gray-500"
+            />
+            <button
+              className="bg-[#1F1F25] hover:bg-gray-700 text-white p-2 rounded-md border border-gray-700"
+              onClick={() => {
+                const query = document.querySelector("input").value;
+                let loadingId = toast.loading("Processing...");
+                makeRequestToCodingAssistant(userId, id, query).then((res) => {
+                  if(res?.data){
+                    toast.success("Request processed successfully");
+                    setQueryOutput(res.data?.content ?? "");
+                    document.querySelector("input").value = "";
+                  }
+                  else if(res?.error){
+                    toast.error(res.error?.message ?? "Error occurred while making request to coding assistant");
+                  }
+                }).catch((err) => {
+                  console.log("Error occurred in makeRequestToCodingAssistant", err);
+                  toast.error("Error occurred while making request to coding assistant");
+                }).finally(() => {
+                  toast.dismiss(loadingId);
+                });
+              }}
+            >
+              Send
+            </button>
+          </div>
+        </SandpackStack>
       </div>
     </>
   );
