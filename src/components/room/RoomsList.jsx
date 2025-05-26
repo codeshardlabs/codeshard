@@ -4,7 +4,7 @@ import RoomListCard from "./RoomListCard";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 const RoomsList = ({ rooms: initialRooms }) => {
-  const [rooms, setRooms] = useState(initialRooms);
+  const [rooms, setRooms] = useState(initialRooms ?? []);
   const router = useRouter();
 
   useEffect(() => {
@@ -15,7 +15,7 @@ const RoomsList = ({ rooms: initialRooms }) => {
     toast.info("Link Copied Successfully");
   };
 
-  if (rooms.length === 0) {
+  if (rooms?.length === 0) {
     return <p>No Rooms Yet...</p>;
   }
 

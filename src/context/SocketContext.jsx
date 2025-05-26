@@ -28,6 +28,7 @@ const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState();
   const [latestData, setLatestData] = useState({});
   const [latestVisibleFiles, setLatestVisibleFiles] = useState([]);
+  const [chatMessages, setChatMessages] = useState([]);
   const { user, isSignedIn } = useUser();
 
   const sendMessage = useCallback(
@@ -41,6 +42,22 @@ const SocketProvider = ({ children }) => {
         activeFile: activeFile,
         data: data,
         roomId: roomId,
+      });
+    },
+    [socket],
+  );
+
+  const sendChatMessage = useCallback(
+    ({text, sender, timestamp, roomId}) => {
+      if (!socket) {
+        console.log("socket not found");
+        return;
+      }
+      socket.emit("event:chat-message", {
+        text,
+        sender,
+        timestamp,
+        roomId,
       });
     },
     [socket],
@@ -104,16 +121,23 @@ const SocketProvider = ({ children }) => {
       });
     };
 
+    const chatMsg = (message) => {
+      console.log("chat message from server: ", message);
+      setChatMessages((prev) => [...prev, message]);
+    };
+
     if (socket) {
       console.log("Socket is here");
     }
 
     socket.on("event:server-message", dataMsg);
     socket.on("event:sync-visible-files", filesMsg);
+    socket.on("event:server-chat-message", chatMsg);
 
     return () => {
       socket.off("event:server-message", dataMsg);
       socket.off("event:sync-visible-files", filesMsg);
+      socket.off("event:server-chat-message", chatMsg);
     };
   }, [socket]);
 
@@ -150,6 +174,8 @@ const SocketProvider = ({ children }) => {
           latestVisibleFiles,
           sendVisibleFiles,
           joinRoom,
+          sendChatMessage,
+          chatMessages,
         }}
       >
         {children}

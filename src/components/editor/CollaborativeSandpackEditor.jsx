@@ -21,6 +21,7 @@ import Settings from "@/src/components/ui/icons/Settings";
 import CollaborativeMonacoEditor from "./CollaborativeMonacoEditor";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
+import ChatBox from "../chat/ChatBox";
 
 export default function CollaborativeSandpackEditor({
   id,
@@ -140,10 +141,6 @@ export default function CollaborativeSandpackEditor({
             setTheme={setTheme}
             template={template}
             addNewFile={addNewFile}
-            // dependencies={dependencies}
-            // devDependencies={devDependencies}
-            // addNewDependency={addNewDependency}
-            // addNewDevDependency={addNewDevDependency}
           />
           <CollaborativeMonacoEditor roomId={id} theme={theme} />
           <SandpackPreview
@@ -153,6 +150,11 @@ export default function CollaborativeSandpackEditor({
           />
         </SandpackLayout>
       </SandpackProvider>
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="pointer-events-auto">
+          <ChatBox roomId={id} />
+        </div>
+      </div>
     </>
   );
 }
@@ -216,13 +218,8 @@ const themes = [
 ];
 
 function SandpackSidebar({
-  // addNewFile,
   theme,
   setTheme,
-  // dependencies,
-  // devDependencies,
-  // addNewDependency,
-  // addNewDevDependency,
   id,
 }) {
   const { userId,  isSignedIn } = useAuth();
