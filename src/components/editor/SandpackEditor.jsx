@@ -374,8 +374,11 @@ function SandpackSidebar({
           </SandpackStack>
         )}
 
-        <SandpackFileExplorer style={{ height: queryOutput ? "19vh" : "80vh" }} />
-        <SandpackStack className="absolute right-0 bottom-0 w-[400px]">
+        <SandpackFileExplorer style={{ height: queryOutput ? "19vh" : userId ? "80vh" : "92vh" }} />
+
+        {
+          userId && (
+            <SandpackStack className="absolute right-0 bottom-0 w-[400px]">
           <div className={`${queryOutput ? "h-[500px]" : "hidden"} overflow-y-auto border border-gray-700 rounded-md p-2  text-white`}>
               <ReactMarkdown>{queryOutput}</ReactMarkdown>
           </div>
@@ -411,6 +414,9 @@ function SandpackSidebar({
             </button>
           </div>
         </SandpackStack>
+          )
+        }
+        
       </div>
     </>
   );

@@ -1,4 +1,4 @@
-import "server-only";
+"use server";
 import { createClerkClient } from "@clerk/nextjs/server";
 
 const clerkClient = createClerkClient({
@@ -11,5 +11,16 @@ export const fetchClerkUser = async (userId) => {
     return user;
   } catch (error) {
     return null;
+  }
+};
+
+
+export const getPrimaryEmailFromClerk = async (userId) => {
+  try {
+    const user = await fetchClerkUser(userId);
+    return user?.primaryEmailAddress?.emailAddress;
+  } catch (error) {
+    console.error("Error fetching primary email from Clerk:", error);
+    return ""
   }
 };

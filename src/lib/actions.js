@@ -1,8 +1,7 @@
 "use server";
 import { HttpMethod } from "../utils/enums";
-import { redirect } from "next/navigation";
 import { protectedRouteHeaders, jsonify } from "./utils";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 const apiOrigin = process.env.NEXT_PUBLIC_BACKEND_URL;
 const apiVersion = "v1";
 let backendEndpoint = `${apiOrigin}/api/${apiVersion}`;
@@ -465,4 +464,3 @@ export async function getSubmissions(assignmentId) {
     throw error;
   }
 }
-

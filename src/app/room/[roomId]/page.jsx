@@ -60,8 +60,8 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
     <>
       <CollaborativeSandpackEditor
         shardDetails={JSON.stringify(shardDetails)}
-        template={isTemplate ? shardDetails.templateType : "react"}
-        id={id.toString() ?? ""}
+        template={isTemplate ? shardDetails?.templateType : "react"}
+        id={shardDetails?.id ?? ""}
         isNewShard={roomId === "new-room"}
       />
     </>

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { getAssignments, submitProject, getSubmissions } from "@/src/lib/actions";
 import { ScaleLoader } from "react-spinners";
+import { getPrimaryEmailFromClerk } from "@/src/lib/clerk";
 
 // Helper function to format dates consistently
 const formatDate = (dateString) => {
@@ -27,12 +28,12 @@ export default function Assignments() {
   const [loading, setLoading] = useState(true);
   const [submissionForm, setSubmissionForm] = useState({
     assignmentId: "",
-    shardId: "",
-    shardLink: "",
-  });
+    shardId: ""
+  })
   const [selectedAssignment, setSelectedAssignment] = useState(null);
   const [submissions, setSubmissions] = useState([]);
   const [activeTab, setActiveTab] = useState('all');
+  const [userEmails, setUserEmails] = useState({});
 
   useEffect(() => {
     fetchAssignments();
@@ -55,12 +56,11 @@ export default function Assignments() {
     
     try {
       await submitProject(assignmentId, {
-        shardId: submissionForm.shardId,
-        shardLink: submissionForm.shardLink,
-      });
+        shardId: submissionForm.shardId
+       });
       
       toast.success("Project submitted successfully!");
-      setSubmissionForm({ assignmentId: "", shardId: "", shardLink: "" });
+      setSubmissionForm({ assignmentId: "", shardId: "" });
     } catch (error) {
       toast.error(error.message);
       console.error(error);
@@ -72,6 +72,16 @@ export default function Assignments() {
       const data = await getSubmissions(assignmentId);
       setSubmissions(data);
       setSelectedAssignment(assignmentId);
+      
+      // Fetch emails for all submissions
+      const emailPromises = data.map(async (submission) => {
+        const email = await getPrimaryEmailFromClerk(submission.userId);
+        return { userId: submission.userId, email };
+      });
+      
+      const emails = await Promise.all(emailPromises);
+      const emailMap = Object.fromEntries(emails.map(({ userId, email }) => [userId, email]));
+      setUserEmails(emailMap);
     } catch (error) {
       toast.error(error.message);
       console.error(error);
@@ -108,13 +118,13 @@ export default function Assignments() {
                 >
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <p className="font-medium">{submission.userId}</p>
+                      <a href={`mailto:${userEmails[submission.userId]}`} className="font-medium">{userEmails[submission.userId]}</a>
                       <p className="text-sm text-gray-400">
                         Submitted: {formatDate(submission.createdAt)}
                       </p>
                     </div>
                     <a
-                      href={submission.shardLink}
+                      href={`${process.env.NEXT_PUBLIC_HOST_URL}/shard/${submission.shardId}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-400 hover:text-blue-300"
@@ -217,20 +227,6 @@ export default function Assignments() {
                     }
                     className="w-full p-2 border rounded-md bg-gray-700 border-gray-600"
                     placeholder="Enter your shard ID"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Shard Link
-                  </label>
-                  <input
-                    type="url"
-                    value={submissionForm.shardLink}
-                    onChange={(e) =>
-                      setSubmissionForm({ ...submissionForm, shardLink: e.target.value })
-                    }
-                    className="w-full p-2 border rounded-md bg-gray-700 border-gray-600"
-                    placeholder="Enter your shard link"
                   />
                 </div>
                 <button
