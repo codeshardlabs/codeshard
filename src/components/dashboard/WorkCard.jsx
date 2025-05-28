@@ -70,6 +70,12 @@ const WorkCard = ({
           })
             .then((res) => {
               console.log("response: ", res);
+              if (res?.error) {
+                setShardName(title);
+                toast.error("Could not save shard title");
+              } else {
+                setShardName(shardName);
+              }
             })
             .catch((err) => {
               console.log("could not save shard name");
@@ -83,7 +89,7 @@ const WorkCard = ({
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  });
+  }, [shardName, userId, id]);
 
   useEffect(() => {
     if (initialContent) {
@@ -134,25 +140,21 @@ const WorkCard = ({
 
   const toggleType = async () => {
     setIsPopoverOpen(false);
-
-    setType((prev) => {
-      if (prev === "private") {
-        return "public";
-      }
-      return "private";
-    });
+    const newType = type === "private" ? "public" : "private";
+    setType(newType);
 
     const result = await updateShard(
       userId,
       id,
       {
-        type: type
+        type: newType 
       }
     );
 
     if (!result?.data) {
       setType(initialType);
       console.log("response error: ", result?.error);
+      toast.error("Could not update shard type");
     }
   };
 
