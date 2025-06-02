@@ -143,7 +143,12 @@ const CollaborativeMonacoEditor = ({ theme, roomId }) => {
   const onEditorChange = useCallback((value) => {
     // setEditorData(value);
     updateCurrentFile(value, true);
-    debounce(sendMessage, 500)({
+    // debounce(sendMessage, 500)({
+    //   activeFile: activeFile, 
+    //   data: value,
+    //   roomId: roomId,
+    // });
+    sendMessage({
       activeFile: activeFile, 
       data: value,
       roomId: roomId,
