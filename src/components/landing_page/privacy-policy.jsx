@@ -1,3 +1,6 @@
+"use client"
+import { Fragment } from "react";
+
 const PrivacyPolicy = () => {
   const list = [
     {
