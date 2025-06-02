@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import Footer from "./footer";
+import Footer from "./Footer";
 import { FeaturesSectionDemo } from "./feature-section";
 import { HeroScrollDemo } from "./hero-scroll";
 import { useAuth } from "@clerk/nextjs";
