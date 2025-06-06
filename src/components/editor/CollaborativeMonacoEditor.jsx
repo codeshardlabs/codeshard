@@ -95,50 +95,50 @@ const CollaborativeMonacoEditor = ({ theme, roomId }) => {
     }
   }, [visibleFiles, roomId, sendVisibleFiles]);
 
-  useEffect(() => {
-    if (!isClient || !editorRef.current || !roomId) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!isClient || !editorRef.current || !roomId) {
+  //     return;
+  //   }
 
-    let cleanup = () => {};
+  //   let cleanup = () => {};
 
-    const setupYjs = async () => {
-      try {
-        const { Doc } = await import("yjs");
-        const { WebsocketProvider } = await import("y-websocket");
-        const { MonacoBinding } = await import("y-monaco");
+  //   const setupYjs = async () => {
+  //     try {
+  //       const { Doc } = await import("yjs");
+  //       const { WebsocketProvider } = await import("y-websocket");
+  //       const { MonacoBinding } = await import("y-monaco");
 
-        const ydoc = new Doc();
-        const ytext = ydoc.getText("monaco");
+  //       const ydoc = new Doc();
+  //       const ytext = ydoc.getText("monaco");
 
-        const wsProvider = new WebsocketProvider(
-          process.env.NEXT_PUBLIC_WS_ENDPOINT,
-          roomId,
-          ydoc,
-        );
+  //       const wsProvider = new WebsocketProvider(
+  //         process.env.NEXT_PUBLIC_WS_ENDPOINT,
+  //         roomId,
+  //         ydoc,
+  //       );
 
-        const monacoBinding = new MonacoBinding(
-          ytext,
-          editorRef.current.getModel(),
-          new Set([editorRef.current]),
-          wsProvider.awareness,
-        );
+  //       const monacoBinding = new MonacoBinding(
+  //         ytext,
+  //         editorRef.current.getModel(),
+  //         new Set([editorRef.current]),
+  //         wsProvider.awareness,
+  //       );
 
-        cleanup = () => {
-          monacoBinding.destroy();
-          wsProvider.destroy();
-          ydoc.destroy();
-        };
-      } catch (error) {
-        console.error("Error setting up Yjs:", error);
-        toast.error("Error setting up Yjs. Refresh and try again.");
-      }
-    };
+  //       cleanup = () => {
+  //         monacoBinding.destroy();
+  //         wsProvider.destroy();
+  //         ydoc.destroy();
+  //       };
+  //     } catch (error) {
+  //       console.error("Error setting up Yjs:", error);
+  //       toast.error("Error setting up Yjs. Refresh and try again.");
+  //     }
+  //   };
 
-    setupYjs();
+  //   setupYjs();
 
-    return () => cleanup();
-  }, [editorRef, isClient, roomId]);
+  //   return () => cleanup();
+  // }, [editorRef, isClient, roomId]);
 
   const onEditorChange = useCallback((value) => {
     // setEditorData(value);
