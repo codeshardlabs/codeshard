@@ -1,5 +1,4 @@
 "use client";
-import { writeToClipboard } from "@/src/utils";
 import React, { useState } from "react";
 import CopyLink from "../ui/icons/Link";
 import Delete from "../ui/icons/Delete";
@@ -7,6 +6,7 @@ import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { deleteShardById } from "@/src/lib/actions";
 import { useUser } from "@clerk/nextjs";
+import { writeToClipboard } from "@/src/lib/utils"; 
 
 const RoomListCard = ({
   index,

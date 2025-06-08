@@ -1,17 +1,18 @@
-import { useRouter } from "next/navigation";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
 import clsx from "clsx";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { isRoomPath } from "@/src/lib/utils";
 
 const ItemsList = () => {
   const { isSignedIn } = useUser();
-  const { userId } = useAuth();
-  const router = useRouter();
+  const pathname = usePathname();
   if (!isSignedIn) {
     toast.error("not signed in");
     return null;
   }
+  
 
   const liItems = [
     // {
@@ -36,11 +37,12 @@ const ItemsList = () => {
     },
   ];
 
-  const evenLiStyles = ``;
-  return (
+  const isRoomPathFlag = isRoomPath(pathname);
+
+   return (
     <>
       <ul className="rounded-sm flex gap-3">
-        {liItems.map((item, index) => (
+        {!isRoomPathFlag && liItems.map((item, index) => (
           <Link
             key={index}
             href={item.target}

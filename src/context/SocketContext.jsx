@@ -6,23 +6,12 @@ import {
   createContext,
   useCallback,
   useState,
-  useEffect,
-  useContext,
+  useEffect
 } from "react";
 import { toast } from "sonner";
 import { useUser } from "@clerk/nextjs";
 
-const SocketContext = createContext(null);
-
-export const useSocket = () => {
-  const state = useContext(SocketContext);
-
-  if (!state) {
-    throw new Error("Socket state not found");
-  }
-
-  return state;
-};
+export const SocketContext = createContext(null);
 
 const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState();

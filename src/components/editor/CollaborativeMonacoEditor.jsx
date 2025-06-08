@@ -1,21 +1,18 @@
 "use client";
 
-import { useSocket } from "@/src/context/SocketContext";
 import { Editor, useMonaco } from "@monaco-editor/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   SandpackStack,
   useSandpack,
-  useSandpackClient,
 } from "@codesandbox/sandpack-react";
 import { FileTabs } from "@codesandbox/sandpack-react";
 import { snakeCase } from "./MonacoEditor";
-import { toast } from "sonner";
-import { debounce } from "@/src/lib/utils";
+import { useSocket } from "@/src/hooks/useSocket";
+// import { debounce } from "@/src/lib/utils";
 
-const CollaborativeMonacoEditor = ({ theme, roomId }) => {
-  const editorRef = useRef(null);
+const CollaborativeMonacoEditor = ({ theme, roomId, readOnly = false }) => {
   const {
     sendMessage,
     latestData,
@@ -29,6 +26,7 @@ const CollaborativeMonacoEditor = ({ theme, roomId }) => {
   const { sandpack } = useSandpack();
   const { files, activeFile, updateCurrentFile, visibleFiles, updateFile } =
     sandpack;
+    const [editor, setEditor] = useState(null);
 
   const code = files[activeFile]?.code || "";
 
@@ -88,7 +86,7 @@ const CollaborativeMonacoEditor = ({ theme, roomId }) => {
       if (JSON.stringify(parsedStoredFiles) !== JSON.stringify(visibleFiles)) {
         sendVisibleFiles({
           visibleFiles,
-          roomId: roomId,
+          roomId: roomId
         });
         window.localStorage.setItem("visibleFiles", JSON.stringify(visibleFiles));
       }
@@ -155,6 +153,18 @@ const CollaborativeMonacoEditor = ({ theme, roomId }) => {
     });
   });
 
+  useEffect(() => {
+    if (editor) {
+      editor.updateOptions({ readOnly });
+    }
+  }, [editor, readOnly]);
+
+  const handleMount = useCallback((node) => {
+    // console.log(monaco)
+    setEditor(node);
+  });
+
+
   if (!isClient) {
     return null;
   }
@@ -194,7 +204,7 @@ const CollaborativeMonacoEditor = ({ theme, roomId }) => {
           onChange={onEditorChange}
           defaultValue={code}
           value={latestData[activeFile]?.code || code}
-          onMount={(editor) => (editorRef.current = editor)}
+          onMount={handleMount}
         />
       </SandpackStack>
     </>

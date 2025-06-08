@@ -21,13 +21,12 @@ import { useModal } from "@/src/hooks/useModal";
 import MonacoEditor from "./MonacoEditor.jsx";
 import Button from "../ui/Button";
 import { makeRequestToCodingAssistant, saveShard } from "@/src/lib/actions";
-import { makeFilesAndDependenciesUIStateLike } from "@/src/utils";
 import { ScaleLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 import Avatar from "react-avatar";
 import Settings from "../ui/icons/Settings";
 import { useAuth, useUser } from "@clerk/nextjs";
-import { isJson } from "@/src/lib/utils";
+import { isJson, makeFilesAndDependenciesUIStateLike } from "@/src/lib/utils";
 import ReactMarkdown from "react-markdown";
 
 export default function SandpackEditor({

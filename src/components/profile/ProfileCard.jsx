@@ -23,8 +23,8 @@ import { toast } from "sonner";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import CommentTextBox from "../comment/CommentTextbox";
 import { CommentsArea } from "../comment/CommentsArea";
-import { useActiveComment } from "../../context/CommentContext";
-import { marshalUsername } from "../../utils";
+import { useActiveComment } from "@/src/hooks/useActiveComment";
+import { marshalUsername } from "@/src/lib/utils";
 import { useUser } from "@clerk/nextjs";
 
 const ProfileCard = ({

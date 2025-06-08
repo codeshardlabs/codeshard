@@ -1,5 +1,5 @@
 import { useModal } from "@/src/hooks/useModal";
-import { templates } from "@/src/utils";
+import { templates } from "@/src/lib/utils";
 import { useRef, useState } from "react";
 
 

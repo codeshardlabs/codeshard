@@ -1,11 +1,9 @@
 import WorkCard from "./WorkCard";
 import { redirect } from "next/navigation";
-import { makeFilesAndDependenciesUIStateLike } from "@/src/utils";
 // import { CommentContextProvider } from "@/src/context/CommentContext";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { fetchShards } from "@/src/lib/actions";
-import { handleFailureCase, throwFailureCb } from "@/src/lib/utils";
-import { GlobalConstants } from "@/src/constants/global-constants";
+import { handleFailureCase, throwFailureCb, makeFilesAndDependenciesUIStateLike, GlobalConstants} from "@/src/lib/utils";
 import { Fragment } from "react";
 const fetchShardsByUserId = async (userId, limit=10, offset=0) => {
   try {

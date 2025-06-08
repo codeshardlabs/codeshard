@@ -15,11 +15,12 @@ import clsx from "clsx";
 import { useAuth } from "@clerk/nextjs";
 import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
 import ItemsList from "./ItemsList";
-import { isRoomPath, templates } from "../../lib/utils";
+import { isRoomPath, RoomRole, templates} from "../../lib/utils";
 import { inviteUserToRoom } from "../../lib/actions";
 import { toast } from "sonner";
+import { useRoom } from "@/src/hooks/useRoom";
 
-export default function Navbar() {
+export default function RoomNavbar() {
   const { userId } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -39,6 +40,7 @@ export default function Navbar() {
   useModal(isInviteModalOpen, setIsInviteModalOpen, inviteModalRef);
   const modal = useRef();
   const joinModal = useRef();
+  const { userRole } = useRoom();
 
   useEffect(() => {
     const handleBodyClick = (e) => {
@@ -240,14 +242,14 @@ export default function Navbar() {
         onSubmit={(e) => e.preventDefault()}
       >
         <div className="flex flex-col gap-2">
-          <label htmlFor="userId" className="text-sm text-gray-300">User ID</label>
+          <label htmlFor="userId" className="text-sm text-gray-300">Email ID</label>
           <input
             id="userId"
             value={inviteUserId}
             onChange={(e) => setInviteUserId(e.target.value)}
-            placeholder="Enter user ID..."
+            placeholder="Enter User Email..."
             className="h-10 rounded-md bg-gray-800 border border-gray-700 px-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
-            type="text"
+            type="email"
           />
         </div>
         <div className="flex flex-col gap-2">
@@ -280,10 +282,6 @@ export default function Navbar() {
       </form>
     </div>
   );
-
-  if(isRoomPath(pathname)) {
-    return <></>;
-  }
 
   return (
     <div className="flex mx-2 my-4  gap-4 items-center justify-between text-sm">
@@ -325,12 +323,14 @@ export default function Navbar() {
               >
                 Copy Link
               </Button>
-              <Button 
+              {
+              userRole && userRole?.userId === userId && userRole?.role === RoomRole.OWNER && <Button 
                 onClick={() => setIsInviteModalOpen(true)} 
                 className="bg-blue-700 hover:bg-blue-800 text-white"
               >
                 Invite
               </Button>
+              }
               </>
             )}
             <Button onClick={() => setIsPopoverOpen(true)} type="outline">

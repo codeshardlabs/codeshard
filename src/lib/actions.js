@@ -1,7 +1,6 @@
 "use server";
-import { HttpMethod } from "../utils/enums";
-import { protectedRouteHeaders, jsonify } from "./utils";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { protectedRouteHeaders, jsonify, HttpMethod } from "./utils";
+import { auth } from "@clerk/nextjs/server";
 const apiOrigin = process.env.NEXT_PUBLIC_BACKEND_URL;
 const apiVersion = "v1";
 let backendEndpoint = `${apiOrigin}/api/${apiVersion}`;
@@ -374,6 +373,38 @@ export async function createNewRoom(userId, content) {
     } catch (error) {
         console.log("error occured in getComments", error)
         return null;
+    }
+}
+
+export async function inviteUserToRoom(userId, roomId, inviteeId, role) {
+    try {
+        const res = await fetch(`${backendEndpoint}/rooms/${roomId}/invite`, {
+            method: HttpMethod.Post,
+            body: jsonify({
+                emailId: inviteeId,
+                role
+            }),
+            headers: protectedRouteHeaders(userId, true)
+        });
+        return await res.json();
+    } catch (error) {
+        console.log("error occurred in inviteUserToRoom", error);
+        return null;
+    }
+}
+
+export async function fetchRoomMembers(userId, roomId, active = false) {    
+    let url = new URL(`${backendEndpoint}/rooms/${roomId}/members`);
+    if(active) url.searchParams.append("active", true);
+    try {
+        const res = await fetch(url.toString(), {
+            method: HttpMethod.Get,
+            headers: protectedRouteHeaders(userId)
+        });
+        return await res.json();
+    } catch (error) {
+        console.log("error occurred in fetchRoomMembers", error);
+        return [];
     }
 }
 

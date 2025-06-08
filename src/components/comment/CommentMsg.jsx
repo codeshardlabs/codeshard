@@ -5,7 +5,7 @@ import Avatar from "react-avatar";
 import Button from "../ui/Button";
 import Comment from "../ui/icons/Comment";
 import { cn } from "@/src/lib/utils";
-import { useActiveComment } from "@/src/context/CommentContext";
+import { useActiveComment } from "@/src/hooks/useActiveComment";
 
 const CommentMsg = ({
   _id,

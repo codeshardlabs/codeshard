@@ -1,10 +1,10 @@
 "use client";
 
-import { useSocket } from "@/src/context/SocketContext";
 import { useUser } from "@clerk/nextjs";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Minimize2, Maximize2, X } from "lucide-react";
 import { Rnd } from "react-rnd";
+import { useSocket } from "@/src/hooks/useSocket";
 
 export default function ChatBox({roomId}) {
   const { socket, chatMessages, sendChatMessage } = useSocket();
@@ -32,7 +32,7 @@ export default function ChatBox({roomId}) {
 
     const message = {
       text: newMessage,
-      sender: user.fullName,
+      sender: user.username, 
       timestamp: new Date().toISOString(),
     };
 
@@ -91,12 +91,12 @@ export default function ChatBox({roomId}) {
                 <div
                   key={index}
                   className={`flex flex-col ${
-                    msg.sender === user.fullName ? "items-end" : "items-start"
+                    msg.sender === user.username ? "items-end" : "items-start"
                   }`}
                 >
                   <div
                     className={`max-w-[80%] rounded-lg p-2 ${
-                      msg.sender === user.fullName
+                      msg.sender === user.username
                         ? "bg-blue-600 text-white"
                         : "bg-gray-700 text-white"
                     }`}
