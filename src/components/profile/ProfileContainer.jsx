@@ -1,4 +1,4 @@
-import { makeFilesAndDependenciesUIStateLike } from "../../utils";
+import { makeFilesAndDependenciesUIStateLike } from "../../lib/utils";
 import { CommentContextProvider } from "../../context/CommentContext";
 import ProfileCard from "./ProfileCard";
 import { Fragment } from "react";

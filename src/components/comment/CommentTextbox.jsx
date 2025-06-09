@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Textarea } from "../ui/textarea";
 import Button from "../ui/Button";
-import { useActiveComment } from "../../context/CommentContext";
-import { toast } from "sonner";
 import { useUser } from "@clerk/nextjs";
+import { useActiveComment } from "@/src/hooks/useActiveComment";
 
 const CommentTextBox = () => {
   const [input, setInput] = useState("");

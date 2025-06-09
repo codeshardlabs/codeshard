@@ -15,11 +15,12 @@ import clsx from "clsx";
 import { useAuth } from "@clerk/nextjs";
 import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
 import ItemsList from "./ItemsList";
-import { isRoomPath, templates } from "../../lib/utils";
-import { inviteUserToRoom } from "../../lib/actions";
+import { isRoomPath, RoomRole, templates} from "../../lib/utils";
+import { inviteUserToRoom, fetchRoomMembers } from "../../lib/actions";
 import { toast } from "sonner";
+import { useRoom } from "@/src/hooks/useRoom";
 
-export default function Navbar() {
+export default function RoomNavbar() {
   const { userId } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -33,12 +34,16 @@ export default function Navbar() {
   const [inviteUserId, setInviteUserId] = useState("");
   const [inviteRole, setInviteRole] = useState("viewer");
   const [isInviting, setIsInviting] = useState(false);
+  const [isMembersExpanded, setIsMembersExpanded] = useState(false);
+  const [members, setMembers] = useState([]);
+  const [isLoadingMembers, setIsLoadingMembers] = useState(false);
   const pgModalRef = useRef();
   const inviteModalRef = useRef();
   useModal(pgModalOpen, setPgModalOpen, pgModalRef);
   useModal(isInviteModalOpen, setIsInviteModalOpen, inviteModalRef);
   const modal = useRef();
   const joinModal = useRef();
+  const { userRole } = useRoom();
 
   useEffect(() => {
     const handleBodyClick = (e) => {
@@ -69,6 +74,25 @@ export default function Navbar() {
       document.removeEventListener("click", handleBodyClick);
     };
   }, [isJoinRoomModalOpen]);
+
+  useEffect(() => {
+    if (isInviteModalOpen && params.roomId) {
+      setIsLoadingMembers(true);
+      fetchRoomMembers(userId, params.roomId)
+        .then(result => {
+          if (result?.data?.members) {
+            setMembers(result.data.members);
+          }
+        })
+        .catch(error => {
+          console.error("Failed to fetch members:", error);
+          toast.error("Failed to load room members");
+        })
+        .finally(() => {
+          setIsLoadingMembers(false);
+        });
+    }
+  }, [isInviteModalOpen, params.roomId, userId]);
 
   const joinRoom = () => {
     if (!roomInput) {
@@ -217,6 +241,11 @@ export default function Navbar() {
         setIsInviteModalOpen(false);
         setInviteUserId("");
         setInviteRole("viewer");
+        // Refresh members list
+        const updatedMembers = await fetchRoomMembers(userId, params.roomId);
+        if (updatedMembers?.data?.members) {
+          setMembers(updatedMembers.data.members);
+        }
       }
     } catch (error) {
       toast.error("Failed to invite user");
@@ -234,20 +263,61 @@ export default function Navbar() {
         <h1 className="text-2xl font-semibold">Invite User</h1>
         <p className="text-sm text-gray-400">Invite a user to collaborate in this room</p>
       </div>
+
+      {/* Members List Accordion */}
+      <div className="border border-gray-700 rounded-lg overflow-hidden">
+        <button
+          onClick={() => setIsMembersExpanded(!isMembersExpanded)}
+          className="w-full px-4 py-2 text-left bg-gray-800 hover:bg-gray-700 flex justify-between items-center"
+        >
+          <span className="font-medium">Room Members ({members.length})</span>
+          <ArrowDown 
+            className={clsx(
+              "size-4 transition-transform",
+              isMembersExpanded ? "rotate-180" : ""
+            )} 
+          />
+        </button>
+        {isMembersExpanded && (
+          <div className="max-h-[200px] overflow-y-auto bg-gray-900">
+            {isLoadingMembers ? (
+              <div className="p-4 text-center text-gray-400">Loading members...</div>
+            ) : members.length === 0 ? (
+              <div className="p-4 text-center text-gray-400">No members yet</div>
+            ) : (
+              <div className="divide-y divide-gray-800">
+                {members.map((member) => (
+                  <div key={member.userId} className="px-4 py-2 flex justify-between items-center">
+                    <span className="text-sm text-gray-300">{member.emailId}</span>
+                    <span className={clsx(
+                      "text-xs px-2 py-1 rounded-full",
+                      member.role === RoomRole.OWNER ? "bg-purple-900 text-purple-200" :
+                      member.role === RoomRole.EDITOR ? "bg-blue-900 text-blue-200" :
+                      "bg-gray-700 text-gray-300"
+                    )}>
+                      {member.role}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
       
       <form
         className="flex flex-col gap-6"
         onSubmit={(e) => e.preventDefault()}
       >
         <div className="flex flex-col gap-2">
-          <label htmlFor="userId" className="text-sm text-gray-300">User ID</label>
+          <label htmlFor="userId" className="text-sm text-gray-300">Email ID</label>
           <input
             id="userId"
             value={inviteUserId}
             onChange={(e) => setInviteUserId(e.target.value)}
-            placeholder="Enter user ID..."
+            placeholder="Enter User Email..."
             className="h-10 rounded-md bg-gray-800 border border-gray-700 px-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
-            type="text"
+            type="email"
           />
         </div>
         <div className="flex flex-col gap-2">
@@ -280,10 +350,6 @@ export default function Navbar() {
       </form>
     </div>
   );
-
-  if(isRoomPath(pathname)) {
-    return <></>;
-  }
 
   return (
     <div className="flex mx-2 my-4  gap-4 items-center justify-between text-sm">
@@ -325,12 +391,14 @@ export default function Navbar() {
               >
                 Copy Link
               </Button>
-              <Button 
+              {
+              userRole && userRole?.userId === userId && userRole?.role === RoomRole.OWNER && <Button 
                 onClick={() => setIsInviteModalOpen(true)} 
                 className="bg-blue-700 hover:bg-blue-800 text-white"
               >
                 Invite
               </Button>
+              }
               </>
             )}
             <Button onClick={() => setIsPopoverOpen(true)} type="outline">

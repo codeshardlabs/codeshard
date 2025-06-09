@@ -1,19 +1,11 @@
 "use client";
 
 import { addComment } from "@/src/lib/actions";
-import { findParentComment } from "@/src/utils";
-import { createContext, useContext, useState } from "react";
+import { findParentComment } from "@/src/lib/utils";
+import { createContext, useState } from "react";
 import { toast } from "sonner";
 
-const CommentContext = createContext(null);
-
-export const useActiveComment = () => {
-  const state = useContext(CommentContext);
-  if (!state) {
-    console.log("Could not find state");
-  }
-  return state;
-};
+export const CommentContext = createContext(null);
 
 export const CommentContextProvider = ({ children }) => {
   const [activeComment, setActiveComment] = useState(null);

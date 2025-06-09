@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation";
-import { templates } from "@/src/utils";
 import SandpackEditor from "@/src/components/editor/SandpackEditor";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import {  createShard } from "@/src/lib/actions";
-import { handleFailureCase, logFailureCb } from "@/src/lib/utils";
+import { handleFailureCase, logFailureCb, templates } from "@/src/lib/utils";
 
 
 const page = async ({ params }) => {

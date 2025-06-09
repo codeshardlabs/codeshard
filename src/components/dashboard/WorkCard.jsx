@@ -26,7 +26,7 @@ import { toast } from "sonner";
 // } from "@/src/components/ui/dialog";
 // import CommentTextBox from "../comment/CommentTextbox";
 // import { CommentsArea } from "../comment/CommentsArea";
-// import { useActiveComment } from "@/src/context/CommentContext";
+// import { useActiveComment } from "@/src/hooks/useActiveComment";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 

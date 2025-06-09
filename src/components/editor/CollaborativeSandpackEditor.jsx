@@ -13,7 +13,7 @@ import { Toaster } from "sonner";
 import { useEffect, useRef, useState } from "react";
 import React from "react";
 import { useModal } from "@/src/hooks/useModal";
-import { makeFilesAndDependenciesUIStateLike } from "@/src/utils";
+import { makeFilesAndDependenciesUIStateLike, RoomRole } from "@/src/lib/utils";
 import { ScaleLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 import Avatar from "react-avatar";
@@ -22,12 +22,14 @@ import CollaborativeMonacoEditor from "./CollaborativeMonacoEditor";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
 import ChatBox from "../chat/ChatBox";
+import { useRoom } from "@/src/hooks/useRoom";
 
 export default function CollaborativeSandpackEditor({
   id,
   shardDetails: initialShardDetails,
   template = "react",
   isNewShard,
+  userRole: initialUserRole,
 }) {
   const [shardDetails, setShardDetails] = useState(
     JSON.parse(initialShardDetails),
@@ -41,6 +43,8 @@ export default function CollaborativeSandpackEditor({
   const [theme, setTheme] = useState("vs-dark");
   useModal(isModalOpen, setIsModalOpen, modalRef);
   const router = useRouter();
+  const { userId } = useAuth();
+  const { userRole, handleUserRole } = useRoom();
 
   console.log("room id: ", id);
 
@@ -49,7 +53,13 @@ export default function CollaborativeSandpackEditor({
     if (isNewShard && id) {
       router.replace(`/room/${id}`);
     }
-  }, []);
+  }, [id]);
+
+  useEffect(() => {
+    if(!userRole && initialUserRole && userId) {
+        handleUserRole(userId, initialUserRole);
+    }
+  }, [userId, initialUserRole]);
 
   useEffect(() => {
     if (initialShardDetails) {
@@ -142,7 +152,7 @@ export default function CollaborativeSandpackEditor({
             template={template}
             addNewFile={addNewFile}
           />
-          <CollaborativeMonacoEditor roomId={id} theme={theme} />
+          <CollaborativeMonacoEditor roomId={id} theme={theme} readOnly={userRole?.role === RoomRole.VIEWER} />
           <SandpackPreview
             showOpenInCodeSandbox={false}
             showOpenNewtab={true}

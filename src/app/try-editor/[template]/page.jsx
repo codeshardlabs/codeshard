@@ -1,6 +1,5 @@
 import SandpackEditor from "@/src/components/editor/SandpackEditor";
-import { templates } from "@/src/utils";
-
+import { templates } from "@/src/lib/utils";
 import { redirect } from "next/navigation";
 export const generateMetadata = ({ params }) => {
   let template = params.template;
