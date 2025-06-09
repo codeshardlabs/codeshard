@@ -55,11 +55,11 @@ export default async function CollaborativeRoomPage({ params, searchParams }) {
 
     if(isOwner) {
       // user is already an owner of the room, redirect to the room
-      redirect(`/room/${roomId}`);
+      redirect(`/room/${newRoomId}`);
     }
       else {
         // user is not an owner of the room, add them as an owner
-      const out = await inviteUserToRoom(userId, roomId, user.primaryEmailAddress?.emailAddress ?? "", RoomRole.OWNER);
+      const out = await inviteUserToRoom(userId, newRoomId, user.primaryEmailAddress?.emailAddress ?? "", RoomRole.OWNER);
       if(out?.error) {
         console.log("error occurred in inviteUserToRoom: ", out);
         redirect("/");
