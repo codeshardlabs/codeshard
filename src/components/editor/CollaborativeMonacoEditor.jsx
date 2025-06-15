@@ -1,7 +1,7 @@
 "use client";
 
 import { Editor, useMonaco } from "@monaco-editor/react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   SandpackStack,
@@ -19,6 +19,7 @@ const CollaborativeMonacoEditor = ({ theme, roomId, readOnly = false }) => {
     latestVisibleFiles,
     sendVisibleFiles,
     joinRoom,
+    propagateRoomState,
   } = useSocket();
   const [isClient, setIsClient] = useState(false);
   const [isThemeLoaded, setIsThemeLoaded] = useState(false);
@@ -27,6 +28,8 @@ const CollaborativeMonacoEditor = ({ theme, roomId, readOnly = false }) => {
   const { files, activeFile, updateCurrentFile, visibleFiles, updateFile } =
     sandpack;
     const [editor, setEditor] = useState(null);
+    const timeoutRef = useRef(null);
+
 
   const code = files[activeFile]?.code || "";
 
@@ -162,6 +165,28 @@ const CollaborativeMonacoEditor = ({ theme, roomId, readOnly = false }) => {
   const handleMount = useCallback((node) => {
     // console.log(monaco)
     setEditor(node);
+
+    node.onDidChangeModelContent(() => {
+      if(timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+      propagateRoomState({
+          roomId: roomId,
+          fileName: activeFile,
+          code: latestData[activeFile]?.code ?? files[activeFile]?.code
+        });
+      }, 5000); // save after 5s of inactivity
+    });
+
+    node.onDidBlurEditorText(() => {
+      propagateRoomState({
+        roomId: roomId,
+        fileName: activeFile,
+        code: latestData[activeFile]?.code ?? files[activeFile]?.code
+      });
+    });
   });
 
 
@@ -189,23 +214,23 @@ const CollaborativeMonacoEditor = ({ theme, roomId, readOnly = false }) => {
     <>
       <SandpackStack style={{ height: "92vh", margin: 0 }}>
         <FileTabs />
-        <Editor
-          key={activeFile}
-          height={"100vh"}
-          defaultLanguage="javascript"
-          theme={
-            theme === "vs-dark" || theme === "light"
-              ? theme
-              : isThemeLoaded
+          <Editor
+            key={activeFile}
+            height={"100vh"}
+            defaultLanguage="javascript"
+            theme={
+              theme === "vs-dark" || theme === "light"
                 ? theme
-                : "vs-dark"
-          }
-          language={fileType}
-          onChange={onEditorChange}
-          defaultValue={code}
-          value={latestData[activeFile]?.code || code}
-          onMount={handleMount}
-        />
+                : isThemeLoaded
+                  ? theme
+                  : "vs-dark"
+            }
+            language={fileType}
+            onChange={onEditorChange}
+            defaultValue={code}
+            value={latestData[activeFile]?.code || code}
+            onMount={handleMount}
+          />
       </SandpackStack>
     </>
   );

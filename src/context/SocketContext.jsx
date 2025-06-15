@@ -81,6 +81,22 @@ const SocketProvider = ({ children }) => {
     [socket],
   );
 
+  const propagateRoomState = useCallback(
+    ({ roomId, fileName, code }) => {
+      console.log("propagateRoomState() is getting called");
+      console.log("roomId: ", roomId);
+      console.log("fileName: ", fileName);
+      console.log("code: ", code);
+      if(socket) {
+        socket.emit("event:propagate-room-state", {
+          roomId: roomId,
+          fileName: fileName,
+          code: code,
+        });
+      }
+    },
+  );
+
   useEffect(() => {
     if (!socket) {
       console.log("socket not available");
@@ -165,6 +181,7 @@ const SocketProvider = ({ children }) => {
           joinRoom,
           sendChatMessage,
           chatMessages,
+          propagateRoomState,
         }}
       >
         {children}
