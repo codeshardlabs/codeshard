@@ -152,7 +152,7 @@ export default function CollaborativeSandpackEditor({
             template={template}
             addNewFile={addNewFile}
           />
-          <CollaborativeMonacoEditor roomId={id} theme={theme} readOnly={userRole?.role === RoomRole.VIEWER} />
+          <CollaborativeMonacoEditor roomFiles={files} roomId={id} theme={theme} readOnly={userRole?.role === RoomRole.VIEWER} />
           <SandpackPreview
             showOpenInCodeSandbox={false}
             showOpenNewtab={true}
