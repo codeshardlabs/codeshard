@@ -32,6 +32,7 @@ import ReactMarkdown from "react-markdown";
 export default function SandpackEditor({
   id,
   shardDetails: initialShardDetails,
+  shard = false,
   template = "react",
   room = false,
   readOnly = false,
@@ -57,6 +58,20 @@ export default function SandpackEditor({
       setDependencies(dep);
       setDevDependencies(devDep);
       setShardDetails(data);
+    }  else if(localStorage.getItem(`try-editor-${template}`)) {
+      const data = JSON.parse(localStorage.getItem(`try-editor-${template}`));
+      console.log("data", data);
+      const finalData = {
+        files: {},
+        dependencies: {},
+        devDependencies: {},
+      };
+
+      finalData.files = data ?? {};
+      setFiles(finalData.files ?? {});
+      setDependencies(finalData.dependencies ?? {});
+      setDevDependencies(data.devDependencies ?? {});
+      setShardDetails(finalData);
     } else {
       setFiles({});
       setShardDetails(null);
@@ -141,7 +156,7 @@ export default function SandpackEditor({
           />
           }
           
-          <MonacoEditor theme={theme} readOnly={readOnly} />
+          <MonacoEditor theme={theme} readOnly={readOnly} shard={shard} template={template} />
           <SandpackPreview
             showOpenInCodeSandbox={false}
             showOpenNewtab={true}
