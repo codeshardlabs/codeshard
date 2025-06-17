@@ -182,14 +182,14 @@ const CollaborativeMonacoEditor = ({ theme, roomId, roomFiles, readOnly = false 
     });
 
     // unnecessary doing it twice
-    // node.onDidBlurEditorText(() => {
-    //   propagateRoomState({
-    //     roomId: roomId,
-    //     fileName: activeFile,
-    //     code: node.getValue(),
-    //     updateType : "blur"
-    //   });
-    // });
+    node.onDidBlurEditorText(() => {
+      propagateRoomState({
+        roomId: roomId,
+        fileName: activeFile,
+        code: node.getValue(),
+        updateType : "blur"
+      });
+    });
   });
 
 
