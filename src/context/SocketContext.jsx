@@ -82,16 +82,18 @@ const SocketProvider = ({ children }) => {
   );
 
   const propagateRoomState = useCallback(
-    ({ roomId, fileName, code }) => {
+    ({ roomId, fileName, code, updateType }) => {
       console.log("propagateRoomState() is getting called");
       console.log("roomId: ", roomId);
       console.log("fileName: ", fileName);
       console.log("code: ", code);
+      console.log("updateType: ", updateType);
       if(socket) {
         socket.emit("event:propagate-room-state", {
           roomId: roomId,
           fileName: fileName,
           code: code,
+          updateType: updateType,
         });
       }
     },

@@ -12,7 +12,7 @@ import { snakeCase } from "./MonacoEditor";
 import { useSocket } from "@/src/hooks/useSocket";
 // import { debounce } from "@/src/lib/utils";
 
-const CollaborativeMonacoEditor = ({ theme, roomId, readOnly = false }) => {
+const CollaborativeMonacoEditor = ({ theme, roomId, roomFiles, readOnly = false }) => {
   const {
     sendMessage,
     latestData,
@@ -175,18 +175,21 @@ const CollaborativeMonacoEditor = ({ theme, roomId, readOnly = false }) => {
       propagateRoomState({
           roomId: roomId,
           fileName: activeFile,
-          code: latestData[activeFile]?.code ?? files[activeFile]?.code
+          code: node.getValue(),
+          updateType : "debounce"
         });
       }, 5000); // save after 5s of inactivity
     });
 
-    node.onDidBlurEditorText(() => {
-      propagateRoomState({
-        roomId: roomId,
-        fileName: activeFile,
-        code: latestData[activeFile]?.code ?? files[activeFile]?.code
-      });
-    });
+    // unnecessary doing it twice
+    // node.onDidBlurEditorText(() => {
+    //   propagateRoomState({
+    //     roomId: roomId,
+    //     fileName: activeFile,
+    //     code: node.getValue(),
+    //     updateType : "blur"
+    //   });
+    // });
   });
 
 
