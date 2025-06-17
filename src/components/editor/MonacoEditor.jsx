@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from "react";
 export function snakeCase(fname) {
   return fname.toLowerCase().replace(/[_() ]/g, "-");
 }
-export default function MonacoEditor({ theme, readOnly = false }) {
+export default function MonacoEditor({ theme, readOnly = false, shard = false, template }) {
   const { sandpack } = useSandpack();
   const { files, activeFile, updateCurrentFile } = sandpack;
   const monaco = useMonaco();
@@ -42,6 +42,16 @@ export default function MonacoEditor({ theme, readOnly = false }) {
   const handleMount = useCallback((node) => {
     // console.log(monaco)
     setEditor(node);
+
+    node.onDidChangeModelContent(() => {
+      if(!shard) {
+        // save the files to local storage if user is not authenticated
+        const filesToSave = {...files};
+        filesToSave[activeFile] = node.getValue(); 
+        console.log("filesToSave", filesToSave);
+        localStorage.setItem(`try-editor-${template}`, JSON.stringify(filesToSave));
+      }
+    });
   });
 
   const jsTypes = ["js", "jsx"];
